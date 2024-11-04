@@ -1,101 +1,368 @@
-import Image from "next/image";
+"use client";
+import { Select, Button, Card, Row, Col, Typography, Progress } from "antd";
+import ReactECharts from "echarts-for-react";
+import {
+  ExportOutlined,
+  SyncOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined,
+} from "@ant-design/icons";
+
+const { Title } = Typography;
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const statusPieOption = {
+    title: {
+      text: "Active MalOps by Status",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      bottom: "5%",
+      left: "center",
+    },
+    series: [
+      {
+        type: "pie",
+        radius: ["40%", "70%"],
+        data: [
+          { value: 35, name: "New" },
+          { value: 25, name: "Reopened" },
+          { value: 40, name: "On Hold" },
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      },
+    ],
+  };
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const severityPieOption = {
+    title: {
+      text: "Active MalOps by Severity",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      bottom: "5%",
+      left: "center",
+    },
+    series: [
+      {
+        type: "pie",
+        radius: ["40%", "70%"],
+        data: [
+          { value: 45, name: "High" },
+          { value: 35, name: "Medium" },
+          { value: 20, name: "Low" },
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      },
+    ],
+  };
+
+  const lineChartOption = {
+    title: {
+      text: "MalOps Trends",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      bottom: "5%",
+      left: "center",
+    },
+    xAxis: {
+      type: "category",
+      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        name: "Total MalOps",
+        type: "line",
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: "Closed MalOps",
+        type: "line",
+        data: [80, 92, 71, 94, 60, 180, 160],
+      },
+    ],
+  };
+
+  const columnChartOption = {
+    title: {
+      text: "MalOps by Mitre Tactic",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "axis",
+    },
+    xAxis: {
+      type: "category",
+      data: [
+        "Execution",
+        "Persistence",
+        "Defense Evasion",
+        "Discovery",
+        "Lateral Movement",
+      ],
+      axisLabel: { interval: 0, rotate: 30 },
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        data: [120, 200, 150, 80, 70],
+        type: "bar",
+      },
+    ],
+  };
+
+  const machineStatusPieOption = {
+    title: {
+      text: "Machines by Status",
+      left: "center",
+    },
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      bottom: "5%",
+      left: "center",
+    },
+    series: [
+      {
+        type: "pie",
+        radius: ["40%", "70%"],
+        data: [
+          { value: 35, name: "Infected online" },
+          { value: 25, name: "Infected offline" },
+          { value: 30, name: "Clean online" },
+          { value: 10, name: "Clean offline" },
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      },
+    ],
+  };
+  return (
+    <div className="grid  p-8 pb-20 gap-3 sm:pt-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
+        <div className="flex gap-4">
+          <Select
+            defaultValue="Last week"
+            style={{ width: 200 }}
+            options={[
+              { value: "last week", label: "Last week" },
+              { value: "last month", label: "Last month" },
+            ]}
+          />
+          <Select
+            defaultValue="Viettel"
+            style={{ width: 200 }}
+            options={[{ value: "Viettel", label: "Viettel" }]}
+          />
+          <Select
+            defaultValue="AI hunting"
+            style={{ width: 200 }}
+            options={[{ value: "AI hunting", label: "AI hunting" }]}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="flex gap-4">
+          <Button
+            type="primary"
+            icon={
+              <ExportOutlined
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
+            }
+          >
+            Export
+          </Button>
+          <Button
+            type="primary"
+            icon={
+              <SyncOutlined
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
+            }
+          >
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      <Card style={{ height: "max-content" }} className="w-full">
+        <Row gutter={[32, 32]}>
+          {[
+            {
+              title: "Total Detections",
+              value: 2851,
+              percent: 12.5,
+              increase: true,
+            },
+            {
+              title: "Total MalOps",
+              value: 1250,
+              percent: -5.2,
+              increase: false,
+            },
+            {
+              title: "Prevented MalOps",
+              value: 584,
+              percent: 8.3,
+              increase: true,
+            },
+            {
+              title: "Active MalOps",
+              value: 12420,
+              percent: 15.8,
+              increase: true,
+            },
+            {
+              title: "MTTR",
+              value: 892,
+              percent: -2.4,
+              increase: false,
+            },
+            {
+              title: "Affected Users",
+              value: 458,
+              percent: 6.7,
+              increase: true,
+            },
+            {
+              title: "Service Issues",
+              value: 23,
+              percent: -12.3,
+              increase: false,
+            },
+            {
+              title: "Affected Hosts",
+              value: 156,
+              percent: 4.2,
+              increase: true,
+            },
+          ].map((item, index) => (
+            <Col key={index} span={3}>
+              <div className="text-center">
+                <Title level={5} style={{ marginBottom: "8px" }}>
+                  {item.title}
+                </Title>
+                <div className="text-2xl font-bold mb-2">{item.value}</div>
+                <div
+                  className={`flex items-center justify-center gap-1 ${
+                    item.increase ? "text-green-500" : "text-red-500"
+                  }`}
+                >
+                  {item.increase ? (
+                    <ArrowUpOutlined
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
+                    />
+                  ) : (
+                    <ArrowDownOutlined
+                      onPointerEnterCapture={undefined}
+                      onPointerLeaveCapture={undefined}
+                    />
+                  )}
+                  <span>{Math.abs(item.percent)}%</span>
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </Card>
+      <Row
+        style={{ height: "max-content" }}
+        gutter={[16, 16]}
+        className="w-full"
+      >
+        <Col span={6}>
+          <Card>
+            <ReactECharts
+              option={statusPieOption}
+              style={{ height: "400px" }}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <ReactECharts
+              option={severityPieOption}
+              style={{ height: "400px" }}
+            />
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card>
+            <ReactECharts
+              option={lineChartOption}
+              style={{ height: "400px" }}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} className="w-full">
+        <Col span={12}>
+          <Card>
+            <ReactECharts
+              option={columnChartOption}
+              style={{ height: "400px" }}
+            />
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card title="Top IOC's" className="h-full">
+            <div className="space-y-4">
+              <div>
+                <div className="mb-2">File</div>
+                <Progress percent={71.4} />
+              </div>
+              <div>
+                <div className="mb-2">Process</div>
+                <Progress percent={28.6} />
+              </div>
+            </div>
+          </Card>
+        </Col>
+        <Col span={6}>
+          <Card>
+            <ReactECharts
+              option={machineStatusPieOption}
+              style={{ height: "400px" }}
+            />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }
