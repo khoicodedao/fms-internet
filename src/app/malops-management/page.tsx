@@ -1,6 +1,6 @@
 "use client";
 import { Card, Row, Col } from "antd";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import ReactECharts from "echarts-for-react";
 import {
   PieChartOutlined,
@@ -11,18 +11,9 @@ import {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import getFileIcon from "./object-type/object-type";
 export default function MalOpsManagement() {
   const gridRef = useRef(null);
-  const [visibleColumns, setVisibleColumns] = useState({
-    state: true,
-    subject: true,
-    group: true,
-    affectedMachines: true,
-    affectedUsers: true,
-    description: true,
-    modules: true,
-    time: true,
-  });
   const pieOptions = {
     tooltip: {
       trigger: "item",
@@ -109,15 +100,61 @@ export default function MalOpsManagement() {
   const cardStyle = {
     paddingTop: "0px",
     paddingBottom: "0px",
-    height: "150px",
+    height: "190px",
     width: "100%",
   };
   const columns = [
     { headerName: "State", field: "state" },
-    { headerName: "Subject", field: "subject" },
+    {
+      headerName: "Object",
+      field: "object",
+      cellRenderer: (params: { value: string }) => {
+        const objectName = params.value;
+        const url = `/malops-management/detail/${objectName}`;
+
+        return (
+          <div className="flex items-center">
+            <p>{getFileIcon(objectName)}</p>{" "}
+            {/* Gọi hàm để lấy icon tương ứng */}
+            <a
+              href={url}
+              className="ml-2 text-blue-500 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {objectName}
+            </a>
+          </div>
+        );
+      },
+    },
     { headerName: "Group", field: "group" },
-    { headerName: "Affected Machines", field: "affectedMachines" },
-    { headerName: "Affected Users", field: "affectedUsers" },
+    {
+      headerName: "Affected Machines",
+      field: "affectedMachines",
+      cellRenderer: (params: { value: string }) => {
+        return (
+          <div className="flex items-center justify-center">
+            <p className=" ">{getFileIcon("computer")}</p>
+            {/* Gọi hàm để lấy icon tương ứng */}
+            <span className="ml-2">{params?.value || ""}</span>
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Affected Users",
+      field: "affectedUsers",
+      cellRenderer: (params: { value: string }) => {
+        return (
+          <div className="flex items-center justify-center">
+            <p className=" ">{getFileIcon("user")}</p>
+            {/* Gọi hàm để lấy icon tương ứng */}
+            <span className="ml-2">{params?.value}</span>
+          </div>
+        );
+      },
+    },
     { headerName: "Detection Description", field: "description" },
     { headerName: "Detection Modules", field: "modules" },
     { headerName: "Time", field: "time" },
@@ -126,10 +163,11 @@ export default function MalOpsManagement() {
   const rowData = [
     {
       state: "Active",
-      subject: "Malware",
+      object:
+        "ced3557310b98b8a1ede8c1c24c4997a2eb2e05e561dd0b6ca36627f0d987d14.exe",
       group: "Group A",
-      affectedMachines: "Machine 1, 2",
-      affectedUsers: "User 1, 2",
+      affectedMachines: "2",
+      affectedUsers: "20",
       description: "Detected unusual activity.",
       modules: "Module 1",
       time: "2024-11-01 10:00:00",
@@ -137,9 +175,10 @@ export default function MalOpsManagement() {
     // Add more rows here
   ];
   const onExportClick = useCallback(() => {
-    gridRef.current.api.exportDataAsCsv();
+    if (gridRef.current) {
+      gridRef.current?.api?.exportDataAsCsv();
+    }
   }, []);
-
   return (
     <div className="pb-20 gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
       <Row gutter={[16, 16]} className="w-full">
@@ -247,7 +286,9 @@ export default function MalOpsManagement() {
           <input
             type="text"
             placeholder="Search..."
-            onChange={(e) => gridRef.current.api.setQuickFilter(e.target.value)}
+            onChange={(e) =>
+              gridRef?.current?.api.setQuickFilter(e.target.value)
+            }
             style={{
               padding: "5px",
               borderRadius: "5px",
@@ -263,6 +304,7 @@ export default function MalOpsManagement() {
             ref={gridRef}
             rowData={rowData}
             columnDefs={columns}
+            rowSelection="multiple"
             pagination={true}
             paginationPageSize={5}
             defaultColDef={{
