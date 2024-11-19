@@ -12,6 +12,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import getFileIcon from "./object-type/object-type";
+import Link from "next/link";
 export default function MalOpsManagement() {
   const gridRef = useRef(null);
   const pieOptions = {
@@ -21,7 +22,7 @@ export default function MalOpsManagement() {
     series: [
       {
         type: "pie",
-        radius: ["40%", "50%"], // Thin donut chart
+        radius: ["40%", "50%"],
         data: [
           { value: 75, name: "Active", itemStyle: { color: "#52c41a" } },
           { value: 25, name: "Inactive", itemStyle: { color: "#f5222d" } },
@@ -103,6 +104,7 @@ export default function MalOpsManagement() {
     height: "190px",
     width: "100%",
   };
+
   const columns = [
     { headerName: "State", field: "state" },
     {
@@ -115,15 +117,9 @@ export default function MalOpsManagement() {
         return (
           <div className="flex items-center">
             <p>{getFileIcon(objectName)}</p>{" "}
-            {/* Gọi hàm để lấy icon tương ứng */}
-            <a
-              href={url}
-              className="ml-2 text-blue-500 underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href={url} className="ml-2 text-blue-500 underline">
               {objectName}
-            </a>
+            </Link>
           </div>
         );
       },
@@ -136,7 +132,6 @@ export default function MalOpsManagement() {
         return (
           <div className="flex items-center justify-center">
             <p className=" ">{getFileIcon("computer")}</p>
-            {/* Gọi hàm để lấy icon tương ứng */}
             <span className="ml-2">{params?.value || ""}</span>
           </div>
         );
@@ -149,7 +144,6 @@ export default function MalOpsManagement() {
         return (
           <div className="flex items-center justify-center">
             <p className=" ">{getFileIcon("user")}</p>
-            {/* Gọi hàm để lấy icon tương ứng */}
             <span className="ml-2">{params?.value}</span>
           </div>
         );
@@ -172,13 +166,14 @@ export default function MalOpsManagement() {
       modules: "Module 1",
       time: "2024-11-01 10:00:00",
     },
-    // Add more rows here
   ];
+
   const onExportClick = useCallback(() => {
     if (gridRef.current) {
       gridRef.current?.api?.exportDataAsCsv();
     }
   }, []);
+
   return (
     <div className="pb-20 gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
       <Row gutter={[16, 16]} className="w-full">
@@ -269,7 +264,6 @@ export default function MalOpsManagement() {
         </Col>
       </Row>
       <Card className="mt-3 py-6">
-        {/* Toolbar for search and export */}
         <div style={{ marginBottom: 10, display: "flex", gap: "10px" }}>
           <button
             onClick={onExportClick}
@@ -298,19 +292,18 @@ export default function MalOpsManagement() {
           />
         </div>
 
-        {/* AG Grid Table */}
         <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
-            columnDefs={columns}
+            columnDefs={columns as any}
             rowSelection="multiple"
             pagination={true}
             paginationPageSize={5}
             defaultColDef={{
               sortable: true,
               filter: true,
-              floatingFilter: true, // Adds a floating filter box under each column
+              floatingFilter: true,
               resizable: true,
             }}
           />
