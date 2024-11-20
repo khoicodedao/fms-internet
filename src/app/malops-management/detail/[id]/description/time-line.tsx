@@ -56,7 +56,7 @@ const App: React.FC = () => (
               onPointerLeaveCapture={undefined}
             />
           ),
-          children: `Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`,
+          children: `Sed up 2015-09-01 `,
         },
         {
           color: "red",

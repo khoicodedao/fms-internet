@@ -46,10 +46,10 @@ function Diagram() {
         {/* Block 2 */}
         <Col span={16}>
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={18}>
               <Flow />
             </Col>
-            <Col span={12}>
+            <Col span={6}>
               <TimeLine />
             </Col>
           </Row>
