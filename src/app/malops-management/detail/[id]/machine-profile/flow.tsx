@@ -2,10 +2,9 @@
 import React, { useEffect, useRef } from "react";
 import { jsPlumb } from "jsplumb";
 import {
-  UploadOutlined,
-  DownloadOutlined,
-  SwapOutlined,
-  SyncOutlined,
+  DesktopOutlined,
+  SettingOutlined,
+  UserOutlined,
   ApartmentOutlined,
 } from "@ant-design/icons";
 import { Typography } from "antd";
@@ -27,18 +26,18 @@ const JsPlumbFlow = () => {
 
     // Kết nối từ máy tính đến các thành phần khác
     instance.connect({
-      source: "computer2",
-      target: "file2",
+      source: "computer3",
+      target: "file3",
       connector: "Straight",
     });
     instance.connect({
-      source: "computer2",
-      target: "database2",
+      source: "computer3",
+      target: "database3",
       connector: "Straight",
     });
     instance.connect({
-      source: "computer2",
-      target: "cloud2",
+      source: "computer3",
+      target: "cloud3",
       connector: "Straight",
     });
 
@@ -71,52 +70,52 @@ const JsPlumbFlow = () => {
       >
         {/* Máy tính ở trên cùng */}
         <div
-          id="computer2"
+          id="computer3"
           style={{ ...nodeStyle, top: "50px", left: "calc(50% - 50px)" }}
         >
-          <UploadOutlined
+          <DesktopOutlined
             style={{ ...iconStyle, color: "#007bff" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Upload</div>
+          <div>computer</div>
         </div>
 
         {/* Các icon khác ở phía dưới theo hàng ngang */}
         <div
-          id="file2"
+          id="file3"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% - 250px)" }}
         >
-          <DownloadOutlined
+          <SettingOutlined
             style={{ ...iconStyle, color: "#28a745" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>File</div>
+          <div>Setting</div>
         </div>
 
         <div
-          id="database2"
+          id="database3"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% - 50px)" }}
         >
-          <SwapOutlined
+          <UserOutlined
             style={{ ...iconStyle, color: "#ffc107" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Connect</div>
+          <div>User</div>
         </div>
 
         <div
-          id="cloud2"
+          id="cloud3"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% + 150px)" }}
         >
-          <SyncOutlined
+          <ApartmentOutlined
             style={{ ...iconStyle, color: "#17a2b8" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Sync</div>
+          <div>Cloud</div>
         </div>
       </div>
     </>
