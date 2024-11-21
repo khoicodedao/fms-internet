@@ -28,7 +28,7 @@ export default function MalOpsManagement() {
     // Add more rows here
   ];
   const onExportClick = useCallback(() => {
-    gridRef.current.api.exportDataAsCsv();
+    // gridRef.current.api.exportDataAsCsv();
   }, []);
 
   return (
@@ -51,7 +51,7 @@ export default function MalOpsManagement() {
           <input
             type="text"
             placeholder="Search..."
-            onChange={(e) => gridRef.current.api.setQuickFilter(e.target.value)}
+            // onChange={(e) => gridRef.current.api.setQuickFilter(e.target.value)}
             style={{
               padding: "5px",
               borderRadius: "5px",
@@ -66,7 +66,7 @@ export default function MalOpsManagement() {
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
-            columnDefs={columns}
+            columnDefs={columns as any}
             pagination={true}
             paginationPageSize={5}
             defaultColDef={{

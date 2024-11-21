@@ -13,8 +13,10 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import getFileIcon from "./object-type/object-type";
 import Link from "next/link";
+import type { AgGridReact as AgGridReactType } from "ag-grid-react";
+
 export default function MalOpsManagement() {
-  const gridRef = useRef(null);
+  const gridRef = useRef<AgGridReactType>(null);
   const pieOptions = {
     tooltip: {
       trigger: "item",
@@ -169,9 +171,9 @@ export default function MalOpsManagement() {
   ];
 
   const onExportClick = useCallback(() => {
-    if (gridRef.current) {
-      gridRef.current?.api?.exportDataAsCsv();
-    }
+    // if (gridRef?.current?.api) {
+    //   gridRef?.current?.api?.exportDataAsCsv();
+    // }
   }, []);
 
   return (
@@ -280,9 +282,11 @@ export default function MalOpsManagement() {
           <input
             type="text"
             placeholder="Search..."
-            onChange={(e) =>
-              gridRef?.current?.api.setQuickFilter(e.target.value)
-            }
+            onChange={(e) => {
+              if (gridRef.current?.api) {
+                // gridRef.current.api.setQuickFilter(e.target.value);
+              }
+            }}
             style={{
               padding: "5px",
               borderRadius: "5px",
@@ -296,7 +300,7 @@ export default function MalOpsManagement() {
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
-            columnDefs={columns as any}
+            columnDefs={columns}
             rowSelection="multiple"
             pagination={true}
             paginationPageSize={5}

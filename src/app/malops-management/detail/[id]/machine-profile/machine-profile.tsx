@@ -4,7 +4,6 @@ import { Card, Table, Row, Col, Typography } from "antd";
 import { DesktopOutlined } from "@ant-design/icons";
 import "reactflow/dist/style.css";
 const { Title } = Typography;
-import Detail from "./detail";
 import DetailDirectory from "./active-directory";
 
 import Flow from "./flow";
