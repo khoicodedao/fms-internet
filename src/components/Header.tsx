@@ -79,7 +79,7 @@ export default function Header() {
       <Breadcrumb items={generateBreadcrumbs()} />
 
       <div className="flex-1 flex justify-center">
-        <img
+        <Image
           src="/logo/logo.png"
           alt="FMS Logo"
           width={120}
