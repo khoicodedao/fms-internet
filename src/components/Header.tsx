@@ -13,7 +13,7 @@ import {
   SafetyCertificateOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
-
+import logo from "@/assets/images/logo.png";
 const { Header: AntHeader } = Layout;
 
 export default function Header() {
@@ -80,7 +80,7 @@ export default function Header() {
 
       <div className="flex-1 flex justify-center">
         <Image
-          src="/logo/logo.png"
+          src={logo}
           alt="FMS Logo"
           width={120}
           height={40}
