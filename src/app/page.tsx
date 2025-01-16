@@ -7,10 +7,14 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
 } from "@ant-design/icons";
+import DatetimePicker from "@/components/DatetimePicker";
+import { useDateContext } from "@/common/date-context";
 
 const { Title } = Typography;
 
 export default function Home() {
+  const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
+  console.log(startDate, endDate);
   const statusPieOption = {
     title: {
       text: "Active MalOps by Status",
@@ -174,14 +178,7 @@ export default function Home() {
     <div className="grid  p-8 pb-20 gap-3 sm:pt-20 font-[family-name:var(--font-geist-sans)]">
       <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
         <div className="flex gap-4">
-          <Select
-            defaultValue="Last week"
-            style={{ width: 200 }}
-            options={[
-              { value: "last week", label: "Last week" },
-              { value: "last month", label: "Last month" },
-            ]}
-          />
+          <DatetimePicker />
           <Select
             defaultValue="Viettel"
             style={{ width: 200 }}

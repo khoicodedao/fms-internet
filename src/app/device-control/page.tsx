@@ -1,13 +1,13 @@
 "use client";
 import { Card } from "antd";
 import React, { useCallback, useRef } from "react";
-
+import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 export default function MalOpsManagement() {
   const gridRef = useRef(null);
-  const columns = [
+  const columns: ColDef<RowData>[] = [
     { headerName: "Vendor Name", field: "vendor_name" },
     { headerName: "Product Name", field: "product_name" },
     { headerName: "User", field: "user" },
@@ -15,8 +15,15 @@ export default function MalOpsManagement() {
     { headerName: "Status", field: "status" },
     { headerName: "Last Connection", field: "last_connection" },
   ];
-
-  const rowData = [
+  type RowData = {
+    vendor_name: string;
+    product_name: string;
+    user: string;
+    machine: string;
+    status: string;
+    last_connection: string;
+  };
+  const rowData: RowData[] = [
     {
       vendor_name: "Vendor A",
       product_name: "Product A",
@@ -66,7 +73,7 @@ export default function MalOpsManagement() {
           <AgGridReact
             ref={gridRef}
             rowData={rowData}
-            columnDefs={columns as any}
+            columnDefs={columns}
             pagination={true}
             paginationPageSize={5}
             defaultColDef={{

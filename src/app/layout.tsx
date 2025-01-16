@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+"use client";
+// import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { ConfigProvider } from "antd";
 import Header from "@/components/Header";
 import "./globals.css";
-
+import { DateProvider } from "../common/date-context"; // Import Context
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -14,11 +16,11 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
-
-export const metadata: Metadata = {
-  title: "FMS Internet",
-  description: "FMS Internet Management System",
-};
+const queryClient = new QueryClient();
+// export const metadata: Metadata = {
+//   title: "FMS Internet",
+//   description: "FMS Internet Management System",
+// };
 
 export default function RootLayout({
   children,
@@ -32,7 +34,12 @@ export default function RootLayout({
       >
         <ConfigProvider>
           <Header />
-          <main className="mt-8">{children}</main>
+
+          <DateProvider>
+            <QueryClientProvider client={queryClient}>
+              <main className="mt-8">{children}</main>
+            </QueryClientProvider>
+          </DateProvider>
         </ConfigProvider>
       </body>
     </html>
