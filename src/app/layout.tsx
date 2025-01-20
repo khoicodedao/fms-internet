@@ -16,25 +16,26 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+import { usePathname } from "next/navigation";
 const queryClient = new QueryClient();
 // export const metadata: Metadata = {
 //   title: "FMS Internet",
 //   description: "FMS Internet Management System",
 // };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+import { ReactNode } from "react";
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ConfigProvider>
-          <Header />
-
+          {!isLoginPage && <Header />}
           <DateProvider>
             <QueryClientProvider client={queryClient}>
               <main className="mt-8">{children}</main>

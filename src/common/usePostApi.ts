@@ -11,7 +11,7 @@ interface PostResponse {
   [key: string]: any;
 }
 
-export const usePostApi = (url: string) => {
+export const usePostApi = (url: string, isNotification: boolean = true) => {
   const [notificationApi, contextHolder] = notification.useNotification(); // Đảm bảo notification được khởi tạo
 
   // Định nghĩa mutation
@@ -22,27 +22,33 @@ export const usePostApi = (url: string) => {
     },
     onMutate: () => {
       // Hiển thị thông báo khi bắt đầu request
-      notificationApi.info({
-        message: "Đang xử lý...",
-        description: "Yêu cầu đang được gửi đi. Vui lòng đợi!",
-        duration: 2,
-      });
+      if (isNotification) {
+        notificationApi.info({
+          message: "Đang xử lý...",
+          description: "Yêu cầu đang được gửi đi. Vui lòng đợi!",
+          duration: 2,
+        });
+      }
     },
     onSuccess: () => {
       // Hiển thị thông báo khi thành công
-      notificationApi.success({
-        message: "Thành công!",
-        description: "Dữ liệu đã được gửi thành công!",
-        duration: 3,
-      });
+      if (isNotification) {
+        notificationApi.success({
+          message: "Thành công!",
+          description: "Dữ liệu đã được gửi thành công!",
+          duration: 3,
+        });
+      }
     },
     onError: (error: Error) => {
       // Hiển thị thông báo khi có lỗi
-      notificationApi.error({
-        message: "Lỗi!",
-        description: `Có lỗi xảy ra: ${error.message}`,
-        duration: 3,
-      });
+      if (isNotification) {
+        notificationApi.error({
+          message: "Lỗi!",
+          description: `Có lỗi xảy ra: ${error.message}`,
+          duration: 3,
+        });
+      }
     },
   });
 

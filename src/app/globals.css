@@ -530,3 +530,8 @@ body {
 .react-flow__edge-path {
   z-index: 10 !important;
 }
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

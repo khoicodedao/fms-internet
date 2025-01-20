@@ -282,7 +282,7 @@ export default function MalOpsManagement() {
           <input
             type="text"
             placeholder="Search..."
-            onChange={(e) => {
+            onChange={() => {
               if (gridRef.current?.api) {
                 // gridRef.current.api.setQuickFilter(e.target.value);
               }
