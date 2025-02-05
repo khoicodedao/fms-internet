@@ -3,6 +3,7 @@
 import localFont from "next/font/local";
 import { ConfigProvider } from "antd";
 import Header from "@/components/Header";
+import { TerminalContextProvider } from "react-terminal";
 import "./globals.css";
 import { DateProvider } from "../common/date-context"; // Import Context
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -34,14 +35,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ConfigProvider>
-          {!isLoginPage && <Header />}
-          <DateProvider>
-            <QueryClientProvider client={queryClient}>
-              <main className="mt-8">{children}</main>
-            </QueryClientProvider>
-          </DateProvider>
-        </ConfigProvider>
+        <TerminalContextProvider>
+          <ConfigProvider>
+            {!isLoginPage && <Header />}
+            <DateProvider>
+              <QueryClientProvider client={queryClient}>
+                <main className="mt-8">{children}</main>
+              </QueryClientProvider>
+            </DateProvider>
+          </ConfigProvider>
+        </TerminalContextProvider>
       </body>
     </html>
   );

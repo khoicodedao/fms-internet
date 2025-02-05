@@ -11,6 +11,7 @@ import {
   BarChartOutlined,
   SearchOutlined,
   SafetyCertificateOutlined,
+  CodeOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -148,6 +149,20 @@ export default function Header() {
               ),
               onClick: () => {
                 router.push("/device-control");
+                setDrawerOpen(false);
+              },
+            },
+            {
+              key: "4",
+              label: "CLI",
+              icon: (
+                <CodeOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/cli");
                 setDrawerOpen(false);
               },
             },
