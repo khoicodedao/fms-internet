@@ -45,9 +45,11 @@ interface CLIPageProps {
   };
 }
 
-const CLIPage = ({ params }: CLIPageProps) => {
+const CLIPage = () => {
   const [terminalLineData, setTerminalLineData] = useState([
-    <TerminalOutput key="welcome">{`Welcome to ${params.id}`}</TerminalOutput>,
+    <TerminalOutput key="welcome">
+      <span className="">{`Welcome to terminal`} </span>
+    </TerminalOutput>,
   ]);
   const [currentInput, setCurrentInput] = useState("");
   const [matchingCommands, setMatchingCommands] = useState<string[]>([]);
