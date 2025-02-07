@@ -8,13 +8,6 @@ const { RangePicker } = DatePicker;
 
 const DatetimePicker = () => {
   const { startDate, setStartDate, endDate, setEndDate } = useDateContext();
-
-  // Set default values if startDate and endDate are null
-  if (!startDate && !endDate) {
-    setStartDate(dayjs().startOf("day"));
-    setEndDate(dayjs().endOf("day"));
-  }
-
   const handleRangeChange = (dates: null | (Dayjs | null)[]) => {
     if (dates) {
       setStartDate(dates[0]);

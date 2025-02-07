@@ -1,5 +1,5 @@
 "use client";
-import { Select, Button, Card, Row, Col, Typography, Progress } from "antd";
+import { Button, Card, Row, Col, Typography, Progress } from "antd";
 import ReactECharts from "echarts-for-react";
 import {
   ExportOutlined,
@@ -179,16 +179,6 @@ export default function Home() {
       <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
         <div className="flex gap-4">
           <DatetimePicker />
-          <Select
-            defaultValue="Viettel"
-            style={{ width: 200 }}
-            options={[{ value: "Viettel", label: "Viettel" }]}
-          />
-          <Select
-            defaultValue="AI hunting"
-            style={{ width: 200 }}
-            options={[{ value: "AI hunting", label: "AI hunting" }]}
-          />
         </div>
 
         <div className="flex gap-4">

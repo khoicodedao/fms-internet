@@ -495,13 +495,6 @@ body {
   color: var(--navSelectedTextColor) !important;
 }
 
-.ant-drawer-header {
-  display: none !important;
-}
-.ant-drawer-content-wrapper {
-  top: 6rem !important;
-  width: 240px !important;
-}
 .ant-select:hover .ant-select-selector {
   cursor: pointer;
   transition: 0.2s;
@@ -509,6 +502,9 @@ body {
   border: 1px solid rgb(246, 189, 3) !important;
   text-transform: none;
   border-radius: 0px;
+}
+.ant-drawer-header {
+  background: rgb(247, 195, 28);
 }
 .ant-select-arrow {
   color: var(--tabBorderColorActive) !important;

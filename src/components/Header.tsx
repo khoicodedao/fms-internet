@@ -13,6 +13,7 @@ import {
   SafetyCertificateOutlined,
   CodeOutlined,
   ClockCircleOutlined,
+  AlertOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -101,90 +102,105 @@ export default function Header() {
           }
         />
       </Dropdown>
-      <div className="menu">
-        <Drawer
-          title="Menu"
-          placement="left"
-          onClose={() => setDrawerOpen(false)}
-          open={drawerOpen}
-        >
-          <Menu
-            mode="vertical"
-            items={[
-              {
-                key: "1",
-                label: "MalOps Management",
-                icon: (
-                  <BarChartOutlined
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                ),
-                onClick: () => {
-                  router.push("/malops-management");
-                  setDrawerOpen(false);
-                },
+
+      <Drawer
+        title="Menu"
+        placement="left"
+        onClose={() => setDrawerOpen(false)}
+        open={drawerOpen}
+        width={240}
+        style={{ top: "6rem", position: "absolute" }}
+      >
+        <Menu
+          mode="vertical"
+          items={[
+            {
+              key: "1",
+              label: "MalOps Management",
+              icon: (
+                <BarChartOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/malops-management");
+                setDrawerOpen(false);
               },
-              {
-                key: "2",
-                label: "Investigation",
-                icon: (
-                  <SearchOutlined
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                ),
-                onClick: () => {
-                  router.push("/investigation");
-                  setDrawerOpen(false);
-                },
+            },
+            {
+              key: "2",
+              label: "Investigation",
+              icon: (
+                <SearchOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/investigation");
+                setDrawerOpen(false);
               },
-              {
-                key: "3",
-                label: "Device Control",
-                icon: (
-                  <SafetyCertificateOutlined
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                ),
-                onClick: () => {
-                  router.push("/device-control");
-                  setDrawerOpen(false);
-                },
+            },
+            {
+              key: "3",
+              label: "Device Control",
+              icon: (
+                <SafetyCertificateOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/device-control");
+                setDrawerOpen(false);
               },
-              {
-                key: "4",
-                label: "CLI",
-                icon: (
-                  <CodeOutlined
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                ),
-                onClick: () => {
-                  router.push("/cli");
-                  setDrawerOpen(false);
-                },
+            },
+            {
+              key: "4",
+              label: "CLI",
+              icon: (
+                <CodeOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/cli");
+                setDrawerOpen(false);
               },
-              {
-                key: "5",
-                label: "Events",
-                icon: (
-                  <ClockCircleOutlined
-                    onPointerEnterCapture={undefined}
-                    onPointerLeaveCapture={undefined}
-                  />
-                ),
-                onClick: () => {
-                  router.push("/events");
-                  setDrawerOpen(false);
-                },
+            },
+            {
+              key: "5",
+              label: "Events",
+              icon: (
+                <ClockCircleOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/events");
+                setDrawerOpen(false);
               },
-            ]}
-          />
-        </Drawer>
-      </div>
+            },
+            {
+              key: "6",
+              label: "Alerts",
+              icon: (
+                <AlertOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/alerts");
+                setDrawerOpen(false);
+              },
+            },
+          ]}
+        />
+      </Drawer>
     </AntHeader>
   );
 }

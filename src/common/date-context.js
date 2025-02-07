@@ -2,12 +2,14 @@
 "use client";
 
 import { createContext, useState, useContext } from "react";
+// import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 const DateContext = createContext();
 
 export const DateProvider = ({ children }) => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(dayjs().startOf("day"));
+  const [endDate, setEndDate] = useState(dayjs().endOf("day"));
 
   return (
     <DateContext.Provider
