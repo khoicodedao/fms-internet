@@ -29,6 +29,7 @@ export default function Events() {
 
   return (
     <DataTable
+      title="Events management"
       dataFieldName="_source"
       apiUrl={API_URL.EVENT_PAGE.DEFAULT}
       columns={columns}

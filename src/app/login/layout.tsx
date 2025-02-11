@@ -6,22 +6,17 @@ interface LoginLayoutProps {
 
 export default function LoginLayout({ children }: LoginLayoutProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        backgroundColor: "#f0f0f0",
-      }}
-    >
+    <div>
       <div
         style={{
-          width: "100%",
-          maxWidth: "400px",
-          padding: "20px",
           backgroundColor: "white",
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+          boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 10px",
+          width: "70%",
+          margin: "auto",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
         }}
       >
         {children}

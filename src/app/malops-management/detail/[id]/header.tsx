@@ -1,3 +1,7 @@
+/* eslint-disable */
+"use client";
+import DatetimePicker from "@/components/DatetimePicker";
+//@ts-ignore
 const ObjectDetailHeader = ({ icon, title, type, description }) => {
   return (
     <div className="flex items-center justify-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10 shadow">
@@ -15,12 +19,7 @@ const ObjectDetailHeader = ({ icon, title, type, description }) => {
       </div>
       {/* Selector thời gian bên phải */}
       <div className="mr-4">
-        <select id="timeSelector" className="border rounded p-1">
-          <option value="today">Today</option>
-          <option value="thisWeek">This week</option>
-          <option value="thisMonth">This Month</option>
-          <option value="custom">Custom</option>
-        </select>
+        <DatetimePicker></DatetimePicker>
       </div>
     </div>
   );

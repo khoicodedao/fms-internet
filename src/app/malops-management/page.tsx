@@ -115,7 +115,6 @@ export default function MalOpsManagement() {
       cellRenderer: (params: { value: string }) => {
         const objectName = params.value;
         const url = `/malops-management/detail/${objectName}`;
-
         return (
           <div className="flex items-center">
             <p>{getFileIcon(objectName)}</p>{" "}
@@ -159,12 +158,11 @@ export default function MalOpsManagement() {
   const rowData = [
     {
       state: "Active",
-      object:
-        "ced3557310b98b8a1ede8c1c24c4997a2eb2e05e561dd0b6ca36627f0d987d14.exe",
+      object: "File",
       group: "Group A",
       affectedMachines: "2",
       affectedUsers: "20",
-      description: "Detected unusual activity.",
+      description: "Detected unusual activity from file cerber.exe",
       modules: "Module 1",
       time: "2024-11-01 10:00:00",
     },

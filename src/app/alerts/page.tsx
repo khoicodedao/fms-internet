@@ -29,6 +29,7 @@ export default function Alerts() {
 
   return (
     <DataTable
+      title="Alert management"
       dataFieldName="_source"
       apiUrl={API_URL.ALERT_PAGE.DEFAULT}
       columns={columns}

@@ -57,7 +57,7 @@ function MachineProfile() {
   ];
 
   return (
-    <div className="top-0 z-10 p-4 bg-gray-100">
+    <div className="top-0 z-10 p-4 bg-white">
       <Row gutter={16}>
         <Col span={8}>
           <Card style={{ height: 500 }} className="shadow pb-8">

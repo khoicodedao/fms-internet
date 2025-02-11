@@ -24,6 +24,7 @@ const KQLSearchBox: React.FC = () => {
 
     // Gợi ý tự động (autocomplete)
     monaco.languages.registerCompletionItemProvider("kql", {
+      // @ts-ignore
       provideCompletionItems: () => {
         const suggestions = [
           {

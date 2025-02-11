@@ -10,10 +10,11 @@ import {
   KeyOutlined,
   BarChartOutlined,
   SearchOutlined,
-  SafetyCertificateOutlined,
   CodeOutlined,
   ClockCircleOutlined,
   AlertOutlined,
+  DeploymentUnitOutlined, // Import for EDR
+  GlobalOutlined, // Import for NDR
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -104,7 +105,7 @@ export default function Header() {
       </Dropdown>
 
       <Drawer
-        title="Menu"
+        headerStyle={{ display: "none" }}
         placement="left"
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
@@ -144,20 +145,34 @@ export default function Header() {
             },
             {
               key: "3",
-              label: "Device Control",
+              label: "NDR",
               icon: (
-                <SafetyCertificateOutlined
+                <GlobalOutlined
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
               ),
               onClick: () => {
-                router.push("/device-control");
+                router.push("/ndr");
                 setDrawerOpen(false);
               },
             },
             {
               key: "4",
+              label: "EDR",
+              icon: (
+                <DeploymentUnitOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/edr");
+                setDrawerOpen(false);
+              },
+            },
+            {
+              key: "5",
               label: "CLI",
               icon: (
                 <CodeOutlined
@@ -171,7 +186,7 @@ export default function Header() {
               },
             },
             {
-              key: "5",
+              key: "6",
               label: "Events",
               icon: (
                 <ClockCircleOutlined
@@ -185,7 +200,7 @@ export default function Header() {
               },
             },
             {
-              key: "6",
+              key: "7",
               label: "Alerts",
               icon: (
                 <AlertOutlined

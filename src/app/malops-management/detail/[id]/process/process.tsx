@@ -1,36 +1,25 @@
 "use client";
 import React from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
-import { WifiOutlined } from "@ant-design/icons";
+import { SettingOutlined } from "@ant-design/icons";
 import "reactflow/dist/style.css";
 const { Title } = Typography;
 import Detail from "./detail";
 import Flow from "./flow";
 
-function Communication() {
+function Process() {
   const columns = [
     {
-      title: "IP",
-      dataIndex: "ip",
-      key: "ip",
-    },
-    {
-      title: "Port",
-      dataIndex: "port",
-      key: "port",
+      title: "name",
+      dataIndex: "name",
+      key: "name",
     },
   ];
 
   const data = [
     {
       key: "1",
-      ip: "192.168.1.1",
-      port: "8080",
-    },
-    {
-      key: "2",
-      ip: "10.0.0.1",
-      port: "443",
+      name: "cerber.exe",
     },
   ];
 
@@ -40,14 +29,14 @@ function Communication() {
         <Col span={8}>
           <Card style={{ height: 500 }} className="shadow pb-8">
             <div className="flex items-center space-x-2 mb-4">
-              <WifiOutlined
+              <SettingOutlined
                 style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               />
               <div>
                 <Title level={5} style={{ margin: 0 }}>
-                  Communication Profile
+                  Processes Profile
                 </Title>
               </div>
             </div>
@@ -71,6 +60,6 @@ function Communication() {
   );
 }
 
-export default function CommunicationPage() {
-  return <Communication />;
+export default function ProcessPage() {
+  return <Process />;
 }

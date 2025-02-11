@@ -11,15 +11,19 @@ import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import SearchBar from "@/components/SearchBar";
 interface DataTableProps {
+  title?: string;
   apiUrl: string;
   columns: ColDef[];
   dataFieldName: string;
+  defaultData?: any;
 }
 
 export default function DataTable({
   apiUrl,
+  title,
   columns,
   dataFieldName,
+  defaultData,
 }: DataTableProps) {
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -39,6 +43,9 @@ export default function DataTable({
         onSuccess: (response: any) => {
           setData(response.data.map((item: any) => item[dataFieldName]));
         },
+        onError: () => {
+          setData(defaultData);
+        },
       }
     );
   }, [startDate, endDate]);
@@ -55,10 +62,15 @@ export default function DataTable({
   }, []);
 
   return (
-    <div className="pb-20 gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
       {contextHolder}
       <Card className="mt-3 py-6">
-        <div className="flex justify-end items-right mb-4">
+        <div className="flex justify-between items-center mb-4">
+          {title && (
+            <p className="text-gray-600 text-sm leading-relaxed font-bold">
+              {title}
+            </p>
+          )}
           <DatetimePicker />
         </div>
 
@@ -87,8 +99,7 @@ export default function DataTable({
             paginationPageSize={5}
             defaultColDef={{
               sortable: true,
-              filter: true,
-              floatingFilter: true,
+
               resizable: true,
             }}
             onRowDoubleClicked={onRowDoubleClicked}

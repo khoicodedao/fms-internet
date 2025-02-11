@@ -1,4 +1,8 @@
 "use client";
+import React from "react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import {
   DesktopOutlined,
   UserOutlined,
@@ -7,15 +11,12 @@ import {
   LinkOutlined,
   GlobalOutlined,
   BugOutlined,
+  CheckCircleOutlined,
+  StopOutlined,
 } from "@ant-design/icons";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  flexRender,
-} from "@tanstack/react-table";
+import type { ColDef } from "ag-grid-community";
+import Link from "next/link";
+
 interface QueryData {
   id: string;
   title: string;
@@ -24,30 +25,26 @@ interface QueryData {
   details: string;
   status: "active" | "archived";
 }
-import { CheckCircleOutlined, StopOutlined } from "@ant-design/icons";
-import type { ColumnDef } from "@tanstack/react-table";
 
-import React from "react";
 export default function Investigation() {
-  const columns: ColumnDef<QueryData>[] = [
+  const columns: ColDef[] = [
     {
-      header: "Query Title",
-      accessorKey: "title",
+      headerName: "Query Title",
+      field: "title",
+      cellRenderer: (params: any) => (
+        <Link href={`/malops-management/detail/${params.value}`}>
+          {params.value}
+        </Link>
+      ),
     },
+    { headerName: "Description", field: "description" },
+    { headerName: "Created At", field: "createdAt" },
     {
-      header: "Description",
-      accessorKey: "description",
-    },
-    {
-      header: "Created At",
-      accessorKey: "createdAt",
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ row }) => (
+      headerName: "Status",
+      field: "status",
+      cellRenderer: (params: any) => (
         <div className="flex items-center gap-2">
-          {row.original.status === "active" ? (
+          {params.value === "active" ? (
             <>
               <CheckCircleOutlined
                 className="text-green-500"
@@ -74,7 +71,7 @@ export default function Investigation() {
   const data: QueryData[] = [
     {
       id: "1",
-      title: "Suspicious Process Query",
+      title: "Cerber.exe",
       description: "Detect unusual process activities",
       createdAt: "2024-01-15",
       details: "Detailed monitoring information",
@@ -96,18 +93,9 @@ export default function Investigation() {
       details: "Detailed monitoring information",
       status: "archived",
     },
-
     // Add more data
   ];
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
   const items = [
     { icon: DesktopOutlined, label: "Machine" },
     { icon: UserOutlined, label: "User" },
@@ -147,64 +135,18 @@ export default function Investigation() {
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             My Saved Queries
           </h2>
-          <div className="rounded-md border">
-            <table className="w-full">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id} className="border-b bg-gray-50">
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="px-6 py-3 text-left text-sm font-semibold text-gray-900"
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="border-b hover:bg-gray-50">
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className="px-6 py-4 text-sm text-gray-500"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="flex items-center justify-between px-4 py-3 bg-white border-t">
-              <button
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                className="px-3 py-1 border rounded"
-              >
-                Previous
-              </button>
-              <span>
-                Page {table.getState().pagination.pageIndex + 1} of{" "}
-                {table.getPageCount()}
-              </span>
-              <button
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                className="px-3 py-1 border rounded"
-              >
-                Next
-              </button>
-            </div>
+          <div
+            className="ag-theme-alpine"
+            style={{ height: 400, width: "100%" }}
+          >
+            <AgGridReact
+              rowData={data}
+              columnDefs={columns}
+              pagination={true}
+              defaultColDef={{
+                sortable: true,
+              }}
+            />
           </div>
         </section>
       </div>

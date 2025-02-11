@@ -3,19 +3,17 @@
 import React, { useEffect, useRef } from "react";
 import { jsPlumb } from "jsplumb";
 import {
-  LaptopOutlined,
   FileOutlined,
-  DatabaseOutlined,
-  CloudOutlined,
-  // InfoCircleOutlined,
   ApartmentOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Typography } from "antd";
 import { Divider } from "antd";
 const { Title } = Typography;
+
 const JsPlumbFlow = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  //@ts-ignore
+  // @ts-ignore
   useEffect(() => {
     const instance = jsPlumb.getInstance({
       Connector: ["Bezier", { curviness: 50 }],
@@ -24,23 +22,23 @@ const JsPlumbFlow = () => {
       EndpointStyle: { fill: "#4caf50" },
       Anchors: ["Bottom", "Top"],
     });
-    //@ts-ignore
+    // @ts-ignore
     instance.setContainer(containerRef?.current);
 
-    // Kết nối từ máy tính đến các thành phần khác
+    // Connect parent process to child processes
     instance.connect({
-      source: "computer",
-      target: "file",
+      source: "parent-process",
+      target: "child-process-1",
       connector: "Straight",
     });
     instance.connect({
-      source: "computer",
-      target: "database",
+      source: "parent-process",
+      target: "child-process-2",
       connector: "Straight",
     });
     instance.connect({
-      source: "computer",
-      target: "cloud",
+      source: "parent-process",
+      target: "child-process-3",
       connector: "Straight",
     });
 
@@ -57,7 +55,7 @@ const JsPlumbFlow = () => {
         />
         <div>
           <Title level={5} style={{ margin: 0 }}>
-            Flow chart
+            Process Flow Chart
           </Title>
         </div>
       </div>
@@ -71,61 +69,61 @@ const JsPlumbFlow = () => {
           padding: "20px",
         }}
       >
-        {/* Máy tính ở trên cùng */}
+        {/* Parent process */}
         <div
-          id="computer"
+          id="parent-process"
           style={{ ...nodeStyle, top: "50px", left: "calc(50% - 50px)" }}
         >
-          <LaptopOutlined
+          <FileOutlined
             style={{ ...iconStyle, color: "#007bff" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Computer</div>
+          <div>Parent Process</div>
         </div>
 
-        {/* Các icon khác ở phía dưới theo hàng ngang */}
+        {/* Child processes */}
         <div
-          id="file"
+          id="child-process-1"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% - 250px)" }}
         >
-          <FileOutlined
+          <SettingOutlined
             style={{ ...iconStyle, color: "#28a745" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>File</div>
+          <div>Child Process 1</div>
         </div>
 
         <div
-          id="database"
+          id="child-process-2"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% - 50px)" }}
         >
-          <DatabaseOutlined
+          <SettingOutlined
             style={{ ...iconStyle, color: "#ffc107" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Database</div>
+          <div>Child Process 2</div>
         </div>
 
         <div
-          id="cloud"
+          id="child-process-3"
           style={{ ...nodeStyle, top: "300px", left: "calc(50% + 150px)" }}
         >
-          <CloudOutlined
+          <SettingOutlined
             style={{ ...iconStyle, color: "#17a2b8" }}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <div>Cloud</div>
+          <div>Child Process 3</div>
         </div>
       </div>
     </>
   );
 };
 
-// Style cho các node
+// Style for the nodes
 const nodeStyle: React.CSSProperties = {
   width: "100px",
   height: "100px",

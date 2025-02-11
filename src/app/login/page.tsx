@@ -6,7 +6,8 @@ import { Form, Input, Button, Spin, message } from "antd";
 import API_URL from "@/common/api-url";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-
+import Image from "next/image";
+import logo from "@/assets/images/logo.png";
 const LoginForm = () => {
   const [messageApi, messageHolder] = message.useMessage();
   const { mutation, contextHolder } = usePostApi(
@@ -50,35 +51,44 @@ const LoginForm = () => {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "50px auto" }}>
-      {contextHolder}
-      {messageHolder}
-      <h1 className="text-center text-4xl">Login</h1>
-      <Form name="login-form" onFinish={onFinish} layout="vertical">
-        <Form.Item
-          label="Username"
-          name="username"
-          rules={[{ required: true, message: "Please enter username!" }]}
-        >
-          <Input placeholder="Enter username" />
-        </Form.Item>
-        <Form.Item
-          label="Password"
-          name="password"
-          rules={[{ required: true, message: "Please enter password!" }]}
-        >
-          <Input.Password placeholder="Enter password" />
-        </Form.Item>
-        <Form.Item>
-          <div className="flex justify-between items-center">
-            <Button type="primary" htmlType="submit" disabled={isLoading}>
-              {" "}
-              Submit
-            </Button>
-            {isLoading ? <Spin tip="Logging in..." /> : ""}
+    <div className="flex flex-row items-center">
+      <div className="w-full flex flex-row justify-center py-8">
+        <Image src={logo} alt="FMS Logo" className="object-contain" priority />
+      </div>
+
+      <div className="w-full max-w-[1200px] grid px-4 border-l border-gray-300 ">
+        <div className="flex items-center justify-center">
+          <div className="w-full max-w-md">
+            {contextHolder}
+            {messageHolder}
+            <h1 className="text-center text-4xl mb-8">Login</h1>
+            <Form name="login-form" onFinish={onFinish} layout="vertical">
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[{ required: true, message: "Please enter username!" }]}
+              >
+                <Input placeholder="Enter username" />
+              </Form.Item>
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: "Please enter password!" }]}
+              >
+                <Input.Password placeholder="Enter password" />
+              </Form.Item>
+              <Form.Item>
+                <div className="flex justify-between items-center">
+                  <Button type="primary" htmlType="submit" disabled={isLoading}>
+                    Submit
+                  </Button>
+                  {isLoading && <Spin tip="Logging in..." />}
+                </div>
+              </Form.Item>
+            </Form>
           </div>
-        </Form.Item>
-      </Form>
+        </div>
+      </div>
     </div>
   );
 };

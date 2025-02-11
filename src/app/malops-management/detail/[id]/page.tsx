@@ -3,10 +3,11 @@ import { Divider } from "antd";
 import { useEffect, useState } from "react";
 import ObjectDetailHeader from "./header";
 import getFileIcon from "../../object-type/object-type";
-import Diagram from "./description/react-flow";
+import Diagram from "./description/description";
 import Communication from "./communication/communication";
 import MachineProfilePage from "./machine-profile/machine-profile";
-
+import ProcessPage from "./process/process";
+import { SettingOutlined } from "@ant-design/icons";
 export default function MalOpsManagementDetail() {
   const [activeSection, setActiveSection] = useState("diagram");
   useEffect(() => {
@@ -56,6 +57,9 @@ export default function MalOpsManagementDetail() {
       <Divider />
       <section id="machine-profile">
         <MachineProfilePage />
+      </section>
+      <section id="process-profile">
+        <ProcessPage />
       </section>
 
       {/* Fixed Bottom Navigation */}
@@ -128,6 +132,21 @@ export default function MalOpsManagementDetail() {
             />
           </svg>
           <span className="text-xs">Machine Profile</span>
+        </button>
+        <button
+          onClick={() => scrollToSection("process-profile")}
+          className={`flex flex-col items-center ${
+            activeSection === "process-profile"
+              ? "text-yellow-500"
+              : "text-gray-500"
+          }`}
+        >
+          <SettingOutlined
+            className="w-6 h-6"
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
+          <span className="text-xs">Process Profile</span>
         </button>
       </div>
     </div>

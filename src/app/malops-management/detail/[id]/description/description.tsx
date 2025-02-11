@@ -8,9 +8,9 @@ const { Panel } = Collapse;
 import AffectedFile from "./affected-file";
 import TimeLine from "./time-line";
 import Flow from "./flow";
-function Diagram() {
+function Description() {
   return (
-    <div className=" top-0 z-10 p-4 bg-gray-100">
+    <div className=" top-0 z-10 p-4 bg-white">
       <Row gutter={16}>
         {/* Block 1 */}
         <Col span={8}>
@@ -62,6 +62,6 @@ function Diagram() {
   );
 }
 
-export default function DiagramPage() {
-  return <Diagram />;
+export default function DescriptionPage() {
+  return <Description />;
 }
