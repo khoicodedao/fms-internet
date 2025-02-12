@@ -106,7 +106,7 @@ const CLIPage = () => {
   );
 
   return (
-    <div style={{ display: "flex", marginTop: "6rem" }}>
+    <div style={{ display: "flex" }}>
       <div
         style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
       >

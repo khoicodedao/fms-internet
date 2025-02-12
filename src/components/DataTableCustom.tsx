@@ -62,7 +62,7 @@ export default function DataTable({
   }, []);
 
   return (
-    <div className="gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="gap-16 font-[family-name:var(--font-geist-sans)]">
       {contextHolder}
       <Card className="mt-3 py-6">
         <div className="flex justify-between items-center mb-4">

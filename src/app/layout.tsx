@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {!isLoginPage && <Header />}
             <DateProvider>
               <QueryClientProvider client={queryClient}>
-                <main className="mt-8">{children}</main>
+                <main className="mt-24">{children}</main>
               </QueryClientProvider>
             </DateProvider>
           </ConfigProvider>
