@@ -14,6 +14,8 @@ export default function MalOpsManagementDetail() {
     if (typeof window === "undefined") return; // Đảm bảo chỉ chạy trên client
 
     const handleScroll = () => {
+      if (typeof window === "undefined") return; // Kiểm tra window có tồn tại không
+
       const sections = document.querySelectorAll("section");
       const scrollPosition = window.scrollY + window.innerHeight / 2;
 

@@ -67,18 +67,21 @@ const CLIPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const checkInputValue = () => {
-      const inputElement = document.querySelector(
-        ".terminal-hidden-input"
-      ) as HTMLInputElement;
-      if (inputElement) {
-        setCurrentInput(inputElement.value);
-      }
-    };
+    // Chỉ chạy nếu là client
+    if (typeof window !== "undefined") {
+      const checkInputValue = () => {
+        const inputElement = document.querySelector(
+          ".terminal-hidden-input"
+        ) as HTMLInputElement;
+        if (inputElement) {
+          setCurrentInput(inputElement.value);
+        }
+      };
 
-    const intervalId = setInterval(checkInputValue, 100); // Check every 100ms
+      const intervalId = setInterval(checkInputValue, 100); // Kiểm tra mỗi 100ms
 
-    return () => clearInterval(intervalId); // Cleanup on unmount
+      return () => clearInterval(intervalId); // Cleanup khi component unmount
+    }
   }, []);
 
   useEffect(() => {

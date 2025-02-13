@@ -99,7 +99,6 @@ export default function DataTable({
             paginationPageSize={5}
             defaultColDef={{
               sortable: true,
-
               resizable: true,
             }}
             onRowDoubleClicked={onRowDoubleClicked}

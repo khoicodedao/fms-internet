@@ -1,9 +1,12 @@
 "use client";
 import React from "react";
 import type { ColDef } from "ag-grid-community";
-import DataTable from "@/components/DataTableCustom";
+// import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
-
+import dynamic from "next/dynamic";
+const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
+  ssr: false,
+});
 export default function Ndr() {
   type RowData = {
     _id: string;

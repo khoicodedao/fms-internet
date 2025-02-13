@@ -1,9 +1,12 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { ColDef } from "ag-grid-community";
-import DataTable from "@/components/DataTableCustom";
+// import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
-
+import dynamic from "next/dynamic";
+const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
+  ssr: false,
+});
 export default function Edr() {
   type RowData = {
     _id: string;
@@ -37,83 +40,89 @@ export default function Edr() {
     { headerName: "MAC Address", field: "mac_address" },
   ];
 
-  const defaultData: RowData[] = [
-    {
-      _id: "1",
-      machine_name: "Machine 1",
-      version: "1.0.0",
-      last_update: "2025-02-10",
-      last_seen: "2025-02-11",
-      first_seen: "2025-01-01",
-      os: "Ubuntu",
-      os_version: "10",
-      internal_ip: "192.168.1.1",
-      external_ip: "203.0.113.1",
-      memory_use: "4/8 GB",
-      cpu_use: "30%",
-      mac_address: "00:1A:2B:3C:4D:5E",
-    },
-    {
-      _id: "2",
-      machine_name: "Machine 2",
-      version: "1.0.1",
-      last_update: "2025-02-09",
-      last_seen: "2025-02-10",
-      first_seen: "2025-01-02",
-      os: "Ubuntu",
-      os_version: "Ubuntu 20.04",
-      internal_ip: "192.168.1.2",
-      external_ip: "203.0.113.2",
-      memory_use: "2/4 GB",
-      cpu_use: "40%",
-      mac_address: "00:1A:2B:3C:4D:5F",
-    },
-    {
-      _id: "3",
-      machine_name: "Machine 3",
-      version: "1.0.2",
-      last_update: "2025-02-08",
-      last_seen: "2025-02-09",
-      first_seen: "2025-01-03",
-      os: "Ubuntu",
-      os_version: "7",
-      internal_ip: "192.168.1.3",
-      external_ip: "203.0.113.3",
-      memory_use: "3/8 GB",
-      cpu_use: "50%",
-      mac_address: "00:1A:2B:3C:4D:60",
-    },
-    {
-      _id: "4",
-      machine_name: "Machine 4",
-      version: "1.0.3",
-      last_update: "2025-02-07",
-      last_seen: "2025-02-08",
-      first_seen: "2025-01-04",
-      os: "Linux",
-      os_version: "CentOS 7",
-      internal_ip: "192.168.1.4",
-      external_ip: "203.0.113.4",
-      memory_use: "6/16 GB",
-      cpu_use: "60%",
-      mac_address: "00:1A:2B:3C:4D:61",
-    },
-    {
-      _id: "5",
-      machine_name: "Machine 5",
-      version: "1.0.4",
-      last_update: "2025-02-06",
-      last_seen: "2025-02-07",
-      first_seen: "2025-01-05",
-      os: "Linux",
-      os_version: "8",
-      internal_ip: "192.168.1.5",
-      external_ip: "203.0.113.5",
-      memory_use: "8/16 GB",
-      cpu_use: "70%",
-      mac_address: "00:1A:2B:3C:4D:62",
-    },
-  ];
+  const [defaultData, setDefaultData] = useState<RowData[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDefaultData([
+        {
+          _id: "1",
+          machine_name: "Machine 1",
+          version: "1.0.0",
+          last_update: "2025-02-10",
+          last_seen: "2025-02-11",
+          first_seen: "2025-01-01",
+          os: "Ubuntu",
+          os_version: "10",
+          internal_ip: "192.168.1.1",
+          external_ip: "203.0.113.1",
+          memory_use: "4/8 GB",
+          cpu_use: "30%",
+          mac_address: "00:1A:2B:3C:4D:5E",
+        },
+        {
+          _id: "2",
+          machine_name: "Machine 2",
+          version: "1.0.1",
+          last_update: "2025-02-09",
+          last_seen: "2025-02-10",
+          first_seen: "2025-01-02",
+          os: "Ubuntu",
+          os_version: "Ubuntu 20.04",
+          internal_ip: "192.168.1.2",
+          external_ip: "203.0.113.2",
+          memory_use: "2/4 GB",
+          cpu_use: "40%",
+          mac_address: "00:1A:2B:3C:4D:5F",
+        },
+        {
+          _id: "3",
+          machine_name: "Machine 3",
+          version: "1.0.2",
+          last_update: "2025-02-08",
+          last_seen: "2025-02-09",
+          first_seen: "2025-01-03",
+          os: "Ubuntu",
+          os_version: "7",
+          internal_ip: "192.168.1.3",
+          external_ip: "203.0.113.3",
+          memory_use: "3/8 GB",
+          cpu_use: "50%",
+          mac_address: "00:1A:2B:3C:4D:60",
+        },
+        {
+          _id: "4",
+          machine_name: "Machine 4",
+          version: "1.0.3",
+          last_update: "2025-02-07",
+          last_seen: "2025-02-08",
+          first_seen: "2025-01-04",
+          os: "Linux",
+          os_version: "CentOS 7",
+          internal_ip: "192.168.1.4",
+          external_ip: "203.0.113.4",
+          memory_use: "6/16 GB",
+          cpu_use: "60%",
+          mac_address: "00:1A:2B:3C:4D:61",
+        },
+        {
+          _id: "5",
+          machine_name: "Machine 5",
+          version: "1.0.4",
+          last_update: "2025-02-06",
+          last_seen: "2025-02-07",
+          first_seen: "2025-01-05",
+          os: "Linux",
+          os_version: "8",
+          internal_ip: "192.168.1.5",
+          external_ip: "203.0.113.5",
+          memory_use: "8/16 GB",
+          cpu_use: "70%",
+          mac_address: "00:1A:2B:3C:4D:62",
+        },
+      ]);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-1">
