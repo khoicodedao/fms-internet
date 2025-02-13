@@ -11,6 +11,8 @@ import { SettingOutlined } from "@ant-design/icons";
 export default function MalOpsManagementDetail() {
   const [activeSection, setActiveSection] = useState("diagram");
   useEffect(() => {
+    if (typeof window === "undefined") return; // Đảm bảo chỉ chạy trên client
+
     const handleScroll = () => {
       const sections = document.querySelectorAll("section");
       const scrollPosition = window.scrollY + window.innerHeight / 2;
@@ -29,14 +31,16 @@ export default function MalOpsManagementDetail() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check on mount
+    handleScroll(); // Kiểm tra ngay khi component mount
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      const element = document.getElementById(sectionId);
+      element?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (

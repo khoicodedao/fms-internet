@@ -49,11 +49,21 @@ export const usePostApi = (url: string, isNotification: boolean = true) => {
           duration: 3,
         });
       }
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        console.error("Error:", error.response.status);
-        document.cookie =
-          "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        window.location.href = "/login";
+      if (
+        typeof window !== "undefined" &&
+        axios.isAxiosError(error) &&
+        error.response?.status === 401
+      ) {
+        if (
+          typeof window !== "undefined" &&
+          axios.isAxiosError(error) &&
+          error.response?.status === 401
+        ) {
+          console.error("Error:", error.response.status);
+          document.cookie =
+            "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          window.location.href = "/login";
+        }
       }
     },
   });
