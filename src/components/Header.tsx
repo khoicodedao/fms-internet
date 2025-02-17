@@ -18,9 +18,11 @@ import {
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
+import { useTranslation } from "react-i18next";
 const { Header: AntHeader } = Layout;
 
 export default function Header() {
+  const { t, i18n } = useTranslation(); // multi-language support
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -46,7 +48,7 @@ export default function Header() {
               onPointerLeaveCapture={undefined}
             />
           ),
-          label: "Change Password",
+          label: t("change_password"),
           onClick: () => {
             /* handle password change */
           },
@@ -59,7 +61,7 @@ export default function Header() {
               onPointerLeaveCapture={undefined}
             />
           ),
-          label: "Logout",
+          label: t("logout"),
           onClick: () => {
             /* handle logout */
           },
@@ -91,7 +93,10 @@ export default function Header() {
           className="object-contain"
         />
       </div>
-
+      <div>
+        <button onClick={() => i18n.changeLanguage("vi")}>VN | </button>
+        <button onClick={() => i18n.changeLanguage("en")}> EN</button>
+      </div>
       <Dropdown overlay={userMenu} placement="bottomRight" arrow>
         <Button
           type="text"
@@ -117,7 +122,7 @@ export default function Header() {
           items={[
             {
               key: "1",
-              label: "MalOps Management",
+              label: t("malops_management"),
               icon: (
                 <BarChartOutlined
                   onPointerEnterCapture={undefined}
@@ -131,7 +136,7 @@ export default function Header() {
             },
             {
               key: "2",
-              label: "Investigation",
+              label: t("investigation"),
               icon: (
                 <SearchOutlined
                   onPointerEnterCapture={undefined}
@@ -173,7 +178,7 @@ export default function Header() {
             },
             {
               key: "5",
-              label: "CLI",
+              label: t("cli"),
               icon: (
                 <CodeOutlined
                   onPointerEnterCapture={undefined}
@@ -187,7 +192,7 @@ export default function Header() {
             },
             {
               key: "6",
-              label: "Events",
+              label: t("events"),
               icon: (
                 <ClockCircleOutlined
                   onPointerEnterCapture={undefined}
@@ -201,7 +206,7 @@ export default function Header() {
             },
             {
               key: "7",
-              label: "Alerts",
+              label: t("alerts"),
               icon: (
                 <AlertOutlined
                   onPointerEnterCapture={undefined}

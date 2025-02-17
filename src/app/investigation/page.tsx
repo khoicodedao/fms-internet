@@ -16,7 +16,7 @@ import {
 } from "@ant-design/icons";
 import type { ColDef } from "ag-grid-community";
 import Link from "next/link";
-
+import { useTranslation } from "next-i18next";
 interface QueryData {
   id: string;
   title: string;
@@ -27,9 +27,10 @@ interface QueryData {
 }
 
 export default function Investigation() {
+  const { t } = useTranslation(); //multi-language support
   const columns: ColDef[] = [
     {
-      headerName: "Query Title",
+      headerName: t("queryTitle"),
       field: "title",
       cellRenderer: (params: any) => (
         <Link href={`/malops-management/detail/${params.value}`}>
@@ -37,10 +38,10 @@ export default function Investigation() {
         </Link>
       ),
     },
-    { headerName: "Description", field: "description" },
-    { headerName: "Created At", field: "createdAt" },
+    { headerName: t("description"), field: "description" },
+    { headerName: t("createdAt"), field: "createdAt" },
     {
-      headerName: "Status",
+      headerName: t("status"),
       field: "status",
       cellRenderer: (params: any) => (
         <div className="flex items-center gap-2">
@@ -51,7 +52,7 @@ export default function Investigation() {
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               />
-              <span className="text-green-500">Active</span>
+              <span className="text-green-500">{t("active")}</span>
             </>
           ) : (
             <>
@@ -60,14 +61,13 @@ export default function Investigation() {
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               />
-              <span className="text-red-500">Inactive</span>
+              <span className="text-red-500">{t("inactive")}</span>
             </>
           )}
         </div>
       ),
     },
   ];
-
   const data: QueryData[] = [
     {
       id: "1",
@@ -97,13 +97,13 @@ export default function Investigation() {
   ];
 
   const items = [
-    { icon: DesktopOutlined, label: "Machine" },
-    { icon: UserOutlined, label: "User" },
-    { icon: AppstoreOutlined, label: "Process" },
-    { icon: FileOutlined, label: "File" },
-    { icon: LinkOutlined, label: "Connection" },
-    { icon: GlobalOutlined, label: "Domain name" },
-    { icon: BugOutlined, label: "Malop Process" },
+    { icon: DesktopOutlined, label: t("machine") },
+    { icon: UserOutlined, label: t("user") },
+    { icon: AppstoreOutlined, label: t("process") },
+    { icon: FileOutlined, label: t("file") },
+    { icon: LinkOutlined, label: t("connection") },
+    { icon: GlobalOutlined, label: t("domain_name") },
+    { icon: BugOutlined, label: t("malop_process") },
   ];
 
   return (
@@ -113,7 +113,7 @@ export default function Investigation() {
         className="grid p-4 pb-20 gap-3  font-[family-name:var(--font-geist-sans)]"
       >
         <h2 className="text-2xl ml-4 pt-7 font-bold text-gray-800 mb-4">
-          Build a query
+          {t("build_query")}
         </h2>
         <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
           {items.map((item, index) => (
@@ -133,7 +133,7 @@ export default function Investigation() {
       >
         <section>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            My Saved Queries
+            {t("queries")}
           </h2>
           <div
             className="ag-theme-alpine"

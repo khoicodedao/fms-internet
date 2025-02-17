@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  i18n: {
+    locales: ["en", "vi"], // Danh sách ngôn ngữ
+    defaultLocale: "en", // Ngôn ngữ mặc định
+  },
 };
 
 export default nextConfig;

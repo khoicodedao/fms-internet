@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import type { ColDef } from "ag-grid-community";
 // import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
@@ -8,6 +9,7 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
 export default function Ndr() {
+  const { t } = useTranslation();
   type RowData = {
     _id: string;
     machine_name: string;
@@ -25,19 +27,19 @@ export default function Ndr() {
   };
 
   const columns: ColDef<RowData>[] = [
-    { headerName: "ID", field: "_id", width: 100 },
-    { headerName: "Machine Name", field: "machine_name" },
-    { headerName: "Version", field: "version" },
-    { headerName: "Last Update", field: "last_update" },
-    { headerName: "Last Seen", field: "last_seen" },
-    { headerName: "First Seen", field: "first_seen" },
-    { headerName: "OS", field: "os" },
-    { headerName: "OS Version", field: "os_version" },
-    { headerName: "Internal IP", field: "internal_ip" },
-    { headerName: "External IP", field: "external_ip" },
-    { headerName: "Memory Use", field: "memory_use" },
-    { headerName: "CPU Use", field: "cpu_use" },
-    { headerName: "MAC Address", field: "mac_address" },
+    { headerName: t("id"), field: "_id", width: 100 },
+    { headerName: t("machineName"), field: "machine_name" },
+    { headerName: t("version"), field: "version" },
+    { headerName: t("lastUpdate"), field: "last_update" },
+    { headerName: t("lastSeen"), field: "last_seen" },
+    { headerName: t("firstSeen"), field: "first_seen" },
+    { headerName: t("os"), field: "os" },
+    { headerName: t("osVersion"), field: "os_version" },
+    { headerName: t("internalIp"), field: "internal_ip" },
+    { headerName: t("externalIp"), field: "external_ip" },
+    { headerName: t("memoryUse"), field: "memory_use" },
+    { headerName: t("cpuUse"), field: "cpu_use" },
+    { headerName: t("macAddress"), field: "mac_address" },
   ];
 
   const defaultData: RowData[] = [
@@ -122,7 +124,7 @@ export default function Ndr() {
     <div className="flex flex-col gap-1">
       <DataTable
         defaultData={defaultData}
-        title="NDR management"
+        title={t("ndrManagement")}
         dataFieldName="_source"
         apiUrl={API_URL.NDR_PAGE.DEFAULT}
         columns={columns}

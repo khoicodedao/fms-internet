@@ -7,8 +7,10 @@ import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+import { useTranslation } from "next-i18next";
 
 export default function Alerts() {
+  const { t } = useTranslation();
   type RowData = {
     mac: string;
     ip: string;
@@ -21,19 +23,19 @@ export default function Alerts() {
   };
 
   const columns: ColDef<RowData>[] = [
-    { headerName: "Object", field: "object" },
-    { headerName: "Action", field: "action" },
-    { headerName: "Mac", field: "mac" },
-    { headerName: "IP", field: "ip" },
-    { headerName: "Computer Name", field: "computer_name" },
-    { headerName: "Alert Source", field: "alert_source" },
-    { headerName: "Alert Level ID", field: "alert_level_id" },
-    { headerName: "Event Time", field: "created_at" },
+    { headerName: t("mac"), field: "mac" },
+    { headerName: t("ip"), field: "ip" },
+    { headerName: t("computerName"), field: "computer_name" },
+    { headerName: t("alertSource"), field: "alert_source" },
+    { headerName: t("alertLevelId"), field: "alert_level_id" },
+    // { headerName: t("eventTime"), field: "event_time" },
+    { headerName: t("object"), field: "object" },
+    { headerName: t("action"), field: "action" },
   ];
 
   return (
     <DataTable
-      title="Alert management"
+      title={t("alertManagement")}
       dataFieldName="_source"
       apiUrl={API_URL.ALERT_PAGE.DEFAULT}
       columns={columns}

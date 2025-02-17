@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 // import type { Metadata } from "next";
 import localFont from "next/font/local";
@@ -7,6 +8,8 @@ import { TerminalContextProvider } from "react-terminal";
 import "./globals.css";
 import { DateProvider } from "../common/date-context"; // Import Context
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { appWithTranslation } from "next-i18next";
+import "../common/i18n";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -26,7 +29,7 @@ const queryClient = new QueryClient();
 
 import { ReactNode } from "react";
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
 
@@ -49,3 +52,5 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     </html>
   );
 }
+//@ts-ignore
+export default appWithTranslation(RootLayout);

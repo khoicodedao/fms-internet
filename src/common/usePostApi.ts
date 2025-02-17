@@ -60,9 +60,10 @@ export const usePostApi = (url: string, isNotification: boolean = true) => {
           error.response?.status === 401
         ) {
           console.error("Error:", error.response.status);
-          document.cookie =
-            "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          window.location.href = "/login";
+          // Xóa cookie và chuyển hướng đến trang đăng nhập
+          // document.cookie =
+          //   "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          // window.location.href = "/login";
         }
       }
     },

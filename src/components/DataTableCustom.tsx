@@ -10,6 +10,7 @@ import ReactJson from "react-json-view";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import SearchBar from "@/components/SearchBar";
+import { useTranslation } from "react-i18next";
 interface DataTableProps {
   title?: string;
   apiUrl: string;
@@ -25,6 +26,7 @@ export default function DataTable({
   dataFieldName,
   defaultData,
 }: DataTableProps) {
+  const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
@@ -85,7 +87,7 @@ export default function DataTable({
               borderRadius: "5px",
             }}
           >
-            Export CSV
+            {t("export_csv")}
           </button>
           <SearchBar></SearchBar>
         </div>

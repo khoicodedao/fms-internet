@@ -14,8 +14,9 @@ import "ag-grid-community/styles/ag-theme-alpine.css";
 import getFileIcon from "./object-type/object-type";
 import Link from "next/link";
 import type { AgGridReact as AgGridReactType } from "ag-grid-react";
-
+import { useTranslation } from "react-i18next";
 export default function MalOpsManagement() {
+  const { t } = useTranslation(); //multi-language support
   const gridRef = useRef<AgGridReactType>(null);
   const pieOptions = {
     tooltip: {
@@ -26,8 +27,8 @@ export default function MalOpsManagement() {
         type: "pie",
         radius: ["40%", "50%"],
         data: [
-          { value: 75, name: "Active", itemStyle: { color: "#52c41a" } },
-          { value: 25, name: "Inactive", itemStyle: { color: "#f5222d" } },
+          { value: 75, name: t("active"), itemStyle: { color: "#52c41a" } },
+          { value: 25, name: t("inactive"), itemStyle: { color: "#f5222d" } },
         ],
         emphasis: {
           itemStyle: {
@@ -53,8 +54,8 @@ export default function MalOpsManagement() {
         type: "pie",
         radius: ["40%", "55%"],
         data: [
-          { value: 892, name: "Online", itemStyle: { color: "#52c41a" } },
-          { value: 342, name: "Offline", itemStyle: { color: "#f5222d" } },
+          { value: 892, name: t("online"), itemStyle: { color: "#52c41a" } },
+          { value: 342, name: t("offline"), itemStyle: { color: "#f5222d" } },
         ],
         label: {
           show: true,
@@ -108,9 +109,9 @@ export default function MalOpsManagement() {
   };
 
   const columns = [
-    { headerName: "State", field: "state" },
+    { headerName: t("state"), field: "state" },
     {
-      headerName: "Object",
+      headerName: t("object"),
       field: "object",
       cellRenderer: (params: { value: string }) => {
         const objectName = params.value;
@@ -125,9 +126,9 @@ export default function MalOpsManagement() {
         );
       },
     },
-    { headerName: "Group", field: "group" },
+    { headerName: t("group"), field: "group" },
     {
-      headerName: "Affected Machines",
+      headerName: t("affectedMachines"),
       field: "affectedMachines",
       cellRenderer: (params: { value: string }) => {
         return (
@@ -139,7 +140,7 @@ export default function MalOpsManagement() {
       },
     },
     {
-      headerName: "Affected Users",
+      headerName: t("affectedUsers"),
       field: "affectedUsers",
       cellRenderer: (params: { value: string }) => {
         return (
@@ -150,9 +151,9 @@ export default function MalOpsManagement() {
         );
       },
     },
-    { headerName: "Detection Description", field: "description" },
-    { headerName: "Detection Modules", field: "modules" },
-    { headerName: "Time", field: "time" },
+    { headerName: t("detectionDescription"), field: "description" },
+    { headerName: t("detectionModules"), field: "modules" },
+    { headerName: t("time"), field: "time" },
   ];
 
   const rowData = [
@@ -186,7 +187,7 @@ export default function MalOpsManagement() {
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
-                Active Ratio
+                {t("active_ratio")}
               </span>
             }
             style={cardStyle}
@@ -208,7 +209,7 @@ export default function MalOpsManagement() {
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
-                Total Endpoints
+                {t("total_endpoint")}
               </span>
             }
             style={cardStyle}
@@ -227,7 +228,7 @@ export default function MalOpsManagement() {
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
-                Connection Status
+                {t("connection_status")}
               </span>
             }
             style={cardStyle}
@@ -249,7 +250,7 @@ export default function MalOpsManagement() {
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
-                Weekly Alerts
+                {t("weekly_alerts")}
               </span>
             }
             style={cardStyle}
@@ -275,7 +276,7 @@ export default function MalOpsManagement() {
               borderRadius: "5px",
             }}
           >
-            Export CSV
+            {t("export_csv")}
           </button>
           <input
             type="text"
