@@ -69,5 +69,23 @@
     "rootCauseInfo": "Root Cause Info",
     "scope": "Scope",
     "communication": "Communication"
-  }
+  },
+  "Active MalOps by Status": "Active MalOps by Status",
+  "Active MalOps by Severity": "Active MalOps by Severity",
+  "MalOps Trends": "MalOps Trends",
+  "MalOps by Mitre Tactic": "MalOps by Mitre Tactic",
+  "Machines by Status": "Machines by Status",
+  "Total Detections": "Total Detections",
+  "Total MalOps": "Total MalOps",
+  "Prevented MalOps": "Prevented MalOps",
+  "Active MalOps": "Active MalOps",
+  "MTTR": "MTTR",
+  "Affected Users": "Affected Users",
+  "Service Issues": "Service Issues",
+  "Affected Hosts": "Affected Hosts",
+  "Top IOC's": "Top IOC's",
+  "File": "File",
+  "Process": "Process",
+  "Export": "Export",
+  "Refresh": "Refresh"
 }

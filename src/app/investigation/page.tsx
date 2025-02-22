@@ -107,7 +107,7 @@ export default function Investigation() {
   ];
 
   return (
-    <div className="grid py-4 pb-20 gap-3 sm:pt-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid py-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]">
       <div
         style={{ background: "#FCFBFB" }}
         className="grid p-4 pb-20 gap-3  font-[family-name:var(--font-geist-sans)]"

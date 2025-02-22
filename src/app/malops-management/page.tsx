@@ -176,7 +176,7 @@ export default function MalOpsManagement() {
   }, []);
 
   return (
-    <div className="pb-20 gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="pb-20 gap-16 sm:py-10 font-[family-name:var(--font-geist-sans)]">
       <Row gutter={[16, 16]} className="w-full">
         <Col xs={24} sm={12} lg={6}>
           <Card

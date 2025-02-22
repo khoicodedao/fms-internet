@@ -49,7 +49,7 @@ export default function Edr() {
       setDefaultData([
         {
           _id: "1",
-          machine_name: "Machine 1",
+          machine_name: "Alpha-PC",
           version: "1.0.0",
           last_update: "2025-02-10",
           last_seen: "2025-02-11",
@@ -64,13 +64,13 @@ export default function Edr() {
         },
         {
           _id: "2",
-          machine_name: "Machine 2",
+          machine_name: "Beta-Server",
           version: "1.0.1",
           last_update: "2025-02-09",
           last_seen: "2025-02-10",
           first_seen: "2025-01-02",
           os: "Ubuntu",
-          os_version: "Ubuntu 20.04",
+          os_version: "20.04",
           internal_ip: "192.168.1.2",
           external_ip: "203.0.113.2",
           memory_use: "2/4 GB",
@@ -79,7 +79,7 @@ export default function Edr() {
         },
         {
           _id: "3",
-          machine_name: "Machine 3",
+          machine_name: "Gamma-Workstation",
           version: "1.0.2",
           last_update: "2025-02-08",
           last_seen: "2025-02-09",
@@ -94,7 +94,7 @@ export default function Edr() {
         },
         {
           _id: "4",
-          machine_name: "Machine 4",
+          machine_name: "Delta-Laptop",
           version: "1.0.3",
           last_update: "2025-02-07",
           last_seen: "2025-02-08",
@@ -109,7 +109,7 @@ export default function Edr() {
         },
         {
           _id: "5",
-          machine_name: "Machine 5",
+          machine_name: "Echo-Desktop",
           version: "1.0.4",
           last_update: "2025-02-06",
           last_seen: "2025-02-07",

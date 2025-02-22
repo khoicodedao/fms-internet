@@ -1,9 +1,10 @@
+/* eslint-disable */
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
 import {
   ApartmentOutlined,
-  DesktopOutlined,
+  // DesktopOutlined,
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -11,36 +12,48 @@ import "reactflow/dist/style.css";
 const { Title } = Typography;
 import Detail from "./detail";
 import dynamic from "next/dynamic";
+import getNodeIcon from "../../../../../common/get-node-icon";
+import { usePostApi } from "@/common/usePostApi";
+import API_URL from "@/common/api-url";
 
 const Flow = dynamic(() => import("../../../../../components/Flow"), {
   ssr: false,
 });
 
 function Process() {
+  const { mutation, contextHolder } = usePostApi(
+    API_URL.EVENT_PAGE.DEFAULT,
+    false
+  );
+  const [dataDetail, setDataDetail] = React.useState<any[]>([]);
+  useEffect(() => {
+    mutation.mutate(
+      {
+        start_date: "2025",
+        end_date: "2026",
+        skip: 0,
+        limit: 50,
+        filter: "object='Process'",
+      },
+      {
+        onSuccess: (response: any) => {
+          setDataDetail(response.data.events);
+        },
+      }
+    );
+  }, []);
   // Dữ liệu mẫu
   const sampleNodes: any[] = [
     {
       //ts-ignore
       id: "computer1",
       label: "Computer",
-      icon: (
-        <DesktopOutlined
-          color="#007bff"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
+      icon: getNodeIcon("Computer"),
     },
     {
       id: "setting1",
       label: "Setting",
-      icon: (
-        <SettingOutlined
-          color="#ffc107"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
+      icon: getNodeIcon("Setting"),
     },
     {
       id: "user1",
@@ -64,11 +77,6 @@ function Process() {
     },
   ];
 
-  const sampleConnections: any[] = [
-    { source: "computer1", target: "setting1" },
-    { source: "computer1", target: "user1" },
-    { source: "setting1", target: "cloud1" },
-  ];
   const columns = [
     {
       title: "name",
@@ -86,6 +94,7 @@ function Process() {
 
   return (
     <div className="top-0 z-10 p-4 bg-white">
+      {contextHolder}
       <Row gutter={16}>
         <Col span={8}>
           <Card style={{ height: 500 }} className="shadow pb-8">
@@ -111,11 +120,11 @@ function Process() {
         </Col>
 
         <Col span={16}>
-          <Row gutter={16}>
+          {/* <Row gutter={16}>
             <Flow nodes={sampleNodes} connections={sampleConnections} />
-          </Row>
+          </Row> */}
           <Row gutter={16}>
-            <Detail />
+            <Detail dataList={dataDetail} />
           </Row>
         </Col>
       </Row>

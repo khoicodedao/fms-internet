@@ -9,15 +9,18 @@ import {
 } from "@ant-design/icons";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
 export default function Home() {
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
   console.log(startDate, endDate);
+  const { t } = useTranslation();
+
   const statusPieOption = {
     title: {
-      text: "Active MalOps by Status",
+      text: t("Active MalOps by Status"),
       left: "center",
     },
     tooltip: {
@@ -49,7 +52,7 @@ export default function Home() {
 
   const severityPieOption = {
     title: {
-      text: "Active MalOps by Severity",
+      text: t("Active MalOps by Severity"),
       left: "center",
     },
     tooltip: {
@@ -81,7 +84,7 @@ export default function Home() {
 
   const lineChartOption = {
     title: {
-      text: "MalOps Trends",
+      text: t("MalOps Trends"),
       left: "center",
     },
     tooltip: {
@@ -114,7 +117,7 @@ export default function Home() {
 
   const columnChartOption = {
     title: {
-      text: "MalOps by Mitre Tactic",
+      text: t("MalOps by Mitre Tactic"),
       left: "center",
     },
     tooltip: {
@@ -144,7 +147,7 @@ export default function Home() {
 
   const machineStatusPieOption = {
     title: {
-      text: "Machines by Status",
+      text: t("Machines by Status"),
       left: "center",
     },
     tooltip: {
@@ -175,7 +178,7 @@ export default function Home() {
     ],
   };
   return (
-    <div className="grid  p-8 pb-20 gap-3 sm:pt-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid  p-8 pb-20 gap-3 font-[family-name:var(--font-geist-sans)]">
       <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
         <div className="flex gap-4">
           <DatetimePicker />
@@ -191,7 +194,7 @@ export default function Home() {
               />
             }
           >
-            Export
+            {t("Export")}
           </Button>
           <Button
             type="primary"
@@ -202,7 +205,7 @@ export default function Home() {
               />
             }
           >
-            Refresh
+            {t("Refresh")}
           </Button>
         </div>
       </div>
@@ -211,49 +214,49 @@ export default function Home() {
         <Row gutter={[32, 32]}>
           {[
             {
-              title: "Total Detections",
+              title: t("Total Detections"),
               value: 2851,
               percent: 12.5,
               increase: true,
             },
             {
-              title: "Total MalOps",
+              title: t("Total MalOps"),
               value: 1250,
               percent: -5.2,
               increase: false,
             },
             {
-              title: "Prevented MalOps",
+              title: t("Prevented MalOps"),
               value: 584,
               percent: 8.3,
               increase: true,
             },
             {
-              title: "Active MalOps",
+              title: t("Active MalOps"),
               value: 12420,
               percent: 15.8,
               increase: true,
             },
             {
-              title: "MTTR",
+              title: t("MTTR"),
               value: 892,
               percent: -2.4,
               increase: false,
             },
             {
-              title: "Affected Users",
+              title: t("Affected Users"),
               value: 458,
               percent: 6.7,
               increase: true,
             },
             {
-              title: "Service Issues",
+              title: t("Service Issues"),
               value: 23,
               percent: -12.3,
               increase: false,
             },
             {
-              title: "Affected Hosts",
+              title: t("Affected Hosts"),
               value: 156,
               percent: 4.2,
               increase: true,
@@ -328,14 +331,14 @@ export default function Home() {
           </Card>
         </Col>
         <Col span={6}>
-          <Card title="Top IOC's" className="h-full">
+          <Card title={t("Top IOC's")} className="h-full">
             <div className="space-y-4">
               <div>
-                <div className="mb-2">File</div>
+                <div className="mb-2">{t("File")}</div>
                 <Progress percent={71.4} />
               </div>
               <div>
-                <div className="mb-2">Process</div>
+                <div className="mb-2">{t("Process")}</div>
                 <Progress percent={28.6} />
               </div>
             </div>

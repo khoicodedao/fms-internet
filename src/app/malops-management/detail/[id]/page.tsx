@@ -46,7 +46,7 @@ export default function MalOpsManagementDetail() {
   };
 
   return (
-    <div className="pb-20 gap-16 sm:py-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       <ObjectDetailHeader
         type={"Ransomware"}
         icon={getFileIcon("file")}

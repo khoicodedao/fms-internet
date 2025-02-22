@@ -45,7 +45,7 @@ export default function Ndr() {
   const defaultData: RowData[] = [
     {
       _id: "1",
-      machine_name: "Machine 1",
+      machine_name: "Orion-Server",
       version: "1.0.0",
       last_update: "2025-02-10",
       last_seen: "2025-02-11",
@@ -60,7 +60,7 @@ export default function Ndr() {
     },
     {
       _id: "2",
-      machine_name: "Machine 2",
+      machine_name: "Atlas-Node",
       version: "1.0.1",
       last_update: "2025-02-09",
       last_seen: "2025-02-10",
@@ -75,7 +75,7 @@ export default function Ndr() {
     },
     {
       _id: "3",
-      machine_name: "Machine 3",
+      machine_name: "Titan-Workstation",
       version: "1.0.2",
       last_update: "2025-02-08",
       last_seen: "2025-02-09",
@@ -90,7 +90,7 @@ export default function Ndr() {
     },
     {
       _id: "4",
-      machine_name: "Machine 4",
+      machine_name: "Vega-Desktop",
       version: "1.0.3",
       last_update: "2025-02-07",
       last_seen: "2025-02-08",
@@ -105,7 +105,7 @@ export default function Ndr() {
     },
     {
       _id: "5",
-      machine_name: "Machine 5",
+      machine_name: "Nova-Laptop",
       version: "1.0.4",
       last_update: "2025-02-06",
       last_seen: "2025-02-07",
@@ -119,7 +119,6 @@ export default function Ndr() {
       mac_address: "00:1A:2B:3C:4D:62",
     },
   ];
-
   return (
     <div className="flex flex-col gap-1">
       <DataTable

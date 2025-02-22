@@ -2,7 +2,7 @@
   "welcome": "Chào mừng bạn đến với trang web của chúng tôi",
   "language": "Ngôn ngữ",
   "active_ratio": "Tỷ lệ hoạt động",
-  "total_endpoint": "Tổng số điểm cuối",
+  "total_endpoint": "Tổng số máy tính",
   "connection_status": "Trạng thái kết nối",
   "weekly_alerts": "Cảnh báo hàng tuần",
   "export_csv": "Xuất CSV",
@@ -69,5 +69,23 @@
     "rootCauseInfo": "Nguyên nhân",
     "scope": "Phạm vi",
     "communication": "Kết nối"
-  }
+  },
+  "Active MalOps by Status": "hoạt động theo trạng thái",
+  "Active MalOps by Severity": "Cảnh báo theo mức độ",
+  "MalOps Trends": "Xu hướng",
+  "MalOps by Mitre Tactic": "Chiến thuật Mitre",
+  "Machines by Status": "Máy theo trạng thái",
+  "Total Detections": "Tổng số cảnh báo",
+  "Total MalOps": "Tổng số sự kiện",
+  "Prevented MalOps": "Đã ngăn chặn",
+  "Active MalOps": "Mối đe dọa hoạt động",
+  "MTTR": "MTTR",
+  "Affected Users": "Người dùng bị ảnh hưởng",
+  "Service Issues": "Vấn đề dịch vụ",
+  "Affected Hosts": "Máy chủ bị ảnh hưởng",
+  "Top IOC's": "IOC hàng đầu",
+  "File": "Tệp",
+  "Process": "Quá trình",
+  "Export": "Xuất",
+  "Refresh": "Làm mới"
 }
