@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { Divider } from "antd";
 import {
   MenuOutlined,
   UserOutlined,
@@ -23,6 +24,11 @@ const { Header: AntHeader } = Layout;
 
 export default function Header() {
   const { t, i18n } = useTranslation(); // multi-language support
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+  const handleLanguageChange = (language: string) => {
+    i18n.changeLanguage(language);
+    setSelectedLanguage(language);
+  };
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -94,8 +100,20 @@ export default function Header() {
         />
       </div>
       <div>
-        <button onClick={() => i18n.changeLanguage("vi")}>VN | </button>
-        <button onClick={() => i18n.changeLanguage("en")}> EN</button>
+        <button
+          className={selectedLanguage === "vi" ? "font-bold" : "opacity-50"}
+          onClick={() => handleLanguageChange("vi")}
+        >
+          VN
+        </button>
+        <Divider type="vertical" />
+        <button
+          className={selectedLanguage === "en" ? "font-bold" : "opacity-50"}
+          onClick={() => handleLanguageChange("en")}
+        >
+          {" "}
+          EN
+        </button>
       </div>
       <Dropdown overlay={userMenu} placement="bottomRight" arrow>
         <Button

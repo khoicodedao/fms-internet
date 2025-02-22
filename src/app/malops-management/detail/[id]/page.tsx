@@ -3,7 +3,7 @@ import { Divider } from "antd";
 import { useEffect, useState } from "react";
 import ObjectDetailHeader from "./header";
 import getFileIcon from "../../object-type/object-type";
-import Diagram from "./description/description";
+import Description from "./description/description";
 import Communication from "./communication/communication";
 import MachineProfilePage from "./machine-profile/machine-profile";
 import ProcessPage from "./process/process";
@@ -54,7 +54,11 @@ export default function MalOpsManagementDetail() {
         description="Ransomware hash"
       />
       <section id="diagram">
-        <Diagram />
+        <Description
+          rootCauseDetails="Root Cause Details"
+          scopeDetails="Scope Details"
+          communicationDetails="Communication Details"
+        />
       </section>
       <Divider />
       <section id="communication">

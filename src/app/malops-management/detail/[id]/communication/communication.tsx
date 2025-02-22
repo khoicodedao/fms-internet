@@ -1,13 +1,75 @@
 "use client";
 import React from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
-import { WifiOutlined } from "@ant-design/icons";
+import {
+  ApartmentOutlined,
+  DesktopOutlined,
+  SettingOutlined,
+  UserOutlined,
+  WifiOutlined,
+} from "@ant-design/icons";
 import "reactflow/dist/style.css";
 const { Title } = Typography;
 import Detail from "./detail";
-import Flow from "./flow";
+import dynamic from "next/dynamic";
+
+const Flow = dynamic(() => import("../../../../../components/Flow"), {
+  ssr: false,
+});
 
 function Communication() {
+  const sampleNodes: any[] = [
+    {
+      //ts-ignore
+      id: "computer3",
+      label: "Computer",
+      icon: (
+        <DesktopOutlined
+          color="#007bff"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "setting3",
+      label: "Setting",
+      icon: (
+        <SettingOutlined
+          color="#ffc107"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "user3",
+      label: "User",
+      icon: (
+        <UserOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "cloud3",
+      label: "Cloud",
+      icon: (
+        <ApartmentOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+  ];
+
+  const sampleConnections: any[] = [
+    { source: "computer3", target: "setting3" },
+    { source: "computer3", target: "user3" },
+    { source: "setting3", target: "cloud3" },
+  ];
+
   const columns = [
     {
       title: "IP",
@@ -61,7 +123,9 @@ function Communication() {
         </Col>
 
         <Col span={16}>
-          <Flow />
+          <Col span={16}>
+            <Flow nodes={sampleNodes} connections={sampleConnections} />
+          </Col>
           <Row gutter={16}>
             <Detail />
           </Row>

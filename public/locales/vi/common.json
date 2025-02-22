@@ -62,5 +62,12 @@
   "alertLevelId": "Mức cảnh báo",
   "eventTime": "Thời gian sự kiện",
   "action": "Hành động",
-  "alertManagement": "Quản lý cảnh báo"
+  "alertManagement": "Quản lý cảnh báo",
+  "description_detail": {
+    "title": "Mô tả",
+    "shortDescription": "Mô tả ngắn gọn về nguyên nhân gốc rễ.",
+    "rootCauseInfo": "Nguyên nhân",
+    "scope": "Phạm vi",
+    "communication": "Kết nối"
+  }
 }

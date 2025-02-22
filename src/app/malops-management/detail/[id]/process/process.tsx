@@ -1,13 +1,74 @@
 "use client";
 import React from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+import {
+  ApartmentOutlined,
+  DesktopOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import "reactflow/dist/style.css";
 const { Title } = Typography;
 import Detail from "./detail";
-import Flow from "./flow";
+import dynamic from "next/dynamic";
+
+const Flow = dynamic(() => import("../../../../../components/Flow"), {
+  ssr: false,
+});
 
 function Process() {
+  // Dữ liệu mẫu
+  const sampleNodes: any[] = [
+    {
+      //ts-ignore
+      id: "computer1",
+      label: "Computer",
+      icon: (
+        <DesktopOutlined
+          color="#007bff"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "setting1",
+      label: "Setting",
+      icon: (
+        <SettingOutlined
+          color="#ffc107"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "user1",
+      label: "User",
+      icon: (
+        <UserOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+    {
+      id: "cloud1",
+      label: "Cloud",
+      icon: (
+        <ApartmentOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      ),
+    },
+  ];
+
+  const sampleConnections: any[] = [
+    { source: "computer1", target: "setting1" },
+    { source: "computer1", target: "user1" },
+    { source: "setting1", target: "cloud1" },
+  ];
   const columns = [
     {
       title: "name",
@@ -50,7 +111,9 @@ function Process() {
         </Col>
 
         <Col span={16}>
-          <Flow />
+          <Row gutter={16}>
+            <Flow nodes={sampleNodes} connections={sampleConnections} />
+          </Row>
           <Row gutter={16}>
             <Detail />
           </Row>

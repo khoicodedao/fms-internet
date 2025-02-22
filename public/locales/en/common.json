@@ -62,5 +62,12 @@
   "alertLevelId": "Alert Level ID",
   "eventTime": "Event Time",
   "action": "Action",
-  "alertManagement": "Alert Management"
+  "alertManagement": "Alert Management",
+  "description_detail": {
+    "title": "Description",
+    "shortDescription": "Short description of the root cause.",
+    "rootCauseInfo": "Root Cause Info",
+    "scope": "Scope",
+    "communication": "Communication"
+  }
 }

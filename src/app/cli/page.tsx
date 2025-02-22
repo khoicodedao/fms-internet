@@ -1,9 +1,10 @@
-/* eslint-disable*/
+/* eslint-disable */
 "use client";
 import React, { useEffect, useState } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
-import { Input, List, Avatar, Badge } from "antd";
+import { Input, List, Avatar, Badge, Button, message } from "antd";
 import { DesktopOutlined } from "@ant-design/icons";
+
 const commands: { [key: string]: string } = {
   help: "Available commands: help, clear, exit, list, show, start, stop, restart, ipconfig, dir, copy, del, move, mkdir, rmdir, ping, tasklist, taskkill, chkdsk, cls, color, date, echo, find, hostname, netstat, path, pause, shutdown, systeminfo, time, tree, type, ver, wmic",
   list: "Listing items...",
@@ -46,15 +47,29 @@ interface Computer {
   online: boolean;
 }
 
-const computers: Computer[] = [
-  { mac: "00:1A:2B:3C:4D:5E", name: "NH/AUTHOR", online: true },
-  { mac: "00:1A:2B:3C:4D:5F", name: "RED/FOX", online: false },
-  { mac: "0C:1A:2D:3C:4D:5G", name: "GREEN/LEAF", online: true },
-  { mac: "0C:1A:2B:3C:4D:5H", name: "BLUE/SKY", online: false },
-  // Add more computers as needed
-];
-
 const CLIPage = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = (text: string) => {
+    messageApi.open({
+      type: "success",
+      content: text,
+    });
+  };
+
+  const error = (text: string) => {
+    messageApi.open({
+      type: "error",
+      content: text,
+    });
+  };
+
+  const warning = (text: string) => {
+    messageApi.open({
+      type: "warning",
+      content: text,
+    });
+  };
+
   const [terminalLineData, setTerminalLineData] = useState([
     <TerminalOutput key="welcome">
       <span className="">{`Welcome to terminal`} </span>
@@ -62,27 +77,46 @@ const CLIPage = () => {
   ]);
   const [currentInput, setCurrentInput] = useState("");
   const [matchingCommands, setMatchingCommands] = useState<string[]>([]);
-  //@ts-ignore
   const [selectedMac, setSelectedMac] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [filteredComputers, setFilteredComputers] = useState<Computer[]>([]);
 
-  useEffect(() => {
-    // Chỉ chạy nếu là client
-    if (typeof window !== "undefined") {
-      const checkInputValue = () => {
-        const inputElement = document.querySelector(
-          ".terminal-hidden-input"
-        ) as HTMLInputElement;
-        if (inputElement) {
-          setCurrentInput(inputElement.value);
-        }
-      };
+  const connectToWebSocket = () => {
+    const ws = new WebSocket("wss://localhost:8080");
+    setSocket(ws);
 
-      const intervalId = setInterval(checkInputValue, 100); // Kiểm tra mỗi 100ms
+    ws.onopen = () => {
+      success("Connected to WebSocket server");
+      // Request the list of connected computers
+      ws.send(JSON.stringify({ type: "request_computers" }));
+    };
 
-      return () => clearInterval(intervalId); // Cleanup khi component unmount
-    }
-  }, []);
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.command) {
+        setTerminalLineData((prev) => [
+          ...prev,
+          <TerminalOutput key={`output-${data.command}`}>
+            <span style={{ color: "#00ff00" }}>{data.command}</span>
+          </TerminalOutput>,
+        ]);
+      } else if (data.type === "update") {
+        // Update the list of computers dynamically
+        const updatedComputers = data.computers;
+        setFilteredComputers(updatedComputers);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("Disconnected from WebSocket server");
+      error("Disconnected from WebSocket server");
+    };
+
+    return () => {
+      ws.close();
+    };
+  };
 
   useEffect(() => {
     const matchCommands = () => {
@@ -95,25 +129,70 @@ const CLIPage = () => {
     matchCommands();
   }, [currentInput]);
 
-  const handleComputerClick = (mac: string) => {
-    setSelectedMac(mac);
+  const handleComputerClick = (computer: Computer) => {
+    setSelectedMac(computer.mac);
     setTerminalLineData([
       <TerminalOutput key="welcome">
-        <span className="">{`Welcome to ${mac}`} </span>
+        <span className="">
+          {`Welcome to ${computer.name} (${computer.mac})`}{" "}
+        </span>
       </TerminalOutput>,
     ]);
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ type: "register", mac: computer.mac }));
+    } else {
+      error("WebSocket is not open");
+    }
   };
 
-  const filteredComputers = computers.filter((computer) =>
-    computer.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleCommandInput = (terminalInput: string) => {
+    setCurrentInput(terminalInput);
+
+    if (commands[terminalInput]) {
+      setTerminalLineData([
+        ...terminalLineData,
+        <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
+        <TerminalOutput key={`output-${terminalInput}`}>
+          <span style={{ color: "#00ff00" }}>{commands[terminalInput]}</span>
+        </TerminalOutput>,
+      ]);
+
+      if (selectedMac && socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(
+          JSON.stringify({
+            type: "command",
+            mac: selectedMac,
+            command: terminalInput,
+          })
+        );
+      } else {
+        error("WebSocket is not open");
+      }
+    } else {
+      setTerminalLineData([
+        ...terminalLineData,
+        <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
+        <TerminalOutput key="not-found">
+          <span style={{ color: "red" }}> Command not found</span>
+        </TerminalOutput>,
+      ]);
+    }
+  };
 
   return (
     <div style={{ display: "flex" }}>
+      {contextHolder}
       <div
         style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
       >
-        <h3>Computers</h3>
+        <Button type="link" href="https://localhost:8080" target="_blank">
+          Open WebSocket
+        </Button>
+        <Button type="primary" onClick={connectToWebSocket}>
+          Connect to WebSocket
+        </Button>
+
         <Input
           placeholder="Search..."
           value={searchTerm}
@@ -125,7 +204,7 @@ const CLIPage = () => {
           dataSource={filteredComputers}
           renderItem={(computer) => (
             <List.Item
-              onClick={() => handleComputerClick(computer.mac)}
+              onClick={() => handleComputerClick(computer)}
               style={{ cursor: "pointer" }}
             >
               <List.Item.Meta
@@ -158,40 +237,10 @@ const CLIPage = () => {
           name="Terminal"
           colorMode={ColorMode.Dark}
           prompt=">"
-          onInput={(terminalInput: string) => {
-            console.log(`New terminal input received: '${terminalInput}'`);
-            setCurrentInput(terminalInput); // Cập nhật đầu vào
-
-            if (commands[terminalInput]) {
-              setTerminalLineData([
-                ...terminalLineData,
-                <TerminalOutput key={terminalInput}>
-                  {terminalInput}
-                </TerminalOutput>,
-                <TerminalOutput key={`output-${terminalInput}`}>
-                  <span style={{ color: "#00ff00" }}>
-                    {" "}
-                    {commands[terminalInput]}
-                  </span>
-                </TerminalOutput>,
-              ]);
-            } else {
-              setTerminalLineData([
-                ...terminalLineData,
-                <TerminalOutput key={terminalInput}>
-                  {terminalInput}
-                </TerminalOutput>,
-                <TerminalOutput key="not-found">
-                  <span style={{ color: "red" }}> Command not found</span>
-                </TerminalOutput>,
-              ]);
-            }
-          }}
-          startingInputValue="" // Đầu vào mặc định
+          onInput={handleCommandInput}
+          startingInputValue=""
         >
           {terminalLineData}
-
-          {/* Hiển thị gợi ý nếu có */}
           {currentInput && matchingCommands.length > 0 && (
             <TerminalOutput key="suggestions">
               <span style={{ color: "#00ff00" }}>
