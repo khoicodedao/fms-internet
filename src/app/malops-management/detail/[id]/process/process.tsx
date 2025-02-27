@@ -1,7 +1,7 @@
 /* eslint-disable */
 "use client";
 import React, { useEffect } from "react";
-import { Card, Table, Row, Col, Typography } from "antd";
+import { Card, Table, Row, Col, Typography, Badge, Button } from "antd";
 import {
   ApartmentOutlined,
   // DesktopOutlined,
@@ -11,14 +11,14 @@ import {
 import "reactflow/dist/style.css";
 const { Title } = Typography;
 import Detail from "./detail";
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 import getNodeIcon from "../../../../../common/get-node-icon";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 
-const Flow = dynamic(() => import("../../../../../components/Flow"), {
-  ssr: false,
-});
+// const Flow = dynamic(() => import("../../../../../components/Flow"), {
+//   ssr: false,
+// });
 
 function Process() {
   const { mutation, contextHolder } = usePostApi(
@@ -33,7 +33,7 @@ function Process() {
         end_date: "2026",
         skip: 0,
         limit: 50,
-        filter: "object='Process'",
+        object: "Process",
       },
       {
         onSuccess: (response: any) => {
@@ -43,55 +43,69 @@ function Process() {
     );
   }, []);
   // Dữ liệu mẫu
-  const sampleNodes: any[] = [
-    {
-      //ts-ignore
-      id: "computer1",
-      label: "Computer",
-      icon: getNodeIcon("Computer"),
-    },
-    {
-      id: "setting1",
-      label: "Setting",
-      icon: getNodeIcon("Setting"),
-    },
-    {
-      id: "user1",
-      label: "User",
-      icon: (
-        <UserOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "cloud1",
-      label: "Cloud",
-      icon: (
-        <ApartmentOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-  ];
+  // const sampleNodes: any[] = [
+  //   {
+  //     //ts-ignore
+  //     id: "computer1",
+  //     label: "Computer",
+  //     icon: getNodeIcon("Computer"),
+  //   },
+  //   {
+  //     id: "setting1",
+  //     label: "Setting",
+  //     icon: getNodeIcon("Setting"),
+  //   },
+  //   {
+  //     id: "user1",
+  //     label: "User",
+  //     icon: (
+  //       <UserOutlined
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: "cloud1",
+  //     label: "Cloud",
+  //     icon: (
+  //       <ApartmentOutlined
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  // ];
 
   const columns = [
     {
-      title: "name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
+      render: (text: string) => (
+        <div className="flex items-center">
+          {getNodeIcon(text)}
+          <span className="ml-2">{text}</span>
+        </div>
+      ),
     },
-  ];
-
-  const data = [
     {
-      key: "1",
-      name: "cerber.exe",
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      render: (text: string) => (
+        <Button type="primary" danger>
+          {text}
+        </Button>
+      ),
     },
   ];
 
+  let overviewDataProcess = dataDetail.map((item, index) => ({
+    key: index,
+    name: item.fields.exe,
+    action: item.action,
+  }));
   return (
     <div className="top-0 z-10 p-4 bg-white">
       {contextHolder}
@@ -112,8 +126,7 @@ function Process() {
             </div>
             <Table
               columns={columns}
-              dataSource={data}
-              title={() => "Malicious Connections"}
+              dataSource={overviewDataProcess}
               pagination={false}
             />
           </Card>

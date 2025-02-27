@@ -4,7 +4,7 @@ import {
   CheckCircleOutlined,
   FolderOutlined,
 } from "@ant-design/icons";
-import { Typography, Divider, Collapse } from "antd";
+import { Typography, Collapse } from "antd";
 import React from "react";
 
 export default function DetailDirectory() {
@@ -52,7 +52,7 @@ export default function DetailDirectory() {
       key: "1",
       label: "Machine Details",
       children: (
-        <div className="space-y-6">
+        <div>
           {machines.map((machine, index) => (
             <div key={index} className="space-y-4">
               <div className="grid grid-cols-3 gap-4 hover:bg-gray-100 p-4 rounded">
@@ -114,7 +114,7 @@ export default function DetailDirectory() {
   return (
     <div className="w-full">
       <div className="flex items-center space-x-2 mb-4">
-        <DesktopOutlined
+        {/* <DesktopOutlined
           style={{ fontSize: "24px", color: "#1890ff" }}
           onPointerEnterCapture={undefined}
           onPointerLeaveCapture={undefined}
@@ -123,10 +123,10 @@ export default function DetailDirectory() {
           <Typography.Title level={5} style={{ margin: 0 }}>
             Machine Information
           </Typography.Title>
-        </div>
+        </div> */}
       </div>
-      <Divider />
-      <Collapse items={items} />
+      {/* <Divider /> */}
+      <Collapse defaultActiveKey={["1"]} items={items} />
     </div>
   );
 }

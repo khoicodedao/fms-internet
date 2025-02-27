@@ -1,133 +1,45 @@
-import {
-  FileOutlined,
-  FileWordOutlined,
-  FileExcelOutlined,
-  FilePdfOutlined,
-} from "@ant-design/icons";
+"use client";
+import API_URL from "@/common/api-url";
+import { usePostApi } from "@/common/usePostApi";
+import { FileOutlined } from "@ant-design/icons";
 import { Typography, Divider, Collapse } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
+import getNodeIcon from "@/common/get-node-icon";
 
 export default function AffectedFile() {
-  const files = [
-    {
-      icon: (
-        <FileWordOutlined
-          style={{ color: "#2B579A" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "65.Ke-hoach-tham-dong-vu-He-thu-2022_ledinhdungkytrung-25-08-2022_07h24p56.docx",
-      path: "C:\\Users\\Admin\\Desktop",
-    },
-    {
-      icon: (
-        <FileWordOutlined
-          style={{ color: "#2B579A" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "1584519870255_Moi truong Huyen.docx",
-      path: "C:\\Users\\Admin\\Desktop",
-    },
-    {
-      icon: (
-        <FileExcelOutlined
-          style={{ color: "#217346" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "bieu-mau-xd-ke-hoach-nam-2024.xlsx",
-      path: "C:\\Users\\Admin\\Desktop",
-    },
-    {
-      icon: (
-        <FilePdfOutlined
-          style={{ color: "#FF0000" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "0_20240125103910.pdf",
-      path: "C:\\Users\\Admin\\Desktop",
-    },
-    {
-      icon: (
-        <FilePdfOutlined
-          style={{ color: "#FF0000" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "120240319153658.pdf",
-      path: "C:\\Users\\Admin\\Desktop",
-    },
-    {
-      icon: (
-        <FileWordOutlined
-          style={{ color: "#2B579A" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "1584519870255_Moi truong Huyen.docx",
-      path: "C:\\Users\\manhd\\Desktop",
-    },
-    {
-      icon: (
-        <FilePdfOutlined
-          style={{ color: "#FF0000" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "120240319153658.pdf",
-      path: "C:\\Users\\manhd\\Desktop",
-    },
-    {
-      icon: (
-        <FilePdfOutlined
-          style={{ color: "#FF0000" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "0_20240125103910.pdf",
-      path: "C:\\Users\\manhd\\Desktop",
-    },
-    {
-      icon: (
-        <FilePdfOutlined
-          style={{ color: "#FF0000" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "3 BCTH KHBVMT Phu Giao.pdf",
-      path: "C:\\Users\\manhd\\Desktop",
-    },
-    {
-      icon: (
-        <FileWordOutlined
-          style={{ color: "#2B579A" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-      name: "65.Ke-hoach-tham-dong-vu-He-thu-2022_ledinhdungkytrung-25-08-2022_07h24p56.docx",
-      path: "C:\\Users\\manhd\\Desktop",
-    },
-  ];
+  const { mutation } = usePostApi(API_URL.EVENT_PAGE.DEFAULT, false);
+  const [dataFile, setDataFile] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    mutation.mutate(
+      {
+        start_date: "2025",
+        end_date: "2026",
+        skip: 0,
+        limit: 50,
+        object: "File",
+      },
+      {
+        onSuccess: (response: any) => {
+          console.log(response.data.events);
+          const mappedData = response.data.events.map((event: any) => ({
+            icon: getNodeIcon(event.fields.file_name),
+            name: event.fields.file_name,
+            path: event.fields.file_path,
+          }));
+          setDataFile(mappedData);
+        },
+      }
+    );
+  }, []);
 
   const items = [
     {
       key: "1",
-      label: "10 Affected Files",
+      label: `${dataFile.length} Affected Files`,
       children: (
         <div className="space-y-4">
-          {files.map((file, index) => (
+          {dataFile.map((file, index) => (
             <div
               key={index}
               className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded"
@@ -159,7 +71,7 @@ export default function AffectedFile() {
         </div>
       </div>
       <Divider />
-      <Collapse items={items} />
+      <Collapse items={items} defaultActiveKey={["1"]} />
     </div>
   );
 }

@@ -104,20 +104,18 @@ export default function Detail() {
 
   return (
     <div className="w-full">
-      <div className="flex items-center space-x-2 mb-4">
+      <div className="flex items-center space-x-2 mb-4 mt-5">
         <LinkOutlined
           style={{ fontSize: "24px", color: "#1890ff" }}
           onPointerEnterCapture={undefined}
           onPointerLeaveCapture={undefined}
         />
         <div>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Network Connections
-          </Typography.Title>
+          <Typography.Title level={5}>Network Connections</Typography.Title>
         </div>
       </div>
       <Divider />
-      <Collapse items={items} />
+      <Collapse defaultActiveKey={["1"]} items={items} />
     </div>
   );
 }

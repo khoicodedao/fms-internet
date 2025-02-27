@@ -1,8 +1,9 @@
 "use client";
 import { FileOutlined } from "@ant-design/icons";
-import { Typography, Divider, Collapse, Table } from "antd";
+import { Typography, Divider, Collapse, Table, Tabs } from "antd";
 import React from "react";
 import getNodeIcon from "@/common/get-node-icon";
+import ReactJson from "react-json-view";
 export default function Detail({ dataList }: { dataList: any[] }) {
   const columns = [
     {
@@ -70,34 +71,39 @@ export default function Detail({ dataList }: { dataList: any[] }) {
           rowKey={(record) => record.fields?.pid || Math.random()}
           expandable={{
             expandedRowRender: (record) => (
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p>
-                      <strong>Image Path:</strong> {record.fields?.image_path}
-                    </p>
-                    <p>
-                      <strong>Working Directory:</strong>{" "}
-                      {record.fields?.current_working_directory}
-                    </p>
-                    <p>
-                      <strong>Integrity Level:</strong>{" "}
-                      {record.fields?.integrity_level}
-                    </p>
+              <Tabs defaultActiveKey="1">
+                <Tabs.TabPane tab="Summary" key="1">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p>
+                        <strong>Image Path:</strong> {record.fields?.image_path}
+                      </p>
+                      <p>
+                        <strong>Working Directory:</strong>{" "}
+                        {record.fields?.current_working_directory}
+                      </p>
+                      <p>
+                        <strong>Integrity Level:</strong>{" "}
+                        {record.fields?.integrity_level}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <strong>MD5 Hash:</strong> {record.fields?.md5_hash}
+                      </p>
+                      <p>
+                        <strong>SHA1 Hash:</strong> {record.fields?.sha1_hash}
+                      </p>
+                      <p>
+                        <strong>MAC Address:</strong> {record.mac}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p>
-                      <strong>MD5 Hash:</strong> {record.fields?.md5_hash}
-                    </p>
-                    <p>
-                      <strong>SHA1 Hash:</strong> {record.fields?.sha1_hash}
-                    </p>
-                    <p>
-                      <strong>MAC Address:</strong> {record.mac}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Json" key="2">
+                  <ReactJson displayDataTypes={false} src={record} />
+                </Tabs.TabPane>
+              </Tabs>
             ),
           }}
         />

@@ -3,13 +3,13 @@ import {
   WindowsOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
-import { Typography, Divider, Collapse } from "antd";
+import { Typography, Collapse } from "antd";
 import React from "react";
 
 export default function Detail() {
   const machines = [
     {
-      name: "Desktop-01",
+      name: "DESKTOP-I9T8DIF",
       osVersion: "Windows 10 Pro",
       status: "Online",
     },
@@ -80,8 +80,8 @@ export default function Detail() {
           </Typography.Title>
         </div>
       </div>
-      <Divider />
-      <Collapse items={items} />
+
+      <Collapse items={items} defaultActiveKey={["1"]} />
     </div>
   );
 }

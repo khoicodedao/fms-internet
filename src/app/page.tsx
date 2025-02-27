@@ -22,6 +22,13 @@ export default function Home() {
     title: {
       text: t("Active MalOps by Status"),
       left: "center",
+      textStyle: {
+        paddingTop: "40px",
+        color: "rgba(0, 0, 0, 0.88)",
+        fontWeight: "600",
+        fontSize: "16px",
+        fontFamily: "Segoe UI",
+      },
     },
     tooltip: {
       trigger: "item",
@@ -54,6 +61,13 @@ export default function Home() {
     title: {
       text: t("Active MalOps by Severity"),
       left: "center",
+      textStyle: {
+        paddingTop: "40px",
+        color: "rgba(0, 0, 0, 0.88)",
+        fontWeight: "600",
+        fontSize: "16px",
+        fontFamily: "Segoe UI",
+      },
     },
     tooltip: {
       trigger: "item",
@@ -86,6 +100,13 @@ export default function Home() {
     title: {
       text: t("MalOps Trends"),
       left: "center",
+      textStyle: {
+        paddingTop: "40px",
+        color: "rgba(0, 0, 0, 0.88)",
+        fontWeight: "600",
+        fontSize: "16px",
+        fontFamily: "Segoe UI",
+      },
     },
     tooltip: {
       trigger: "axis",
@@ -119,6 +140,13 @@ export default function Home() {
     title: {
       text: t("MalOps by Mitre Tactic"),
       left: "center",
+      textStyle: {
+        paddingTop: "40px",
+        color: "rgba(0, 0, 0, 0.88)",
+        fontWeight: "600",
+        fontSize: "16px",
+        fontFamily: "Segoe UI",
+      },
     },
     tooltip: {
       trigger: "axis",
@@ -149,6 +177,13 @@ export default function Home() {
     title: {
       text: t("Machines by Status"),
       left: "center",
+      textStyle: {
+        paddingTop: "40px",
+        color: "rgba(0, 0, 0, 0.88)",
+        fontWeight: "600",
+        fontSize: "16px",
+        fontFamily: "Segoe UI",
+      },
     },
     tooltip: {
       trigger: "item",
@@ -300,7 +335,7 @@ export default function Home() {
           <Card>
             <ReactECharts
               option={statusPieOption}
-              style={{ height: "400px" }}
+              style={{ height: "400px", fontFamily: "Roboto" }}
             />
           </Card>
         </Col>
@@ -326,7 +361,7 @@ export default function Home() {
           <Card>
             <ReactECharts
               option={columnChartOption}
-              style={{ height: "400px" }}
+              style={{ height: "400px", fontFamily: "inherit" }}
             />
           </Card>
         </Col>

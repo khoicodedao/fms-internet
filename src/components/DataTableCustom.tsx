@@ -11,12 +11,12 @@ import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import SearchBar from "@/components/SearchBar";
 import { useTranslation } from "react-i18next";
+
 interface DataTableProps {
   title?: string;
   apiUrl: string;
   columns: ColDef[];
   dataFieldName: string;
-  defaultData?: any;
 }
 
 export default function DataTable({
@@ -24,7 +24,6 @@ export default function DataTable({
   title,
   columns,
   dataFieldName,
-  defaultData,
 }: DataTableProps) {
   const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
@@ -38,15 +37,30 @@ export default function DataTable({
   useEffect(() => {
     mutation.mutate(
       {
-        start_date: startDate.format("YYYY-MM-DD HH:mm:ss"),
-        end_date: endDate.format("YYYY-MM-DD HH:mm:ss"),
+        start_date: startDate,
+        end_date: endDate,
+        skip: 0,
+        limit: 50,
+        object: "File",
+        filter: "",
       },
       {
         onSuccess: (response: any) => {
-          setData(response.data.map((item: any) => item[dataFieldName]));
+          console.log("API response:", response);
+          if (response && response.data && response.data[dataFieldName]) {
+            const dataRes = response.data[dataFieldName].map(
+              (item: any) => item
+            );
+            console.log("Mapped data:", dataRes);
+            setData(dataRes);
+          } else {
+            console.error("Unexpected API response format:", response);
+            setData([]);
+          }
         },
-        onError: () => {
-          setData(defaultData);
+        onError: (error: any) => {
+          console.error("API call failed:", error);
+          setData([]);
         },
       }
     );
@@ -89,7 +103,7 @@ export default function DataTable({
           >
             {t("export_csv")}
           </button>
-          <SearchBar></SearchBar>
+          <SearchBar />
         </div>
 
         <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>

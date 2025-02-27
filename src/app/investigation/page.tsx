@@ -71,7 +71,7 @@ export default function Investigation() {
   const data: QueryData[] = [
     {
       id: "1",
-      title: "Cerber.exe",
+      title: "Adobe.exe",
       description: "Detect unusual process activities",
       createdAt: "2024-01-15",
       details: "Detailed monitoring information",

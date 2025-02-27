@@ -1,8 +1,8 @@
 import { DatePicker, Space } from "antd";
 import { useDateContext } from "@/common/date-context";
-import dayjs from "dayjs";
+// import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
-import { RangePickerProps } from "antd/es/date-picker";
+// import { RangePickerProps } from "antd/es/date-picker";
 
 const { RangePicker } = DatePicker;
 
@@ -19,9 +19,9 @@ const DatetimePicker = () => {
   };
 
   // Disable dates after today
-  const disabledDate: RangePickerProps["disabledDate"] = (current) => {
-    return current && current > dayjs().endOf("day");
-  };
+  // const disabledDate: RangePickerProps["disabledDate"] = (current) => {
+  //   return current && current > dayjs().endOf("day");
+  // };
 
   return (
     <Space direction="vertical" size={12}>
@@ -29,7 +29,7 @@ const DatetimePicker = () => {
         showTime
         format="YYYY-MM-DD HH:mm:ss"
         onChange={handleRangeChange}
-        disabledDate={disabledDate}
+        // disabledDate={disabledDate}
         value={[startDate, endDate]}
       />
     </Space>

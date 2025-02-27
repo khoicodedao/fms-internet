@@ -50,7 +50,7 @@ export default function MalOpsManagementDetail() {
       <ObjectDetailHeader
         type={"Ransomware"}
         icon={getFileIcon("file")}
-        title="cerber.exe"
+        title="Adobe.exe"
         description="Ransomware hash"
       />
       <section id="diagram">

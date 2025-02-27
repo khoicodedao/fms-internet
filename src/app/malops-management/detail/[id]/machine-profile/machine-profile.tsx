@@ -2,73 +2,72 @@
 import React from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
 import {
-  ApartmentOutlined,
+  // ApartmentOutlined,
   DesktopOutlined,
-  SettingOutlined,
-  UserOutlined,
+  // SettingOutlined,
+  // UserOutlined,
 } from "@ant-design/icons";
 import "reactflow/dist/style.css";
-const { Title } = Typography;
 import DetailDirectory from "./active-directory";
 
-import dynamic from "next/dynamic";
+// import dynamic from "next/dynamic";
 
-const Flow = dynamic(() => import("../../../../../components/Flow"), {
-  ssr: false,
-});
+// const Flow = dynamic(() => import("../../../../../components/Flow"), {
+//   ssr: false,
+// });
 
 function MachineProfile() {
-  const sampleNodes: any[] = [
-    {
-      //ts-ignore
-      id: "computer4",
-      label: "Computer",
-      icon: (
-        <DesktopOutlined
-          color="#007bff"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "setting4",
-      label: "Setting",
-      icon: (
-        <SettingOutlined
-          color="#ffc107"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "user4",
-      label: "User",
-      icon: (
-        <UserOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "cloud4",
-      label: "Cloud",
-      icon: (
-        <ApartmentOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-  ];
+  // const sampleNodes: any[] = [
+  //   {
+  //     //ts-ignore
+  //     id: "computer4",
+  //     label: "Computer",
+  //     icon: (
+  //       <DesktopOutlined
+  //         color="#007bff"
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: "setting4",
+  //     label: "Setting",
+  //     icon: (
+  //       <SettingOutlined
+  //         color="#ffc107"
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: "user4",
+  //     label: "User",
+  //     icon: (
+  //       <UserOutlined
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     id: "cloud4",
+  //     label: "Cloud",
+  //     icon: (
+  //       <ApartmentOutlined
+  //         onPointerEnterCapture={undefined}
+  //         onPointerLeaveCapture={undefined}
+  //       />
+  //     ),
+  //   },
+  // ];
 
-  const sampleConnections: any[] = [
-    { source: "computer4", target: "setting4" },
-    { source: "computer4", target: "user4" },
-    { source: "setting4", target: "cloud4" },
-  ];
+  // const sampleConnections: any[] = [
+  //   { source: "computer4", target: "setting4" },
+  //   { source: "computer4", target: "user4" },
+  //   { source: "setting4", target: "cloud4" },
+  // ];
   const columns = [
     {
       title: "Machine Name",
@@ -123,14 +122,14 @@ function MachineProfile() {
           <Card style={{ height: 500 }} className="shadow pb-8">
             <div className="flex items-center space-x-2 mb-4">
               <DesktopOutlined
-                style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
+                style={{ fontSize: "24px", color: "#1890ff" }}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               />
               <div>
-                <Title level={5} style={{ margin: 0 }}>
+                <Typography.Title level={5} style={{ margin: 0 }}>
                   Machine Information
-                </Title>
+                </Typography.Title>
               </div>
             </div>
             <Table
@@ -144,13 +143,10 @@ function MachineProfile() {
         </Col>
 
         <Col span={16}>
-          <Col span={16}>
-            <Flow nodes={sampleNodes} connections={sampleConnections} />
-          </Col>
-          <Row gutter={16}>{/* <Detail /> */}</Row>
-          <Row gutter={16}>
+          <div className="flex flex-col space-y-44">
+            {/* <Flow nodes={sampleNodes} connections={sampleConnections} /> */}
             <DetailDirectory />
-          </Row>
+          </div>
         </Col>
       </Row>
     </div>

@@ -2,99 +2,53 @@
 import React from "react";
 import { Card, Table, Row, Col, Typography } from "antd";
 import {
-  ApartmentOutlined,
-  DesktopOutlined,
-  SettingOutlined,
-  UserOutlined,
-  WifiOutlined,
+  WifiOutlined, // Router Icon
 } from "@ant-design/icons";
-import "reactflow/dist/style.css";
+import "vis-network/styles/vis-network.css"; // CSS cho vis-network
+import NetworkGraph from "./network";
 const { Title } = Typography;
 import Detail from "./detail";
-import dynamic from "next/dynamic";
-
-const Flow = dynamic(() => import("../../../../../components/Flow"), {
-  ssr: false,
-});
-
 function Communication() {
-  const sampleNodes: any[] = [
-    {
-      //ts-ignore
-      id: "computer3",
-      label: "Computer",
-      icon: (
-        <DesktopOutlined
-          color="#007bff"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "setting3",
-      label: "Setting",
-      icon: (
-        <SettingOutlined
-          color="#ffc107"
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "user3",
-      label: "User",
-      icon: (
-        <UserOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-    {
-      id: "cloud3",
-      label: "Cloud",
-      icon: (
-        <ApartmentOutlined
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-      ),
-    },
-  ];
-
   const sampleConnections: any[] = [
-    { source: "computer3", target: "setting3" },
-    { source: "computer3", target: "user3" },
-    { source: "setting3", target: "cloud3" },
+    {
+      source: "DESKTOP-I9T8DIF",
+      target: "DESKTOP-AS",
+      ip: "192.168.1.1",
+      port: "8080",
+      mac: "00:1A:2B:3C:4D:5E",
+    },
+    {
+      source: "My_PC",
+      target: "DESKTOP-AZ",
+      ip: "192.168.1.2",
+      port: "8081",
+      mac: "00:1A:2B:3C:4D:5F",
+    },
+    {
+      source: "My_PC",
+      target: "DESKTOP-AZ",
+      ip: "192.168.1.3",
+      port: "8082",
+      mac: "00:1A:2B:3C:4D:60",
+    },
   ];
 
   const columns = [
-    {
-      title: "IP",
-      dataIndex: "ip",
-      key: "ip",
-    },
-    {
-      title: "Port",
-      dataIndex: "port",
-      key: "port",
-    },
+    { title: "MAC Address", dataIndex: "mac", key: "mac" },
+    { title: "Source", dataIndex: "source", key: "source" },
+    { title: "Target", dataIndex: "target", key: "target" },
+    { title: "IP", dataIndex: "ip", key: "ip" },
+    { title: "Port", dataIndex: "port", key: "port" },
   ];
 
-  const data = [
-    {
-      key: "1",
-      ip: "192.168.1.1",
-      port: "8080",
-    },
-    {
-      key: "2",
-      ip: "10.0.0.1",
-      port: "443",
-    },
-  ];
+  const data = sampleConnections.map((connection, index) => ({
+    key: index.toString(),
+    source: connection.source,
+    target: connection.target,
+    ip: connection.ip,
+    port: connection.port,
+    mac: connection.mac,
+  }));
 
   return (
     <div className="top-0 z-10 p-4 bg-white">
@@ -107,28 +61,19 @@ function Communication() {
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               />
-              <div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Communication Profile
-                </Title>
-              </div>
+              <Title level={5} style={{ margin: 0 }}>
+                Communication Profile
+              </Title>
             </div>
-            <Table
-              columns={columns}
-              dataSource={data}
-              title={() => "Malicious Connections"}
-              pagination={false}
-            />
+            <Table columns={columns} dataSource={data} pagination={false} />
           </Card>
         </Col>
 
         <Col span={16}>
-          <Col span={16}>
-            <Flow nodes={sampleNodes} connections={sampleConnections} />
-          </Col>
-          <Row gutter={16}>
-            <Detail />
-          </Row>
+          <Card style={{ height: 500, overflow: "hidden" }}>
+            <NetworkGraph />
+          </Card>
+          <Detail></Detail>
         </Col>
       </Row>
     </div>
