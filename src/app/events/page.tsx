@@ -35,6 +35,7 @@ export default function Events() {
   return (
     <DataTable
       title={t("eventManagement")}
+      body={{ object: "Registry" }}
       dataFieldName="events"
       apiUrl={API_URL.EVENT_PAGE.DEFAULT}
       columns={columns}

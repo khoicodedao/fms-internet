@@ -48,10 +48,10 @@ export default function MalOpsManagementDetail() {
   return (
     <div className="pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       <ObjectDetailHeader
-        type={"Ransomware"}
+        type={"Malware"}
         icon={getFileIcon("file")}
         title="Adobe.exe"
-        description="Ransomware hash"
+        description="Malware detected on your computer"
       />
       <section id="diagram">
         <Description

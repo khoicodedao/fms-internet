@@ -1,106 +1,184 @@
-/* eslint-disable no-console */
+/* eslint-disable */
+/* 
+    +----------------------+
+    |  WebSocket Server    |
+    +----------------------+
+               |
+               | (1) Client kết nối
+               v
+    +----------------------+
+    |   Nhận kết nối mới   |
+    +----------------------+
+               |
+               | (2) Gửi xác nhận "you connected"
+               v
+    +----------------------+
+    | Chờ nhận tin nhắn WS |
+    +----------------------+
+               |
+               | (3) Client gửi tin nhắn (message event)
+               v
+    +----------------------+
+    |   Phân loại message  |
+    +----------------------+
+       |       |       |
+       |       |       |
+       |       |       |-------------------+
+       |       |                           |
+       v       v                           v
+ +----------------+             +----------------+
+ |  new_user     |             | request/response|
+ +----------------+             +----------------+
+       |                              |
+       | (4) Lưu user vào users{}     | (5) Xác thực JWT
+       |                              | Nếu lỗi -> đóng WS
+       |                              v
+       v                  +-----------------------+
+ +----------------+       | Gửi tin nhắn tới user |
+ | Broadcast user|       +-----------------------+
+ +----------------+
+       |
+       v
+    (6) Chờ tin nhắn tiếp theo hoặc ngắt kết nối
+
+
+Gửi tin nhắn JSON để đăng ký user mới
+{
+  "type": "new_user",
+  "nickname": "user123"
+}
+
+Gửi tin nhắn đến user khác
+
+{
+  "type": "request",
+  "token": "YOUR_JWT_TOKEN",
+  "to_user": "user456",
+  "message": "Hello!"
+}
+Gửi phản hồi lại
+{
+  "type": "response",
+  "token": "YOUR_JWT_TOKEN",
+  "from_user": "user456",
+  "to_user": "user123",
+  "message": "Hi, user123!"
+}
+*/
+
 const fs = require("fs");
 const https = require("https");
-const WebSocket = require("ws");
-const path = require("path");
+const { WebSocketServer, WebSocket } = require("ws");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-// Load SSL certificate and key
-const server = https.createServer(
-  {
-    cert: fs.readFileSync("server.cert"),
-    key: fs.readFileSync("server.key"),
-  },
-  (req, res) => {
-    // Serve the HTML file
-    if (req.method === "GET" && req.url === "/") {
-      fs.readFile(path.join(__dirname, "index.html"), (err, data) => {
-        if (err) {
-          res.writeHead(500);
-          res.end("Error loading index.html");
-        } else {
-          res.writeHead(200, { "Content-Type": "text/html" });
-          res.end(data);
-        }
-      });
-    } else {
-      res.writeHead(404);
-      res.end("Not Found");
-    }
-  }
-);
+const secretKey = "TT5P25fms@2022";
 
-const wss = new WebSocket.Server({ server });
-
-const clients = new Map(); // Map to store clients by MAC address
-
-const broadcastComputers = () => {
-  const computers = Array.from(clients.values()).map((client) => ({
-    mac: client.mac,
-    name: client.name,
-    online: client.ws.readyState === WebSocket.OPEN,
-  }));
-
-  wss.clients.forEach((client) => {
-    console.log("client", client.mac);
-    if (client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify({ type: "update", computers }));
-    }
-  });
+// Đọc chứng chỉ SSL từ file `server.cert` và `server.key`
+const options = {
+  cert: fs.readFileSync("server.cert"),
+  key: fs.readFileSync("server.key"),
 };
 
+// Tạo HTTPS Server sử dụng chứng chỉ SSL
+const server = https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end("WebSocket Secure Server is running!");
+});
+
+// Khởi tạo WebSocket Server trên HTTPS
+const wss = new WebSocketServer({ server });
+const clients = {};
+
+console.log("WebSocket server đang chạy trên HTTPS...");
+
 wss.on("connection", (ws) => {
+  let nickname = null;
+  console.log("Client mới kết nối");
+
   ws.on("message", (message) => {
-    console.log(`Received message: ${message}`);
     try {
       const data = JSON.parse(message);
+      console.log("Nhận tin nhắn:", data);
 
-      if (data.type === "register") {
-        clients.set(data.mac, { ws, mac: data.mac, name: data.name });
-        ws.mac = data.mac;
-        ws.name = data.name;
-        console.log(`Computer ${data.mac} (${data.name}) connected`);
-        broadcastComputers();
-      } else if (data.type === "command") {
-        const targetClient = clients.get(data.mac);
-        if (targetClient && targetClient.ws.readyState === WebSocket.OPEN) {
-          console.log(`Sending command to ${data.mac}: ${data.command}`);
-          wss.clients.forEach((client) => {
-            if (
-              client.readyState === WebSocket.OPEN &&
-              client.mac === data.mac
-            ) {
-              client.send(
-                JSON.stringify({ type: "command", command: data.command })
+      if (data.type === "new_user") {
+        nickname = data.nickname;
+        clients[nickname] = ws;
+        console.log(`Người dùng ${nickname} đã kết nối.`);
+
+        broadcastClients();
+      }
+
+      if (data.type === "request" || data.type === "response") {
+        let token = data.token;
+        jwt.verify(token, secretKey, (err, decoded) => {
+          if (err) {
+            console.log("Lỗi xác thực token:", err.message);
+            ws.send(
+              JSON.stringify({ type: "error", message: "Token không hợp lệ" })
+            );
+            ws.close();
+          } else {
+            let from_user = decoded.user_name;
+            let to_user = data.to_user;
+
+            if (clients[to_user]) {
+              clients[to_user].send(JSON.stringify(data));
+              console.log(`Gửi tin nhắn từ ${from_user} đến ${to_user}`);
+            } else {
+              ws.send(
+                JSON.stringify({
+                  type: "error",
+                  message: "Người nhận không online",
+                })
               );
             }
-          });
-        } else {
-          console.log(`Client ${data.mac} is not available or disconnected.`);
-        }
-      } else if (data.type === "response") {
-        console.log(`Response from ${data.mac}: ${data.result}`);
-      } else if (data.type === "request_computers") {
-        const computers = Array.from(clients.values()).map((client) => ({
-          mac: client.mac,
-          name: client.name,
-          online: client.ws.readyState === WebSocket.OPEN,
-        }));
-        ws.send(JSON.stringify({ type: "update", computers }));
+          }
+        });
+      }
+
+      if (data.type === "get_clients") {
+        sendClientList(ws);
       }
     } catch (error) {
-      console.error("Error parsing message:", error);
+      console.error("Lỗi xử lý tin nhắn:", error);
     }
   });
 
   ws.on("close", () => {
-    if (ws.mac) {
-      clients.delete(ws.mac);
-      console.log(`Computer ${ws.mac} disconnected`);
-      broadcastComputers();
+    if (nickname) {
+      console.log(`Người dùng ${nickname} đã ngắt kết nối.`);
+      delete clients[nickname];
+      broadcastClients();
     }
   });
 });
 
-server.listen(8080, () => {
-  console.log("WebSocket Secure server is running on wss://localhost:8080");
+// Lắng nghe HTTPS trên cổng 8443
+server.listen(8443, () => {
+  console.log("Server HTTPS đang chạy trên cổng 8443...");
 });
+
+// Broadcast tin nhắn đến tất cả client trừ người gửi
+function broadcastClients(data, sender) {
+  Object.values(clients).forEach((client) => {
+    if (client !== sender && client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(data));
+    }
+  });
+
+  let clientList = Object.keys(clients);
+  let message = JSON.stringify({ type: "clients_list", clients: clientList });
+
+  Object.values(clients).forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(message);
+    }
+  });
+
+  console.log("Danh sách clients đã được cập nhật:", clientList);
+}
+function sendClientList(ws) {
+  let clientList = Object.keys(clients);
+  ws.send(JSON.stringify({ type: "clients_list", clients: clientList }));
+}

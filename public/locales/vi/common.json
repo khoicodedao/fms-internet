@@ -44,7 +44,7 @@
   "version": "Phiên bản",
   "lastUpdate": "Cập nhật lần cuối",
   "lastSeen": "Thời gian online cuối",
-  "firstSeen": "Thời gian online đầu",
+  "ndrStatus": "Trạng thái NDR",
   "os": "Hệ điều hành",
   "osVersion": "Phiên bản hệ điều hành",
   "internalIp": "IP nội bộ",

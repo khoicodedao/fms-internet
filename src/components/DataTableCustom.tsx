@@ -17,6 +17,7 @@ interface DataTableProps {
   apiUrl: string;
   columns: ColDef[];
   dataFieldName: string;
+  body?: any;
 }
 
 export default function DataTable({
@@ -24,6 +25,7 @@ export default function DataTable({
   title,
   columns,
   dataFieldName,
+  body,
 }: DataTableProps) {
   const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
@@ -33,7 +35,7 @@ export default function DataTable({
   const gridRef = useRef(null);
 
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
-
+  const bodyData = body || {};
   useEffect(() => {
     mutation.mutate(
       {
@@ -41,8 +43,7 @@ export default function DataTable({
         end_date: endDate,
         skip: 0,
         limit: 50,
-        object: "File",
-        filter: "",
+        ...bodyData,
       },
       {
         onSuccess: (response: any) => {

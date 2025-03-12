@@ -120,13 +120,13 @@ function Description({
 
         {/* Block 2 */}
         <Col span={16}>
-          <Row gutter={16}>
-            <Col span={18}>
+          <Row content="" gutter={16}>
+            {/* <Col span={18}>
               <Flow nodes={sampleNodes} connections={sampleConnections} />
-            </Col>
-            <Col span={6}>
-              <TimeLine />
-            </Col>
+            </Col> */}
+            {/* <Col span={6}> */}
+            <TimeLine />
+            {/* </Col> */}
           </Row>
           <Row gutter={16}>
             <AffectedFile />

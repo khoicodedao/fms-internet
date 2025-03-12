@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 import { Input, List, Avatar, Badge, Button, message } from "antd";
 import { DesktopOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie";
 
 const commands: { [key: string]: string } = {
   help: "Available commands: help, clear, exit, list, show, start, stop, restart, ipconfig, dir, copy, del, move, mkdir, rmdir, ping, tasklist, taskkill, chkdsk, cls, color, date, echo, find, hostname, netstat, path, pause, shutdown, systeminfo, time, tree, type, ver, wmic",
@@ -41,13 +42,8 @@ const commands: { [key: string]: string } = {
   wmic: "Windows Management Instrumentation Command-line...",
 };
 
-interface Computer {
-  mac: string;
-  name: string;
-  online: boolean;
-}
-
 const CLIPage = () => {
+  const token = Cookies.get("auth_token");
   const [messageApi, contextHolder] = message.useMessage();
   const success = (text: string) => {
     messageApi.open({
@@ -76,35 +72,42 @@ const CLIPage = () => {
     </TerminalOutput>,
   ]);
   const [currentInput, setCurrentInput] = useState("");
-  const [matchingCommands, setMatchingCommands] = useState<string[]>([]);
   const [selectedMac, setSelectedMac] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [filteredComputers, setFilteredComputers] = useState<Computer[]>([]);
+  const [filteredComputers, setFilteredComputers] = useState<any[]>([]);
 
   const connectToWebSocket = () => {
-    const ws = new WebSocket("wss://localhost:8080");
+    const ws = new WebSocket("wss://localhost:8443");
     setSocket(ws);
 
     ws.onopen = () => {
       success("Connected to WebSocket server");
       // Request the list of connected computers
-      ws.send(JSON.stringify({ type: "request_computers" }));
+      ws.send(
+        JSON.stringify({
+          type: "new_user",
+          nickname: "webclient",
+        })
+      );
     };
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.command) {
-        setTerminalLineData((prev) => [
-          ...prev,
-          <TerminalOutput key={`output-${data.command}`}>
-            <span style={{ color: "#00ff00" }}>{data.command}</span>
-          </TerminalOutput>,
-        ]);
-      } else if (data.type === "update") {
-        // Update the list of computers dynamically
-        const updatedComputers = data.computers;
-        setFilteredComputers(updatedComputers);
+      console.log("data", data);
+      if (data) {
+        if (data.type === "response") {
+          setTerminalLineData((prev) => [
+            ...prev,
+            <TerminalOutput key={`output-${data.message}`}>
+              <span style={{ color: "#00ff00" }}>{data.message}</span>
+            </TerminalOutput>,
+          ]);
+        }
+        if (data.type === "clients_list") {
+          console.log("data.clients", data.clients);
+          setFilteredComputers(data.clients);
+        }
       }
     };
 
@@ -118,32 +121,13 @@ const CLIPage = () => {
     };
   };
 
-  useEffect(() => {
-    const matchCommands = () => {
-      const matches = Object.keys(commands).filter((cmd) =>
-        cmd.startsWith(currentInput)
-      );
-      setMatchingCommands(matches);
-    };
-
-    matchCommands();
-  }, [currentInput]);
-
-  const handleComputerClick = (computer: Computer) => {
-    setSelectedMac(computer.mac);
+  const handleComputerClick = (computer: any) => {
+    setSelectedMac(computer);
     setTerminalLineData([
       <TerminalOutput key="welcome">
-        <span className="">
-          {`Welcome to ${computer.name} (${computer.mac})`}{" "}
-        </span>
+        <span className="">{`Welcome to ${computer.name} (${computer})`} </span>
       </TerminalOutput>,
     ]);
-
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ type: "register", mac: computer.mac }));
-    } else {
-      error("WebSocket is not open");
-    }
   };
 
   const handleCommandInput = (terminalInput: string) => {
@@ -153,17 +137,15 @@ const CLIPage = () => {
       setTerminalLineData([
         ...terminalLineData,
         <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
-        <TerminalOutput key={`output-${terminalInput}`}>
-          <span style={{ color: "#00ff00" }}>{commands[terminalInput]}</span>
-        </TerminalOutput>,
       ]);
 
-      if (selectedMac && socket && socket.readyState === WebSocket.OPEN) {
+      if (socket) {
         socket.send(
           JSON.stringify({
-            type: "command",
-            mac: selectedMac,
-            command: terminalInput,
+            type: "request",
+            token: token,
+            to_user: selectedMac,
+            message: terminalInput,
           })
         );
       } else {
@@ -173,9 +155,6 @@ const CLIPage = () => {
       setTerminalLineData([
         ...terminalLineData,
         <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
-        <TerminalOutput key="not-found">
-          <span style={{ color: "red" }}> Command not found</span>
-        </TerminalOutput>,
       ]);
     }
   };
@@ -186,7 +165,7 @@ const CLIPage = () => {
       <div
         style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
       >
-        <Button type="link" href="https://localhost:8080" target="_blank">
+        <Button type="link" href="https://localhost:8443" target="_blank">
           Open WebSocket
         </Button>
         <Button type="primary" onClick={connectToWebSocket}>
@@ -211,7 +190,8 @@ const CLIPage = () => {
                 avatar={
                   <Avatar
                     style={{
-                      backgroundColor: computer.online ? "green" : "#bb161c",
+                      backgroundColor:
+                        selectedMac == computer ? "green" : "gray",
                     }}
                     icon={
                       <DesktopOutlined
@@ -221,13 +201,9 @@ const CLIPage = () => {
                     }
                   />
                 }
-                title={computer.name}
-                description={computer.mac}
+                title={computer}
               />
-              <Badge
-                status={computer.online ? "success" : "error"}
-                style={{ marginLeft: "auto" }}
-              />
+              <Badge status={"success"} style={{ marginLeft: "auto" }} />
             </List.Item>
           )}
         />
@@ -241,13 +217,6 @@ const CLIPage = () => {
           startingInputValue=""
         >
           {terminalLineData}
-          {currentInput && matchingCommands.length > 0 && (
-            <TerminalOutput key="suggestions">
-              <span style={{ color: "#00ff00" }}>
-                {matchingCommands.join(", ")}
-              </span>
-            </TerminalOutput>
-          )}
         </Terminal>
       </div>
     </div>

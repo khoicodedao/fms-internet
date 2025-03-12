@@ -65,7 +65,9 @@ function Communication() {
                 Communication Profile
               </Title>
             </div>
-            <Table columns={columns} dataSource={data} pagination={false} />
+            <div style={{ overflowX: "auto" }}>
+              <Table columns={columns} dataSource={data} pagination={false} />
+            </div>
           </Card>
         </Col>
 

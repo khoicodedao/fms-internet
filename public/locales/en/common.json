@@ -44,7 +44,7 @@
   "version": "Version",
   "lastUpdate": "Last Update",
   "lastSeen": "Last Seen",
-  "firstSeen": "First Seen",
+  "ndrStatus": "NDR Status",
   "os": "OS",
   "osVersion": "OS Version",
   "internalIp": "Internal IP",
@@ -65,7 +65,7 @@
   "alertManagement": "Alert Management",
   "description_detail": {
     "title": "Description",
-    "shortDescription": "Short description of the root cause.",
+    "shortDescription": "Mustang MalOps",
     "rootCauseInfo": "Root Cause Info",
     "scope": "Scope",
     "communication": "Communication"
