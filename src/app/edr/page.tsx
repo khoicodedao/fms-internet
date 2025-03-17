@@ -46,7 +46,7 @@ export default function Edr() {
     <div className="flex flex-col gap-1">
       <DataTable
         title={t("edrManagement")}
-        dataFieldName="_source"
+        dataFieldName="edrs"
         apiUrl={API_URL.EDR_PAGE.DEFAULT}
         columns={columns}
       />

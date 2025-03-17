@@ -32,28 +32,30 @@ export default function DataTable({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
   const [data, setData] = useState([]);
-  const gridRef = useRef(null);
-
+  const gridRef = useRef<any>(null);
+  const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
   const bodyData = body || {};
-  useEffect(() => {
+
+  const fetchData = () => {
     mutation.mutate(
       {
         start_date: startDate,
         end_date: endDate,
-        skip: 0,
-        limit: 50,
+        skip: pagination.skip,
+        limit: pagination.limit,
         ...bodyData,
       },
       {
         onSuccess: (response: any) => {
           console.log("API response:", response);
-          if (response && response.data && response.data[dataFieldName]) {
-            const dataRes = response.data[dataFieldName].map(
-              (item: any) => item
-            );
-            console.log("Mapped data:", dataRes);
-            setData(dataRes);
+          if (response?.data?.[dataFieldName]) {
+            // Set the row count if available
+            if (gridRef.current?.api?.setRowCount) {
+              gridRef.current.api.setRowCount(response.data.countTotal || 0);
+            }
+            // Update the data state to table with the fetched data
+            setData(response.data[dataFieldName]);
           } else {
             console.error("Unexpected API response format:", response);
             setData([]);
@@ -65,7 +67,29 @@ export default function DataTable({
         },
       }
     );
-  }, [startDate, endDate]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [startDate, endDate, pagination]);
+
+  const onPaginationChanged = useCallback(() => {
+    if (gridRef.current) {
+      const api = gridRef.current.api;
+      const pageSize = api.paginationGetPageSize();
+      const currentPage = api.paginationGetCurrentPage();
+
+      setPagination((prev) => {
+        const newPagination = {
+          skip: currentPage * pageSize,
+          limit: pageSize,
+        };
+        return JSON.stringify(prev) === JSON.stringify(newPagination)
+          ? prev
+          : newPagination;
+      });
+    }
+  }, []);
 
   const onRowDoubleClicked = (event: any) => {
     setSelectedRow(event.data);
@@ -73,9 +97,7 @@ export default function DataTable({
   };
 
   const onExportClick = useCallback(() => {
-    if (gridRef.current) {
-      (gridRef.current as any).api.exportDataAsCsv();
-    }
+    gridRef.current?.api.exportDataAsCsv();
   }, []);
 
   return (
@@ -113,12 +135,14 @@ export default function DataTable({
             rowData={data}
             columnDefs={columns}
             pagination={true}
-            paginationPageSize={5}
+            paginationPageSize={pagination.limit}
+            paginationPageSizeSelector={[10, 25, 50, 100]} // Cho phép chọn số dòng mỗi trang
             defaultColDef={{
               sortable: true,
               resizable: true,
             }}
             onRowDoubleClicked={onRowDoubleClicked}
+            onPaginationChanged={onPaginationChanged}
           />
         </div>
       </Card>
