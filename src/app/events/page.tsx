@@ -3,11 +3,14 @@ import React from "react";
 import type { ColDef } from "ag-grid-community";
 // import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
+import { Tabs } from "antd";
 import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+const { TabPane } = Tabs;
 import { useTranslation } from "next-i18next";
+
 export default function Events() {
   const { t } = useTranslation();
   type RowData = {
@@ -31,14 +34,54 @@ export default function Events() {
     { headerName: t("object"), field: "object" },
     { headerName: t("action"), field: "action" },
   ];
+  const columnFlow = [
+    { headerName: t("Src mac"), field: "src_mac" },
+    { headerName: t("Dest mac"), field: "fields.dest_mac" },
+    { headerName: t("Dest IP"), field: "fields.dest_ip" },
+    { headerName: t("Src IP"), field: "fields.src_ip" },
+    { headerName: t("eventTime"), field: "fields.timestamp" },
+    { headerName: t("object"), field: "object" },
+    { headerName: t("action"), field: "action" },
+  ];
 
   return (
-    <DataTable
-      title={t("eventManagement")}
-      body={{ object: "Registry" }}
-      dataFieldName="events"
-      apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-      columns={columns}
-    />
+    <Tabs type="card" defaultActiveKey="1">
+      <TabPane tab="Socket" key="1">
+        <DataTable
+          title=""
+          body={{ object: "socket" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </TabPane>
+      <TabPane tab="Registry" key="2">
+        <DataTable
+          title=""
+          body={{ object: "registry" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </TabPane>
+      <TabPane tab="File" key="3">
+        <DataTable
+          title=""
+          body={{ object: "file" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </TabPane>
+      <TabPane tab="Flow" key="4">
+        <DataTable
+          title=""
+          body={{ object: "flow" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columnFlow}
+        />
+      </TabPane>
+    </Tabs>
   );
 }

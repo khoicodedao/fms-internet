@@ -13,7 +13,7 @@ export default function Edr() {
   type RowData = {
     _id: string;
     machine_name: string;
-    version: string;
+    "version string": string;
     last_update: string; // Assuming date is in string format
     last_seen: string; // Assuming date is in string format
     first_seen: string; // Assuming date is in string format
@@ -28,18 +28,15 @@ export default function Edr() {
 
   const columns: ColDef<RowData>[] = [
     { headerName: t("id"), field: "_id", width: 100 },
+    { headerName: t("macAddress"), field: "mac_address" },
     { headerName: t("machineName"), field: "machine_name" },
-    { headerName: t("version"), field: "version" },
+    { headerName: t("version"), field: "version string" },
     { headerName: t("lastUpdate"), field: "last_update" },
     { headerName: t("lastSeen"), field: "last_seen" },
-    { headerName: t("firstSeen"), field: "first_seen" },
     { headerName: t("os"), field: "os" },
-    { headerName: t("osVersion"), field: "os_version" },
     { headerName: t("internalIp"), field: "internal_ip" },
-    { headerName: t("externalIp"), field: "external_ip" },
     { headerName: t("memoryUse"), field: "memory_use" },
     { headerName: t("cpuUse"), field: "cpu_use" },
-    { headerName: t("macAddress"), field: "mac_address" },
   ];
 
   return (

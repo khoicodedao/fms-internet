@@ -51,9 +51,7 @@ export default function DataTable({
           console.log("API response:", response);
           if (response?.data?.[dataFieldName]) {
             // Set the row count if available
-            if (gridRef.current?.api?.setRowCount) {
-              gridRef.current.api.setRowCount(response.data.countTotal || 0);
-            }
+
             // Update the data state to table with the fetched data
             setData(response.data[dataFieldName]);
           } else {
@@ -73,23 +71,23 @@ export default function DataTable({
     fetchData();
   }, [startDate, endDate, pagination]);
 
-  const onPaginationChanged = useCallback(() => {
-    if (gridRef.current) {
-      const api = gridRef.current.api;
-      const pageSize = api.paginationGetPageSize();
-      const currentPage = api.paginationGetCurrentPage();
+  const onPaginationChanged = () => {
+    if (!gridRef.current || !gridRef.current.api) return; // Kiểm tra API đã được khởi tạo
 
-      setPagination((prev) => {
-        const newPagination = {
-          skip: currentPage * pageSize,
-          limit: pageSize,
-        };
-        return JSON.stringify(prev) === JSON.stringify(newPagination)
-          ? prev
-          : newPagination;
-      });
-    }
-  }, []);
+    const api = gridRef.current.api;
+    const pageSize = api.paginationGetPageSize();
+    const currentPage = api.paginationGetCurrentPage();
+
+    setPagination((prev) => {
+      const newPagination = {
+        skip: currentPage * pageSize,
+        limit: pageSize,
+      };
+      return JSON.stringify(prev) === JSON.stringify(newPagination)
+        ? prev
+        : newPagination;
+    });
+  };
 
   const onRowDoubleClicked = (event: any) => {
     setSelectedRow(event.data);
@@ -137,10 +135,6 @@ export default function DataTable({
             pagination={true}
             paginationPageSize={pagination.limit}
             paginationPageSizeSelector={[10, 25, 50, 100]} // Cho phép chọn số dòng mỗi trang
-            defaultColDef={{
-              sortable: true,
-              resizable: true,
-            }}
             onRowDoubleClicked={onRowDoubleClicked}
             onPaginationChanged={onPaginationChanged}
           />
