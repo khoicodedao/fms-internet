@@ -1,6 +1,7 @@
 "use client";
 import { Button, Card, Row, Col, Typography, Progress } from "antd";
 import ReactECharts from "echarts-for-react";
+import { useRouter } from "next/navigation";
 import {
   ExportOutlined,
   SyncOutlined,
@@ -10,10 +11,34 @@ import {
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import { useTranslation } from "react-i18next";
+import jwt from "jsonwebtoken";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 const { Title } = Typography;
 
 export default function Home() {
+  console.log("test");
+  const router = useRouter();
+  useEffect(() => {
+    const authToken = Cookies.get("auth_token"); // Get the token from cookies
+    console.log(authToken);
+    if (!authToken) {
+      router.push("/login"); // Redirect if token is missing
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(authToken, "TT5P25fms@2022") as jwt.JwtPayload; // Replace with your secret key
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      if (decoded?.exp < currentTime) {
+        router.push("/login"); // Redirect if token is expired
+      }
+    } catch (error) {
+      router.push("/login"); // Redirect if token is invalid
+    }
+  }, []);
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
   console.log(startDate, endDate);
   const { t } = useTranslation();
