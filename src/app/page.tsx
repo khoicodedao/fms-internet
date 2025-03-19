@@ -18,7 +18,7 @@ import API_URL from "@/common/api-url";
 export default function Home() {
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
   const { mutation, contextHolder } = usePostApi(
-    API_URL.LOGIN_PAGE.DEFAULT,
+    API_URL.EVENT_PAGE.DEFAULT,
     false
   );
   useEffect(() => {
