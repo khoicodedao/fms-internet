@@ -45,7 +45,7 @@ export default function Events() {
   ];
 
   return (
-    <Tabs type="card" defaultActiveKey="1">
+    <Tabs tabPosition="left" type="card" defaultActiveKey="1">
       <TabPane tab="Socket" key="1">
         <DataTable
           title=""

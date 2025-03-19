@@ -1,7 +1,7 @@
+/* eslint-disable  */
 "use client";
 import { Button, Card, Row, Col, Typography, Progress } from "antd";
 import ReactECharts from "echarts-for-react";
-import { useRouter } from "next/navigation";
 import {
   ExportOutlined,
   SyncOutlined,
@@ -11,38 +11,30 @@ import {
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import { useTranslation } from "react-i18next";
-import jwt from "jsonwebtoken";
-import Cookies from "js-cookie";
 import { useEffect } from "react";
-
 const { Title } = Typography;
-
+import { usePostApi } from "@/common/usePostApi";
+import API_URL from "@/common/api-url";
 export default function Home() {
-  console.log("test");
-  const router = useRouter();
-  useEffect(() => {
-    const authToken = Cookies.get("auth_token"); // Get the token from cookies
-    console.log(authToken);
-    if (!authToken) {
-      router.push("/login"); // Redirect if token is missing
-      return;
-    }
-
-    try {
-      const decoded = jwt.verify(authToken, "TT5P25fms@2022") as jwt.JwtPayload; // Replace with your secret key
-      const currentTime = Math.floor(Date.now() / 1000);
-
-      if (decoded?.exp < currentTime) {
-        router.push("/login"); // Redirect if token is expired
-      }
-    } catch (error) {
-      router.push("/login"); // Redirect if token is invalid
-    }
-  }, []);
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
-  console.log(startDate, endDate);
+  const { mutation, contextHolder } = usePostApi(
+    API_URL.LOGIN_PAGE.DEFAULT,
+    false
+  );
+  useEffect(() => {
+    mutation.mutate(
+      {
+        user_name: "test2",
+        password: "Zxcvbnm!@#",
+      },
+      {
+        onSuccess: (response: any) => {
+          // Kiểm tra nếu API trả về thành công
+        },
+      }
+    );
+  }, []);
   const { t } = useTranslation();
-
   const statusPieOption = {
     title: {
       text: t("Active MalOps by Status"),
@@ -271,7 +263,7 @@ export default function Home() {
       </div>
 
       <Card style={{ height: "max-content" }} className="w-full">
-        <Row gutter={[32, 32]}>
+        <Row gutter={[16, 16]}>
           {[
             {
               title: t("Total Detections"),
@@ -297,54 +289,32 @@ export default function Home() {
               percent: 15.8,
               increase: true,
             },
-            {
-              title: t("MTTR"),
-              value: 892,
-              percent: -2.4,
-              increase: false,
-            },
-            {
-              title: t("Affected Users"),
-              value: 458,
-              percent: 6.7,
-              increase: true,
-            },
-            {
-              title: t("Service Issues"),
-              value: 23,
-              percent: -12.3,
-              increase: false,
-            },
-            {
-              title: t("Affected Hosts"),
-              value: 156,
-              percent: 4.2,
-              increase: true,
-            },
           ].map((item, index) => (
-            <Col key={index} span={3}>
+            <Col key={index} span={6}>
               <div className="text-center">
                 <Title level={5} style={{ marginBottom: "8px" }}>
                   {item.title}
                 </Title>
-                <div className="text-2xl font-bold mb-2">{item.value}</div>
-                <div
-                  className={`flex items-center justify-center gap-1 ${
-                    item.increase ? "text-green-500" : "text-red-500"
-                  }`}
-                >
-                  {item.increase ? (
-                    <ArrowUpOutlined
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    />
-                  ) : (
-                    <ArrowDownOutlined
-                      onPointerEnterCapture={undefined}
-                      onPointerLeaveCapture={undefined}
-                    />
-                  )}
-                  <span>{Math.abs(item.percent)}%</span>
+                <div className="flex justify-center">
+                  <div className="text-2xl font-bold mb-2">{item.value}</div>
+                  <div
+                    className={`flex  items-center items-center justify-center gap-1 ${
+                      item.increase ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {item.increase ? (
+                      <ArrowUpOutlined
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      />
+                    ) : (
+                      <ArrowDownOutlined
+                        onPointerEnterCapture={undefined}
+                        onPointerLeaveCapture={undefined}
+                      />
+                    )}
+                    <span>{Math.abs(item.percent)}%</span>
+                  </div>
                 </div>
               </div>
             </Col>

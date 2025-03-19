@@ -1,11 +1,10 @@
-"use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { usePostApi } from "@/common/usePostApi";
-import { Card, Drawer } from "antd";
+import { Card, Drawer, Pagination } from "antd";
 import ReactJson from "react-json-view";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
@@ -27,33 +26,38 @@ export default function DataTable({
   dataFieldName,
   body,
 }: DataTableProps) {
+  const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
+  const handleSearch = (query: string) => {
+    setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm
+    setSearchQuery(query.replaceAll('"', "'")); // Cập nhật state khi nhận giá trị từ component con
+  };
   const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]); // Dữ liệu hiển thị trong bảng
   const gridRef = useRef<any>(null);
-  const [pagination, setPagination] = useState({ skip: 0, limit: 10 });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
+  const [rowTotal, setRowTotal] = useState(0); // Tổng số row từ API
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
   const bodyData = body || {};
 
+  // Fetch data từ API
   const fetchData = () => {
     mutation.mutate(
       {
+        filter: searchQuery,
         start_date: startDate,
         end_date: endDate,
-        skip: pagination.skip,
-        limit: pagination.limit,
+        skip: (pagination.current - 1) * pagination.pageSize,
+        limit: pagination.pageSize,
         ...bodyData,
       },
       {
         onSuccess: (response: any) => {
-          console.log("API response:", response);
           if (response?.data?.[dataFieldName]) {
-            // Set the row count if available
-
-            // Update the data state to table with the fetched data
-            setData(response.data[dataFieldName]);
+            setRowTotal(response.data.countTotal); // Lưu tổng số row
+            setData(response.data[dataFieldName]); // Lưu dữ liệu bảng
           } else {
             console.error("Unexpected API response format:", response);
             setData([]);
@@ -69,31 +73,26 @@ export default function DataTable({
 
   useEffect(() => {
     fetchData();
-  }, [startDate, endDate, pagination]);
+  }, [
+    startDate,
+    endDate,
+    pagination.current,
+    pagination.pageSize,
+    searchQuery,
+  ]);
 
-  const onPaginationChanged = () => {
-    if (!gridRef.current || !gridRef.current.api) return; // Kiểm tra API đã được khởi tạo
-
-    const api = gridRef.current.api;
-    const pageSize = api.paginationGetPageSize();
-    const currentPage = api.paginationGetCurrentPage();
-
-    setPagination((prev) => {
-      const newPagination = {
-        skip: currentPage * pageSize,
-        limit: pageSize,
-      };
-      return JSON.stringify(prev) === JSON.stringify(newPagination)
-        ? prev
-        : newPagination;
-    });
+  // Sự kiện khi đổi trang
+  const onPaginationChange = (page: number, pageSize: number) => {
+    setPagination({ current: page, pageSize });
   };
 
+  // Sự kiện khi nhấn double-click vào row
   const onRowDoubleClicked = (event: any) => {
     setSelectedRow(event.data);
     setIsDrawerOpen(true);
   };
 
+  // Xuất CSV
   const onExportClick = useCallback(() => {
     gridRef.current?.api.exportDataAsCsv();
   }, []);
@@ -124,23 +123,34 @@ export default function DataTable({
           >
             {t("export_csv")}
           </button>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
         </div>
 
+        {/* Table */}
         <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
           <AgGridReact
             ref={gridRef}
             rowData={data}
             columnDefs={columns}
-            pagination={true}
-            paginationPageSize={pagination.limit}
-            paginationPageSizeSelector={[10, 25, 50, 100]} // Cho phép chọn số dòng mỗi trang
+            pagination={false} // Tắt phân trang mặc định của AgGrid
             onRowDoubleClicked={onRowDoubleClicked}
-            onPaginationChanged={onPaginationChanged}
+          />
+        </div>
+
+        {/* Phân trang Ant Design */}
+        <div style={{ marginTop: 20, textAlign: "right" }}>
+          <Pagination
+            current={pagination.current}
+            pageSize={pagination.pageSize}
+            total={rowTotal} // Tổng số row từ API
+            showSizeChanger
+            pageSizeOptions={[10, 25, 50, 100]}
+            onChange={onPaginationChange}
           />
         </div>
       </Card>
 
+      {/* Drawer hiển thị chi tiết dữ liệu */}
       <Drawer
         title="Data Details"
         placement="right"

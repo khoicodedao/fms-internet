@@ -1,10 +1,21 @@
 /* eslint-disable */
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Editor, { Monaco } from "@monaco-editor/react";
-
-const KQLSearchBox: React.FC = () => {
+import { SearchOutlined } from "@ant-design/icons";
+interface KQLSearchBoxProps {
+  onSearch?: (query: string) => void; // Optional prop để gửi dữ liệu lên component cha
+}
+//ts-ignore
+const KQLSearchBox: React.FC<KQLSearchBoxProps> = ({ onSearch }) => {
   // Cấu hình gợi ý & highlight cho Monaco Editor
+  const [query, setQuery] = useState(""); // State để lưu giá trị editor
+  const handleSearch = () => {
+    if (onSearch) {
+      onSearch(query); // Gửi dữ liệu lên component cha
+    }
+    console.log("Search query:", query); // Debug
+  };
   const handleEditorDidMount = (monaco: Monaco) => {
     monaco.languages.register({ id: "kql" });
 
@@ -30,42 +41,42 @@ const KQLSearchBox: React.FC = () => {
           {
             label: "status",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "status: ",
+            insertText: "status=",
           },
           {
             label: "cpu",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "cpu: ",
+            insertText: "cpu= ",
           },
           {
             label: "memory",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "memory: ",
+            insertText: "memory= ",
           },
           {
             label: "disk",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "disk: ",
+            insertText: "disk= ",
           },
           {
             label: "ip",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "ip: ",
+            insertText: "ip= ",
           },
           {
             label: "mac",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "mac: ",
+            insertText: "mac= ",
           }, // Bổ sung "mac"
           {
             label: "description",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "description: ",
+            insertText: "description= ",
           },
           {
             label: "hostname",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "hostname: ",
+            insertText: "hostname= ",
           },
           {
             label: "AND",
@@ -89,25 +100,38 @@ const KQLSearchBox: React.FC = () => {
   };
 
   return (
-    <Editor
-      height="30px"
-      width="90%"
-      defaultLanguage="kql"
-      theme="light"
-      className="border border-gray-300 rounded-md"
-      options={{
-        wordWrap: "off",
-        lineNumbers: "off",
-        minimap: { enabled: false },
-        scrollbar: { vertical: "hidden", horizontal: "hidden" },
-        scrollBeyondLastLine: false,
-        overviewRulerLanes: 0,
-        renderLineHighlight: "none",
-        folding: false,
-        automaticLayout: true,
-      }}
-      onMount={(_, monaco) => handleEditorDidMount(monaco)}
-    />
+    <div className="flex items-center border border-gray-300 rounded-md">
+      <Editor
+        height="30px"
+        width="calc(100vw - 300px)"
+        defaultLanguage="kql"
+        theme="light"
+        className="flex-grow"
+        options={{
+          wordWrap: "off",
+          lineNumbers: "off",
+          minimap: { enabled: false },
+          scrollbar: { vertical: "hidden", horizontal: "hidden" },
+          scrollBeyondLastLine: false,
+          overviewRulerLanes: 0,
+          renderLineHighlight: "none",
+          folding: false,
+          automaticLayout: true,
+        }}
+        onMount={(_, monaco) => handleEditorDidMount(monaco)}
+        onChange={(value) => setQuery(value || "")} // Cập nhật state khi editor thay đổi
+      />
+      <button
+        className=" py-3 bg-gray-100 hover:bg-gray-200 rounded-r-md"
+        onClick={handleSearch}
+      >
+        <SearchOutlined
+          className="px-4"
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      </button>
+    </div>
   );
 };
 

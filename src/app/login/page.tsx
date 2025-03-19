@@ -80,7 +80,7 @@ const LoginForm = () => {
               <Form.Item>
                 <div className="flex justify-between items-center">
                   <Button type="primary" htmlType="submit" disabled={isLoading}>
-                    Submit
+                    Login
                   </Button>
                   {isLoading && <Spin tip="Logging in..." />}
                 </div>
