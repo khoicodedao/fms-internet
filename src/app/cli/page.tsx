@@ -78,7 +78,7 @@ const CLIPage = () => {
   const [filteredComputers, setFilteredComputers] = useState<any[]>([]);
 
   const connectToWebSocket = () => {
-    const ws = new WebSocket("wss://localhost:8443");
+    const ws = new WebSocket("wss://10.32.116.195:8443");
     setSocket(ws);
 
     ws.onopen = () => {
@@ -165,7 +165,7 @@ const CLIPage = () => {
       <div
         style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
       >
-        <Button type="link" href="https://localhost:8443" target="_blank">
+        <Button type="link" href="https://10.32.116.195:8443" target="_blank">
           Open WebSocket
         </Button>
         <Button type="primary" onClick={connectToWebSocket}>

@@ -8,6 +8,8 @@ import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+import formatDateTime from "@/common/formatDate";
+import Status from "@/common/status";
 export default function Ndr() {
   const { t } = useTranslation();
   type RowData = {
@@ -24,16 +26,27 @@ export default function Ndr() {
   };
 
   const columns: ColDef<RowData>[] = [
-    { headerName: t("id"), field: "_id", width: 100 },
+    { headerName: t("macAddress"), field: "mac_address" },
     { headerName: t("machineName"), field: "ndr_name" },
     { headerName: t("version"), field: "version" },
-    { headerName: t("lastUpdate"), field: "last_updated" },
-    { headerName: t("lastSeen"), field: "last_seen" },
-    { headerName: t("ndrStatus"), field: "ndr_status" },
+    {
+      headerName: t("lastUpdate"),
+      field: "last_updated",
+      valueFormatter: formatDateTime,
+    },
+    {
+      headerName: t("lastSeen"),
+      field: "last_seen",
+      valueFormatter: formatDateTime,
+    },
+    {
+      headerName: t("ndrStatus"),
+      field: "ndr_status",
+      cellRenderer: (params: any) => <Status status={params.value} />,
+    },
     { headerName: t("internalIp"), field: "ip_local" },
     { headerName: t("externalIp"), field: "ip_public" },
     { headerName: t("storageElasticUse"), field: "elastic_storage_used" },
-    { headerName: t("macAddress"), field: "mac_address" },
   ];
 
   return (

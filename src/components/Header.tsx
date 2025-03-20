@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link"; // Import Link from Next.js
 import { Divider } from "antd";
 import {
   MenuOutlined,
@@ -14,8 +15,8 @@ import {
   CodeOutlined,
   ClockCircleOutlined,
   AlertOutlined,
-  DeploymentUnitOutlined, // Import for EDR
-  GlobalOutlined, // Import for NDR
+  DeploymentUnitOutlined,
+  GlobalOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -32,6 +33,7 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
   const generateBreadcrumbs = () => {
     const paths = pathname?.split("/").filter((path) => path);
     return [
@@ -41,6 +43,16 @@ export default function Header() {
         href: "/" + paths.slice(0, index + 1).join("/"),
       })) || []),
     ];
+  };
+
+  // Custom breadcrumb item renderer to use Next.js Link
+  const itemRender = (route: any, params: any, routes: any[]) => {
+    const last = routes.indexOf(route) === routes.length - 1;
+    return last ? (
+      <span>{route.title}</span>
+    ) : (
+      <Link href={route.href}>{route.title}</Link>
+    );
   };
 
   const userMenu = (
@@ -88,16 +100,18 @@ export default function Header() {
         }
         onClick={() => setDrawerOpen(true)}
       />
-      <Breadcrumb items={generateBreadcrumbs()} />
+      <Breadcrumb items={generateBreadcrumbs()} itemRender={itemRender} />
 
       <div className="flex-1 flex justify-center">
-        <Image
-          src={logo}
-          alt="FMS Logo"
-          width={120}
-          height={40}
-          className="object-contain"
-        />
+        <Link href={"/"}>
+          <Image
+            src={logo}
+            alt="FMS Logo"
+            width={120}
+            height={40}
+            className="object-contain"
+          />
+        </Link>
       </div>
       <div>
         <button

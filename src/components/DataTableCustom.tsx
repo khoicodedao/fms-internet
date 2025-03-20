@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { ColDef } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
@@ -41,7 +42,21 @@ export default function DataTable({
   const [rowTotal, setRowTotal] = useState(0); // Tổng số row từ API
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
   const bodyData = body || {};
-
+  const idColumn: ColDef = {
+    headerName: "#",
+    field: "autoId",
+    width: 70,
+    pinned: "left",
+    valueGetter: (params) => {
+      const rowIndex = params.node?.rowIndex;
+      if (rowIndex !== undefined) {
+        //@ts-ignore
+        return (pagination.current - 1) * pagination.pageSize + rowIndex + 1;
+      }
+      return null;
+    },
+  };
+  const columnDefs = [idColumn, ...columns];
   // Fetch data từ API
   const fetchData = () => {
     mutation.mutate(
@@ -131,7 +146,7 @@ export default function DataTable({
           <AgGridReact
             ref={gridRef}
             rowData={data}
-            columnDefs={columns}
+            columnDefs={columnDefs}
             pagination={false} // Tắt phân trang mặc định của AgGrid
             onRowDoubleClicked={onRowDoubleClicked}
           />

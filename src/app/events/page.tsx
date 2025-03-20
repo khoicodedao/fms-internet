@@ -10,7 +10,9 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 });
 const { TabPane } = Tabs;
 import { useTranslation } from "next-i18next";
-
+import AlertLevel from "@/common/alertLevel";
+import formatDateTime from "@/common/formatDate";
+import SocketStatus from "@/common/socketStatus";
 export default function Events() {
   const { t } = useTranslation();
   type RowData = {
@@ -29,17 +31,29 @@ export default function Events() {
     { headerName: t("ip"), field: "ip" },
     { headerName: t("computerName"), field: "computer_name" },
     { headerName: t("alertSource"), field: "alert_source" },
-    { headerName: t("alertLevelId"), field: "alert_level_id" },
+    {
+      headerName: t("alertLevelId"),
+      field: "alert_level_id",
+      cellRenderer: (params: any) => <AlertLevel level={params.value} />,
+    },
     { headerName: t("eventTime"), field: "event_time" },
     { headerName: t("object"), field: "object" },
-    { headerName: t("action"), field: "action" },
+    {
+      headerName: t("action"),
+      field: "action",
+      cellRenderer: (params: any) => <SocketStatus status={params.value} />,
+    },
   ];
   const columnFlow = [
     { headerName: t("Src mac"), field: "src_mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
     { headerName: t("Dest IP"), field: "fields.dest_ip" },
     { headerName: t("Src IP"), field: "fields.src_ip" },
-    { headerName: t("eventTime"), field: "fields.timestamp" },
+    {
+      headerName: t("eventTime"),
+      field: "fields.timestamp",
+      valueFormatter: formatDateTime,
+    },
     { headerName: t("object"), field: "object" },
     { headerName: t("action"), field: "action" },
   ];
