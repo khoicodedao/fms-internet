@@ -1,5 +1,5 @@
 const API_URL = {
-  HOME_PAGE: { DEFAULT: "/api/home-page" },
+  HOME_PAGE: { DEFAULT: "/api/dashboard/statis" },
   LOGIN_PAGE: { DEFAULT: "/api/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/events/paginate" },
   ALERT_PAGE: { DEFAULT: "/api/alerts/paginate" },

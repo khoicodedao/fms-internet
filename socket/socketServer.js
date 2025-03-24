@@ -53,6 +53,7 @@ Gửi tin nhắn đến user khác
 {
   "type": "request",
   "token": "YOUR_JWT_TOKEN",
+  "from_user": "user456",
   "to_user": "user456",
   "message": "Hello!"
 }

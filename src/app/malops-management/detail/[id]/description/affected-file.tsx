@@ -16,7 +16,7 @@ export default function AffectedFile() {
         start_date: "2025",
         end_date: "2026",
         skip: 0,
-        limit: 50,
+        limit: 10,
         object: "File",
       },
       {

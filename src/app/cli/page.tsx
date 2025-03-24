@@ -5,43 +5,7 @@ import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
 import { Input, List, Avatar, Badge, Button, message } from "antd";
 import { DesktopOutlined } from "@ant-design/icons";
 import Cookies from "js-cookie";
-
-const commands: { [key: string]: string } = {
-  help: "Available commands: help, clear, exit, list, show, start, stop, restart, ipconfig, dir, copy, del, move, mkdir, rmdir, ping, tasklist, taskkill, chkdsk, cls, color, date, echo, find, hostname, netstat, path, pause, shutdown, systeminfo, time, tree, type, ver, wmic",
-  list: "Listing items...",
-  show: "Showing item...",
-  start: "Starting service...",
-  stop: "Stopping service...",
-  restart: "Restarting service...",
-  ipconfig: "Displaying IP configuration...",
-  dir: "Displaying list of directories...",
-  copy: "Copying files...",
-  del: "Deleting files...",
-  move: "Moving files...",
-  mkdir: "Creating directory...",
-  rmdir: "Removing directory...",
-  ping: "Pinging network...",
-  tasklist: "Listing tasks...",
-  taskkill: "Killing task...",
-  chkdsk: "Checking disk...",
-  cls: "Clearing screen...",
-  color: "Changing console color...",
-  date: "Displaying or setting date...",
-  echo: "Displaying messages...",
-  find: "Finding text in a file...",
-  hostname: "Displaying hostname...",
-  netstat: "Displaying network statistics...",
-  path: "Displaying or setting path...",
-  pause: "Pausing the command prompt...",
-  shutdown: "Shutting down the computer...",
-  systeminfo: "Displaying system information...",
-  time: "Displaying or setting time...",
-  tree: "Displaying directory tree...",
-  type: "Displaying contents of a file...",
-  ver: "Displaying Windows version...",
-  wmic: "Windows Management Instrumentation Command-line...",
-};
-
+// const  = process.env.SOCKET_SERVER_URL;
 const CLIPage = () => {
   const token = Cookies.get("auth_token");
   const [messageApi, contextHolder] = message.useMessage();
@@ -77,6 +41,14 @@ const CLIPage = () => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [filteredComputers, setFilteredComputers] = useState<any[]>([]);
 
+  useEffect(() => {
+    connectToWebSocket();
+    return () => {
+      if (socket) {
+        socket.close();
+      }
+    };
+  }, []);
   const connectToWebSocket = () => {
     const ws = new WebSocket("wss://10.32.116.195:8443");
     setSocket(ws);
@@ -125,37 +97,30 @@ const CLIPage = () => {
     setSelectedMac(computer);
     setTerminalLineData([
       <TerminalOutput key="welcome">
-        <span className="">{`Welcome to ${computer.name} (${computer})`} </span>
+        <span className="">{`Welcome to (${computer})`} </span>
       </TerminalOutput>,
     ]);
   };
 
   const handleCommandInput = (terminalInput: string) => {
     setCurrentInput(terminalInput);
+    setTerminalLineData([
+      ...terminalLineData,
+      <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
+    ]);
 
-    if (commands[terminalInput]) {
-      setTerminalLineData([
-        ...terminalLineData,
-        <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
-      ]);
-
-      if (socket) {
-        socket.send(
-          JSON.stringify({
-            type: "request",
-            token: token,
-            to_user: selectedMac,
-            message: terminalInput,
-          })
-        );
-      } else {
-        error("WebSocket is not open");
-      }
+    if (socket) {
+      socket.send(
+        JSON.stringify({
+          type: "request",
+          from_user: "webclient",
+          token: token,
+          to_user: selectedMac,
+          message: terminalInput,
+        })
+      );
     } else {
-      setTerminalLineData([
-        ...terminalLineData,
-        <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
-      ]);
+      error("WebSocket is not open");
     }
   };
 
@@ -168,9 +133,9 @@ const CLIPage = () => {
         <Button type="link" href="https://10.32.116.195:8443" target="_blank">
           Open WebSocket
         </Button>
-        <Button type="primary" onClick={connectToWebSocket}>
+        {/* <Button type="primary" onClick={connectToWebSocket}>
           Connect to WebSocket
-        </Button>
+        </Button> */}
 
         <Input
           placeholder="Search..."

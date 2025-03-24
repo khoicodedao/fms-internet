@@ -24,7 +24,7 @@ const App: React.FC = () => (
       </div>
     </div>
     <Divider />
-    <div className="flex flex-col justify-center items-center rotate-[270deg]">
+    <div className="flex flex-col justify-center items-center">
       <Timeline
         mode="alternate"
         items={[

@@ -1,35 +1,61 @@
 /* eslint-disable  */
 "use client";
-import { Button, Card, Row, Col, Typography, Progress } from "antd";
+import { Button, Card, Row, Col, Typography, Progress, Statistic } from "antd";
 import ReactECharts from "echarts-for-react";
 import {
   ExportOutlined,
   SyncOutlined,
   ArrowUpOutlined,
   ArrowDownOutlined,
+  ClusterOutlined,
+  DatabaseOutlined,
+  DeploymentUnitOutlined,
+  FileOutlined,
 } from "@ant-design/icons";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 const { Title } = Typography;
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
+import CountUp from "react-countup";
+import Link from "next/link";
+type DashboardData = {
+  countEdrTotal: number;
+  countNdrTotal: number;
+  countEdrOnline: number;
+  countNdrOnline: number;
+  countAlert: number;
+  countSocket: number;
+  countRegistry: number;
+  countFile: number;
+  countFlow: number;
+};
+//@ts-ignore
+import { saveAs } from "file-saver";
 export default function Home() {
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
+  const [data, setData] = useState<DashboardData>({} as DashboardData);
+  const exportToJson = () => {
+    const jsonData = JSON.stringify(data, null, 2); // Chuyển đổi dữ liệu thành JSON
+    const blob = new Blob([jsonData], { type: "application/json" });
+    saveAs(blob, "dashboard-data.json"); // Tải file với tên "dashboard-data.json"
+  };
   const { mutation, contextHolder } = usePostApi(
-    API_URL.EVENT_PAGE.DEFAULT,
+    API_URL.HOME_PAGE.DEFAULT,
     false
   );
   useEffect(() => {
     mutation.mutate(
       {
-        user_name: "test2",
-        password: "Zxcvbnm!@#",
+        start_date: startDate,
+        end_date: endDate,
       },
       {
         onSuccess: (response: any) => {
           // Kiểm tra nếu API trả về thành công
+          setData(response.data);
         },
       }
     );
@@ -189,46 +215,41 @@ export default function Home() {
       },
     ],
   };
-
-  const machineStatusPieOption = {
-    title: {
-      text: t("Machines by Status"),
-      left: "center",
-      textStyle: {
-        paddingTop: "40px",
-        color: "rgba(0, 0, 0, 0.88)",
-        fontWeight: "600",
-        fontSize: "16px",
-        fontFamily: "Segoe UI",
-      },
-    },
-    tooltip: {
-      trigger: "item",
-    },
-    legend: {
-      bottom: "5%",
-      left: "center",
-    },
-    series: [
-      {
-        type: "pie",
-        radius: ["40%", "70%"],
-        data: [
-          { value: 35, name: "Infected online" },
-          { value: 25, name: "Infected offline" },
-          { value: 30, name: "Clean online" },
-          { value: 10, name: "Clean offline" },
-        ],
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
-          },
+  const machineStatusPieOption = useMemo(() => {
+    return {
+      title: {
+        text: "EDR Status",
+        left: "center",
+        textStyle: {
+          paddingTop: "40px",
+          color: "rgba(0, 0, 0, 0.88)",
+          fontWeight: "600",
+          fontSize: "16px",
+          fontFamily: "Segoe UI",
         },
       },
-    ],
-  };
+      tooltip: {
+        trigger: "item",
+      },
+      legend: {
+        bottom: "5%",
+        left: "center",
+      },
+      series: [
+        {
+          type: "pie",
+          radius: ["40%", "70%"],
+          data: [
+            { value: data.countEdrOnline || 0, name: "Online" },
+            {
+              value: data.countEdrTotal,
+              name: "Offline",
+            },
+          ],
+        },
+      ],
+    };
+  }, [data]); //
   return (
     <div className="grid  p-8 pb-20 gap-3 font-[family-name:var(--font-geist-sans)]">
       <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
@@ -245,6 +266,7 @@ export default function Home() {
                 onPointerLeaveCapture={undefined}
               />
             }
+            onClick={exportToJson}
           >
             {t("Export")}
           </Button>
@@ -256,65 +278,97 @@ export default function Home() {
                 onPointerLeaveCapture={undefined}
               />
             }
+            onClick={() => {
+              mutation.mutate(
+                {
+                  start_date: startDate,
+                  end_date: endDate,
+                },
+                {
+                  onSuccess: (response: any) => {
+                    setData(response.data); // Update the dashboard data
+                  },
+                }
+              );
+            }}
           >
             {t("Refresh")}
           </Button>
         </div>
       </div>
-
       <Card style={{ height: "max-content" }} className="w-full">
         <Row gutter={[16, 16]}>
           {[
             {
-              title: t("Total Detections"),
-              value: 2851,
-              percent: 12.5,
-              increase: true,
+              title: "Socket Event",
+              value: data.countSocket || 0,
+              icon: (
+                <ClusterOutlined
+                  style={{ color: "#1890ff", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
             },
             {
-              title: t("Total MalOps"),
-              value: 1250,
-              percent: -5.2,
-              increase: false,
+              title: "Registry Event",
+              value: data.countRegistry || 0,
+              icon: (
+                <DatabaseOutlined
+                  style={{ color: "#52c41a", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
             },
             {
-              title: t("Prevented MalOps"),
-              value: 584,
-              percent: 8.3,
-              increase: true,
+              title: "File Event",
+              value: data.countFile || 0,
+              icon: (
+                <FileOutlined
+                  style={{ color: "#faad14", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
             },
             {
-              title: t("Active MalOps"),
-              value: 12420,
-              percent: 15.8,
-              increase: true,
+              title: "Flow Event",
+              value: data.countFlow || 0,
+              icon: (
+                <DeploymentUnitOutlined
+                  style={{ color: "#eb2f96", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
             },
           ].map((item, index) => (
             <Col key={index} span={6}>
               <div className="text-center">
-                <Title level={5} style={{ marginBottom: "8px" }}>
-                  {item.title}
+                <Title
+                  level={5}
+                  style={{
+                    marginBottom: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {item.icon}
+                  <Link style={{ color: "var(--textDark)" }} href={"/events"}>
+                    {item.title}
+                  </Link>
                 </Title>
                 <div className="flex justify-center">
-                  <div className="text-2xl font-bold mb-2">{item.value}</div>
-                  <div
-                    className={`flex  items-center items-center justify-center gap-1 ${
-                      item.increase ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {item.increase ? (
-                      <ArrowUpOutlined
-                        onPointerEnterCapture={undefined}
-                        onPointerLeaveCapture={undefined}
-                      />
-                    ) : (
-                      <ArrowDownOutlined
-                        onPointerEnterCapture={undefined}
-                        onPointerLeaveCapture={undefined}
-                      />
+                  <Statistic
+                    value={item.value}
+                    formatter={(value) => (
+                      //@ts-ignore
+                      <CountUp end={value} duration={1} separator="," />
                     )}
-                    <span>{Math.abs(item.percent)}%</span>
-                  </div>
+                    className="text-2xl font-bold mb-2"
+                  />
                 </div>
               </div>
             </Col>
@@ -376,10 +430,20 @@ export default function Home() {
         </Col>
         <Col span={6}>
           <Card>
-            <ReactECharts
-              option={machineStatusPieOption}
-              style={{ height: "400px" }}
-            />
+            {data.countEdrTotal !== undefined &&
+            data.countEdrOnline !== undefined ? (
+              <ReactECharts
+                option={machineStatusPieOption}
+                style={{ height: "400px" }}
+              />
+            ) : (
+              <div
+                style={{ height: "400px" }}
+                className="flex justify-center items-center"
+              >
+                Loading...
+              </div>
+            )}
           </Card>
         </Col>
       </Row>
