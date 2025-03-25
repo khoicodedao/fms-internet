@@ -546,3 +546,25 @@ canvas {
   background-color: rgb(247, 195, 28) !important;
   border-color: rgb(247, 195, 28) !important;
 }
+
+section {
+  overflow: auto;
+  scrollbar-width: none; /* For Firefox */
+}
+
+section::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+
+.react-terminal {
+  overflow: auto;
+  scrollbar-width: none; /* For Firefox */
+}
+.react-terminal::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+
+.react-terminal-wrapper {
+  height: calc(100vh - 117px) !important;
+  overflow: hidden !important;
+}

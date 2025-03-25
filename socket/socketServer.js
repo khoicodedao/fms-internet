@@ -55,8 +55,18 @@ Gửi tin nhắn đến user khác
   "token": "YOUR_JWT_TOKEN",
   "from_user": "user456",
   "to_user": "user456",
+  "dir":"/var"
   "message": "Hello!"
 }
+
+{
+  "type": "request",
+  "token": "YOUR_JWT_TOKEN",
+  "from_user": "user456",
+  "to_user": "user456",
+  "message": "Get directory"
+}
+
 Gửi phản hồi lại
 {
   "type": "response",
@@ -64,6 +74,7 @@ Gửi phản hồi lại
   "from_user": "user456",
   "to_user": "user123",
   "message": "Hi, user123!"
+  dir":"/root/"
 }
 */
 

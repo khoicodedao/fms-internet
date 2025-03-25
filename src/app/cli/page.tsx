@@ -2,11 +2,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
-import { Input, List, Avatar, Badge, Button, message } from "antd";
-import { DesktopOutlined } from "@ant-design/icons";
+import { Input, List, Avatar, Badge, Button, message, Tooltip } from "antd";
+import {
+  ApiOutlined,
+  CheckCircleFilled,
+  CloseCircleFilled,
+  DesktopOutlined,
+  DisconnectOutlined,
+} from "@ant-design/icons";
 import Cookies from "js-cookie";
 // const  = process.env.SOCKET_SERVER_URL;
 const CLIPage = () => {
+  const [serverStatus, setServerStatus] = useState<"online" | "offline">(
+    "offline"
+  );
   const token = Cookies.get("auth_token");
   const [messageApi, contextHolder] = message.useMessage();
   const success = (text: string) => {
@@ -36,11 +45,11 @@ const CLIPage = () => {
     </TerminalOutput>,
   ]);
   const [currentInput, setCurrentInput] = useState("");
-  const [selectedMac, setSelectedMac] = useState<string | null>(null);
+  const [selectedMac, setSelectedMac] = useState<string | null>("");
   const [searchTerm, setSearchTerm] = useState("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [filteredComputers, setFilteredComputers] = useState<any[]>([]);
-
+  const [dir, setDir] = useState<string>("");
   useEffect(() => {
     connectToWebSocket();
     return () => {
@@ -49,11 +58,13 @@ const CLIPage = () => {
       }
     };
   }, []);
+
   const connectToWebSocket = () => {
     const ws = new WebSocket("wss://10.32.116.195:8443");
     setSocket(ws);
 
     ws.onopen = () => {
+      setServerStatus("online");
       success("Connected to WebSocket server");
       // Request the list of connected computers
       ws.send(
@@ -63,12 +74,14 @@ const CLIPage = () => {
         })
       );
     };
-
+    ws.onerror = () => {
+      setServerStatus("offline");
+    };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("data", data);
       if (data) {
         if (data.type === "response") {
+          setDir(data.dir);
           setTerminalLineData((prev) => [
             ...prev,
             <TerminalOutput key={`output-${data.message}`}>
@@ -93,7 +106,18 @@ const CLIPage = () => {
     };
   };
 
-  const handleComputerClick = (computer: any) => {
+  const handleComputerClick = (computer: any, wss: WebSocket | null) => {
+    if (wss) {
+      wss.send(
+        JSON.stringify({
+          type: "request",
+          token: token,
+          from_user: "webclient",
+          to_user: computer,
+          message: "Get directory",
+        })
+      );
+    }
     setSelectedMac(computer);
     setTerminalLineData([
       <TerminalOutput key="welcome">
@@ -106,7 +130,9 @@ const CLIPage = () => {
     setCurrentInput(terminalInput);
     setTerminalLineData([
       ...terminalLineData,
-      <TerminalOutput key={terminalInput}>{terminalInput}</TerminalOutput>,
+      <TerminalOutput
+        key={terminalInput}
+      >{`${dir}${terminalInput}`}</TerminalOutput>,
     ]);
 
     if (socket) {
@@ -130,9 +156,39 @@ const CLIPage = () => {
       <div
         style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
       >
-        <Button type="link" href="https://10.32.116.195:8443" target="_blank">
-          Open WebSocket
-        </Button>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: "10px",
+          }}
+        >
+          {serverStatus === "offline" ? (
+            <Tooltip title=" Click here to Check server status">
+              <Button
+                type="link"
+                href="https://10.32.116.195:8443"
+                target="_blank"
+                icon={
+                  <DisconnectOutlined
+                    style={{ fontSize: "20px", color: "red" }}
+                    onPointerEnterCapture={undefined}
+                    onPointerLeaveCapture={undefined}
+                  />
+                }
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Connected to server">
+              <ApiOutlined
+                style={{ color: "green", fontSize: "20px", marginLeft: "10px" }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
+            </Tooltip>
+          )}
+        </div>
+
         {/* <Button type="primary" onClick={connectToWebSocket}>
           Connect to WebSocket
         </Button> */}
@@ -148,7 +204,8 @@ const CLIPage = () => {
           dataSource={filteredComputers}
           renderItem={(computer) => (
             <List.Item
-              onClick={() => handleComputerClick(computer)}
+              //ts-ignore
+              onClick={() => handleComputerClick(computer, socket)}
               style={{ cursor: "pointer" }}
             >
               <List.Item.Meta
@@ -173,11 +230,11 @@ const CLIPage = () => {
           )}
         />
       </div>
-      <div style={{ width: "80%", padding: "10px", height: "100vh" }}>
+      <div style={{ width: "80%", padding: "10px" }}>
         <Terminal
           name="Terminal"
           colorMode={ColorMode.Dark}
-          prompt=">"
+          prompt={`${dir}>`}
           onInput={handleCommandInput}
           startingInputValue=""
         >

@@ -242,7 +242,7 @@ export default function Home() {
           data: [
             { value: data.countEdrOnline || 0, name: "Online" },
             {
-              value: data.countEdrTotal,
+              value: data.countEdrTotal - data.countEdrOnline || 0,
               name: "Offline",
             },
           ],
