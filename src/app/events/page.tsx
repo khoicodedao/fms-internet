@@ -13,6 +13,13 @@ import { useTranslation } from "next-i18next";
 import AlertLevel from "@/common/alertLevel";
 import formatDateTime from "@/common/formatDate";
 import SocketStatus from "@/common/socketStatus";
+import {
+  BranchesOutlined,
+  FileOutlined,
+  PartitionOutlined,
+  ProfileOutlined,
+  WifiOutlined,
+} from "@ant-design/icons";
 export default function Events() {
   const { t } = useTranslation();
   type RowData = {
@@ -60,7 +67,19 @@ export default function Events() {
 
   return (
     <Tabs tabPosition="left" type="card" defaultActiveKey="1">
-      <TabPane tab="Socket" key="1">
+      <TabPane
+        tab={
+          <span>
+            <WifiOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+              color="red"
+            />{" "}
+            Socket
+          </span>
+        }
+        key="1"
+      >
         <DataTable
           title=""
           body={{ object: "socket" }}
@@ -69,7 +88,18 @@ export default function Events() {
           columns={columns}
         />
       </TabPane>
-      <TabPane tab="Registry" key="2">
+      <TabPane
+        tab={
+          <span>
+            <ProfileOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+            Registry
+          </span>
+        }
+        key="2"
+      >
         <DataTable
           title=""
           body={{ object: "registry" }}
@@ -78,7 +108,18 @@ export default function Events() {
           columns={columns}
         />
       </TabPane>
-      <TabPane tab="File" key="3">
+      <TabPane
+        tab={
+          <span>
+            <FileOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            File
+          </span>
+        }
+        key="3"
+      >
         <DataTable
           title=""
           body={{ object: "file" }}
@@ -87,7 +128,38 @@ export default function Events() {
           columns={columns}
         />
       </TabPane>
-      <TabPane tab="Flow" key="4">
+      <TabPane
+        tab={
+          <span>
+            <PartitionOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Process
+          </span>
+        }
+        key="4"
+      >
+        <DataTable
+          title=""
+          body={{ object: "process" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </TabPane>
+      <TabPane
+        tab={
+          <span>
+            <BranchesOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Flow
+          </span>
+        }
+        key="5"
+      >
         <DataTable
           title=""
           body={{ object: "flow" }}

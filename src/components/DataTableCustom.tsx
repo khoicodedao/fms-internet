@@ -18,6 +18,7 @@ interface DataTableProps {
   columns: ColDef[];
   dataFieldName: string;
   body?: any;
+  reload?: boolean; // Add onReload prop
 }
 
 export default function DataTable({
@@ -26,6 +27,7 @@ export default function DataTable({
   columns,
   dataFieldName,
   body,
+  reload, // Destructure onReload
 }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
   const handleSearch = (query: string) => {
@@ -95,6 +97,11 @@ export default function DataTable({
     pagination.pageSize,
     searchQuery,
   ]);
+  useEffect(() => {
+    setTimeout(() => {
+      fetchData();
+    }, 1000);
+  }, [reload]);
 
   // Sự kiện khi đổi trang
   const onPaginationChange = (page: number, pageSize: number) => {

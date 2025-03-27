@@ -6,6 +6,8 @@ import {
   CloseCircleOutlined,
   QuestionCircleOutlined,
   DeleteOutlined,
+  DisconnectOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 
 export type SocketStatusType =
@@ -13,7 +15,11 @@ export type SocketStatusType =
   | "TIME-WAIT"
   | "CLOSED"
   | "UNKNOWN"
-  | "REMOVE"; // Added "REMOVED"
+  | "REMOVE"
+  | "Create"
+  | "Terminate"
+  | "Delete"
+  | "Write";
 
 interface SocketStatusProps {
   status: SocketStatusType;
@@ -68,6 +74,46 @@ const socketStatusConfig: Record<
     color: "gray",
     icon: (
       <DeleteOutlined
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      />
+    ),
+  },
+  Create: {
+    label: "Create",
+    color: "green",
+    icon: (
+      <ClockCircleOutlined
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      />
+    ),
+  },
+  Terminate: {
+    label: "Terminate",
+    color: "red",
+    icon: (
+      <DisconnectOutlined
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      />
+    ),
+  },
+  Delete: {
+    label: "Delete",
+    color: "red",
+    icon: (
+      <DeleteOutlined
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      />
+    ),
+  },
+  Write: {
+    label: "Write",
+    color: "green",
+    icon: (
+      <EditOutlined
         onPointerEnterCapture={undefined}
         onPointerLeaveCapture={undefined}
       />
