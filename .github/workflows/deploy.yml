@@ -25,20 +25,29 @@ jobs:
           username: ${{ secrets.LOCAL_SSH_USER }}
           key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           script: |
-            # Write environment variables to .env file
-            echo "${{ secrets.PROD_ENV }}" > .env
-            cat .env  # Check if the .env file is correct
+            # Chuyển đến đúng thư mục chứa Git repository
+            cd /home/ndr/nextjs-app/fms-internet || exit 1  # Thoát nếu thư mục không tồn tại
 
-            # Configure Git to use HTTPS and the PAT for authentication
+            # Kiểm tra xem có thư mục .git không
+            if [ ! -d ".git" ]; then
+              echo "❌ Lỗi: Không tìm thấy Git repository trong /home/ndr/nextjs-app/fms-internet"
+              exit 1
+            fi
+
+            # Ghi biến môi trường vào file .env
+            echo "${{ secrets.PROD_ENV }}" > .env
+            cat .env  # Kiểm tra nội dung
+
+            # Thiết lập Git để sử dụng token
             git config --global credential.helper store
             echo "https://github.com:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
 
-            # Perform git pull to update the repository
+            # Cập nhật code mới nhất
             git pull origin main
 
-            # Install dependencies and build the project
+            # Cài đặt dependencies & build
             npm install --force
             npm run build
 
-            # Restart the application using PM2
+            # Khởi động lại ứng dụng với PM2
             pm2 restart nextjs-app
