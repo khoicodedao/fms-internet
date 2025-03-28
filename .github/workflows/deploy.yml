@@ -23,5 +23,5 @@ jobs:
             cd /home/ndr/nextjs-app
             git pull origin main
             npm install
-            npm run build
+            npm run build -- --force
             pm2 restart nextjs-app
