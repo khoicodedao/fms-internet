@@ -141,7 +141,7 @@ export default function Home() {
 
   const lineChartOption = {
     title: {
-      text: t("MalOps Trends"),
+      text: t("MalOps"),
       left: "center",
       textStyle: {
         paddingTop: "40px",
