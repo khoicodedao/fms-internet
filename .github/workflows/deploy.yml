@@ -27,6 +27,6 @@ jobs:
           script: |
             cd /home/ndr/nextjs-app/fms-internet
             git pull origin main
-            npm install
-            npm run build -- --force
+            npm install --force
+            npm run build
             pm2 restart nextjs-app
