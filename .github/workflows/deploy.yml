@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.LOCAL_SSH_USER }}
           key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ndr/nextjs-app
+            cd /home/ndr/nextjs-app/fms-internet
             git pull origin main
             npm install
             npm run build -- --force
