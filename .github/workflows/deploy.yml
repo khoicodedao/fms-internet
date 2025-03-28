@@ -1,0 +1,27 @@
+name: Deploy Next.js to Local Server
+
+on:
+  push:
+    branches:
+      - main # Chạy pipeline khi có code mới trên nhánh main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: SSH into local server and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LOCAL_SSH_HOST }} # Địa chỉ IP máy chủ local
+          username: ${{ secrets.LOCAL_SSH_USER }} # User đăng nhập SSH (vd: ubuntu)
+          key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }} # SSH Private Key
+          script: |
+            cd /home/ndr/nextjs-app
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart nextjs-app
