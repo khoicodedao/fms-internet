@@ -21,12 +21,18 @@ jobs:
       - name: SSH into local server and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: "100.123.107.82" # Cập nhật IP Tailscale của máy local
+          host: "100.123.107.82"
           username: ${{ secrets.LOCAL_SSH_USER }}
           key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           script: |
             cd /home/ndr/nextjs-app/fms-internet
+
+            # Ghi nội dung biến môi trường vào file .env
+            echo "${{ secrets.PROD_ENV }}" > .env
+            cat .env  # Kiểm tra file
+
             git pull origin main
             npm install --force
             npm run build
+
             pm2 restart nextjs-app
