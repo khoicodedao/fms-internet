@@ -3,7 +3,7 @@ name: Deploy Next.js to Local Server
 on:
   push:
     branches:
-      - main # Chạy pipeline khi có code mới trên nhánh main
+      - main
 
 jobs:
   deploy:
@@ -13,12 +13,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install Tailscale
+        run: |
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTHKEY }}
+
       - name: SSH into local server and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.LOCAL_SSH_HOST }} # Địa chỉ IP máy chủ local
-          username: ${{ secrets.LOCAL_SSH_USER }} # User đăng nhập SSH (vd: ubuntu)
-          key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }} # SSH Private Key
+          host: "100.99.88.77" # Thay bằng IP Tailscale của máy local
+          username: ${{ secrets.LOCAL_SSH_USER }}
+          key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           script: |
             cd /home/ndr/nextjs-app
             git pull origin main
