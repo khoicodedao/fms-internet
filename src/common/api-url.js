@@ -3,10 +3,14 @@ const API_URL = {
   LOGIN_PAGE: { DEFAULT: "/api/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/events/paginate" },
   ALERT_PAGE: { DEFAULT: "/api/alerts/paginate" },
-  EDR_PAGE: { DEFAULT: "/api/edrs/paginate" },
+  EDR_PAGE: {
+    DEFAULT: "/api/edrs/paginate",
+    REMOTE: "/api/edrs/update-remote",
+  },
   NDR_PAGE: {
     DEFAULT: "/api/ndrs/paginate",
     REMOTE: "/api/ndrs/update-remote",
   },
+  LOGS_PAGE: { DEFAULT: "/api/logs/paginate" },
 };
 export default API_URL;

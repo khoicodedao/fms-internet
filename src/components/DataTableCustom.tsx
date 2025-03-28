@@ -27,8 +27,9 @@ export default function DataTable({
   columns,
   dataFieldName,
   body,
-  reload, // Destructure onReload
-}: DataTableProps) {
+  reload,
+}: // Destructure onReload
+DataTableProps) {
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
   const handleSearch = (query: string) => {
     setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm

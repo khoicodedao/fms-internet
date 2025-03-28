@@ -566,5 +566,12 @@ section::-webkit-scrollbar {
 
 .react-terminal-wrapper {
   height: calc(100vh - 117px) !important;
-  overflow: hidden !important;
+  /* overflow: hidden !important; */
+}
+.view-lines,
+[class="view-line"] {
+  z-index: 9999999 !important;
+}
+[aria-checked="true"] .ant-switch-inner {
+  background: var(--backgroundPrimary) !important;
 }

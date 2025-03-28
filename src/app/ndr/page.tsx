@@ -51,14 +51,21 @@ export default function Ndr() {
     {
       headerName: t("Function"),
       field: "mac_address",
-      cellRenderer: (params: any) => (
-        <Switch
-          value={params.data.is_remote}
-          onClick={(checked) => onChange(checked, params.value)}
-        />
-      ),
+      cellRenderer: (params: any) => {
+        return (
+          <Switch
+            value={params.data.is_remote}
+            onClick={(checked) => onChange(checked, params.value)}
+          />
+        );
+      },
     },
-    { headerName: t("macAddress"), field: "mac_address" },
+    {
+      headerName: t("macAddress"),
+      field: "mac_address",
+      sortable: true, // Enable sorting for this column
+      sort: "asc",
+    },
     { headerName: t("machineName"), field: "ndr_name" },
     { headerName: t("version"), field: "version" },
     {
