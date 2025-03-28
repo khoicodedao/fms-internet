@@ -25,14 +25,20 @@ jobs:
           username: ${{ secrets.LOCAL_SSH_USER }}
           key: ${{ secrets.LOCAL_SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ndr/nextjs-app/fms-internet
-
-            # Ghi nội dung biến môi trường vào file .env
+            # Write environment variables to .env file
             echo "${{ secrets.PROD_ENV }}" > .env
-            cat .env  # Kiểm tra file
+            cat .env  # Check if the .env file is correct
 
-            git clone https://github.com/khoicodedao/fms-internet.git
+            # Configure Git to use HTTPS and the PAT for authentication
+            git config --global credential.helper store
+            echo "https://github.com:${{ secrets.GH_TOKEN }}@github.com" > ~/.git-credentials
+
+            # Perform git pull to update the repository
+            git pull origin main
+
+            # Install dependencies and build the project
             npm install --force
             npm run build
 
+            # Restart the application using PM2
             pm2 restart nextjs-app
