@@ -85,9 +85,10 @@ export default function Home() {
         type: "pie",
         radius: ["40%", "70%"],
         data: [
-          { value: 35, name: "New" },
-          { value: 25, name: "Reopened" },
-          { value: 40, name: "On Hold" },
+          { value: data.countSocket, name: "Socket Event" },
+          { value: data.countRegistry, name: "Registry Event" },
+          { value: data.countFile, name: "File Event" },
+          { value: data.countFlow, name: "Flow Event" },
         ],
         emphasis: {
           itemStyle: {
@@ -100,9 +101,9 @@ export default function Home() {
     ],
   };
 
-  const severityPieOption = {
+  const ndrPieOption = {
     title: {
-      text: t("Active MalOps by Severity"),
+      text: t("NDR Status"),
       left: "center",
       textStyle: {
         paddingTop: "40px",
@@ -124,9 +125,8 @@ export default function Home() {
         type: "pie",
         radius: ["40%", "70%"],
         data: [
-          { value: 45, name: "High" },
-          { value: 35, name: "Medium" },
-          { value: 20, name: "Low" },
+          { value: data.countNdrOnline, name: "Online" },
+          { value: data.countNdrTotal - data.countNdrOnline, name: "Offline" },
         ],
         emphasis: {
           itemStyle: {
@@ -380,7 +380,7 @@ export default function Home() {
         gutter={[16, 16]}
         className="w-full"
       >
-        <Col span={6}>
+        <Col span={12}>
           <Card>
             <ReactECharts
               option={statusPieOption}
@@ -388,14 +388,14 @@ export default function Home() {
             />
           </Card>
         </Col>
-        <Col span={6}>
+        {/* <Col span={6}>
           <Card>
             <ReactECharts
               option={severityPieOption}
               style={{ height: "400px" }}
             />
           </Card>
-        </Col>
+        </Col> */}
         <Col span={12}>
           <Card>
             <ReactECharts
@@ -415,17 +415,8 @@ export default function Home() {
           </Card>
         </Col>
         <Col span={6}>
-          <Card title={t("Top IOC's")} className="h-full">
-            <div className="space-y-4">
-              <div>
-                <div className="mb-2">{t("File")}</div>
-                <Progress percent={71.4} />
-              </div>
-              <div>
-                <div className="mb-2">{t("Process")}</div>
-                <Progress percent={28.6} />
-              </div>
-            </div>
+          <Card className="h-full">
+            <ReactECharts option={ndrPieOption} style={{ height: "400px" }} />
           </Card>
         </Col>
         <Col span={6}>
