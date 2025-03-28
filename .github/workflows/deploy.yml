@@ -16,7 +16,7 @@ jobs:
       - name: Install Tailscale
         run: |
           curl -fsSL https://tailscale.com/install.sh | sh
-          sudo tailscale up --authkey==tskey-auth-kbYvsSLeL411CNTRL-Y9sTJiJw9JBZ7Ppm9MhPJB91vbNz3D4w
+          sudo tailscale up --authkey=tskey-auth-kbYvsSLeL411CNTRL-Y9sTJiJw9JBZ7Ppm9MhPJB91vbNz3D4w
 
       - name: SSH into local server and deploy
         uses: appleboy/ssh-action@master
