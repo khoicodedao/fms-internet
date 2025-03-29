@@ -17,6 +17,7 @@ import {
   AlertOutlined,
   DeploymentUnitOutlined,
   GlobalOutlined,
+  FileExclamationOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -247,6 +248,20 @@ export default function Header() {
               ),
               onClick: () => {
                 router.push("/alerts");
+                setDrawerOpen(false);
+              },
+            },
+            {
+              key: "8",
+              label: t("Logs"),
+              icon: (
+                <FileExclamationOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/error-logs");
                 setDrawerOpen(false);
               },
             },

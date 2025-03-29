@@ -575,3 +575,7 @@ section::-webkit-scrollbar {
 [aria-checked="true"] .ant-switch-inner {
   background: var(--backgroundPrimary) !important;
 }
+.suggest-status-bar {
+  z-index: 9999999 !important;
+  overflow: scroll !important;
+}

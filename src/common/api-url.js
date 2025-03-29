@@ -11,6 +11,6 @@ const API_URL = {
     DEFAULT: "/api/ndrs/paginate",
     REMOTE: "/api/ndrs/update-remote",
   },
-  LOGS_PAGE: { DEFAULT: "/api/logs/paginate" },
+  LOGS_PAGE: { DEFAULT: "/api/error-logs/paginate" },
 };
 export default API_URL;
