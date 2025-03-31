@@ -13,9 +13,9 @@ export default function ErrorLogs() {
   const { t } = useTranslation();
   type RowData = {
     mac: string;
-    ip: string;
+    error_message: string;
     computer_name: string;
-    alert_source: string;
+    source: string;
     alert_level_id: string;
     created_at: string;
     object: string;
@@ -24,13 +24,9 @@ export default function ErrorLogs() {
 
   const columns: ColDef<RowData>[] = [
     { headerName: t("mac"), field: "mac" },
-    { headerName: t("ip"), field: "ip" },
-    { headerName: t("computerName"), field: "computer_name" },
-    { headerName: t("alertSource"), field: "alert_source" },
-    { headerName: t("alertLevelId"), field: "alert_level_id" },
-    // { headerName: t("eventTime"), field: "event_time" },
-    { headerName: t("object"), field: "object" },
-    { headerName: t("action"), field: "action" },
+    { headerName: "Error message", field: "error_message", width: 900 },
+    { headerName: "Source", field: "source" },
+    { headerName: "Created Time", field: "created_at" },
   ];
 
   return (
