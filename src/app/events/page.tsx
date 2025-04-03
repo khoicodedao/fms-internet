@@ -14,6 +14,7 @@ import AlertLevel from "@/common/alertLevel";
 import formatDateTime from "@/common/formatDate";
 import SocketStatus from "@/common/socketStatus";
 import {
+  ApiOutlined,
   BranchesOutlined,
   FileOutlined,
   PartitionOutlined,
@@ -163,6 +164,26 @@ export default function Events() {
         <DataTable
           title=""
           body={{ object: "flow" }}
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columnFlow}
+        />
+      </TabPane>
+      <TabPane
+        tab={
+          <span>
+            <ApiOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Http
+          </span>
+        }
+        key="6"
+      >
+        <DataTable
+          title=""
+          body={{ object: "http" }}
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columnFlow}
