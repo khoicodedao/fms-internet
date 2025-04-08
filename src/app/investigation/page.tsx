@@ -25,6 +25,7 @@ interface QueryData {
   details: string;
   status: "active" | "archived";
 }
+import QueryFlowBuilder from "./query-builder/query-flow-builder";
 
 export default function Investigation() {
   const { t } = useTranslation(); //multi-language support
@@ -131,6 +132,7 @@ export default function Investigation() {
         style={{ background: "#FCFBFB" }}
         className="grid p-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]"
       >
+        <QueryFlowBuilder />
         <section>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             {t("queries")}
