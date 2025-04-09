@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import {
@@ -11,90 +10,25 @@ import {
   LinkOutlined,
   GlobalOutlined,
   BugOutlined,
-  CheckCircleOutlined,
-  StopOutlined,
 } from "@ant-design/icons";
-import type { ColDef } from "ag-grid-community";
-import Link from "next/link";
 import { useTranslation } from "next-i18next";
-interface QueryData {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  details: string;
-  status: "active" | "archived";
-}
-import QueryFlowBuilder from "./query-builder/query-flow-builder";
+import API_URL from "@/common/api-url";
+import dynamic from "next/dynamic";
+import formatDateTime from "@/common/formatDate";
 
+const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
+  ssr: false,
+});
+import QueryFlowBuilder from "./query-builder/query-flow-builder";
 export default function Investigation() {
   const { t } = useTranslation(); //multi-language support
-  const columns: ColDef[] = [
+  const columns = [
+    { headerName: "filter", field: "filter", width: 500 },
     {
-      headerName: t("queryTitle"),
-      field: "title",
-      cellRenderer: (params: any) => (
-        <Link href={`/malops-management/detail/${params.value}`}>
-          {params.value}
-        </Link>
-      ),
+      headerName: "Created at",
+      field: "created_at",
+      valueFormatter: formatDateTime,
     },
-    { headerName: t("description"), field: "description" },
-    { headerName: t("createdAt"), field: "createdAt" },
-    {
-      headerName: t("status"),
-      field: "status",
-      cellRenderer: (params: any) => (
-        <div className="flex items-center gap-2">
-          {params.value === "active" ? (
-            <>
-              <CheckCircleOutlined
-                className="text-green-500"
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              />
-              <span className="text-green-500">{t("active")}</span>
-            </>
-          ) : (
-            <>
-              <StopOutlined
-                className="text-red-500"
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              />
-              <span className="text-red-500">{t("inactive")}</span>
-            </>
-          )}
-        </div>
-      ),
-    },
-  ];
-  const data: QueryData[] = [
-    {
-      id: "1",
-      title: "Adobe.exe",
-      description: "Detect unusual process activities",
-      createdAt: "2024-01-15",
-      details: "Detailed monitoring information",
-      status: "active",
-    },
-    {
-      id: "2",
-      title: "Network Traffic Analysis",
-      description: "Analyze network traffic patterns",
-      createdAt: "2024-01-15",
-      details: "Detailed monitoring information",
-      status: "active",
-    },
-    {
-      id: "3",
-      title: "File Integrity Monitoring",
-      description: "Monitor file changes and integrity",
-      createdAt: "2024-01-15",
-      details: "Detailed monitoring information",
-      status: "archived",
-    },
-    // Add more data
   ];
 
   const items = [
@@ -132,25 +66,23 @@ export default function Investigation() {
         style={{ background: "#FCFBFB" }}
         className="grid p-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]"
       >
-        <QueryFlowBuilder />
-        <section>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            {t("queries")}
-          </h2>
-          <div
-            className="ag-theme-alpine"
-            style={{ height: 400, width: "100%" }}
-          >
-            <AgGridReact
-              rowData={data}
-              columnDefs={columns}
-              pagination={true}
-              defaultColDef={{
-                sortable: true,
-              }}
-            />
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[300px]">
+            <QueryFlowBuilder />
           </div>
-        </section>
+          <div className="flex-1 min-w-[300px]">
+            <section>
+              <DataTable
+                showDatepicker={false}
+                showFilter={false}
+                title="Query Flow"
+                dataFieldName="filters"
+                apiUrl={API_URL.INVESTIGATION_PAGE.DEFAULT}
+                columns={columns}
+              />
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   );

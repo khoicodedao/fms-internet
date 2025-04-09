@@ -1,13 +1,14 @@
-import React, { useCallback, useState } from "react";
+/* eslint-disable */
+import React, { useCallback, useRef } from "react";
 import ReactFlow, {
   addEdge,
   Background,
   Controls,
-  MiniMap,
   useEdgesState,
   useNodesState,
   Handle,
   Position,
+  ReactFlowInstance,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
@@ -15,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 const fields = ["Age", "Name", "Status"];
 const operators = ["==", "!=", ">", "<", ">=", "<="];
 
+//@ts-ignore
 const CustomNode = ({ data, id }) => {
   const updateField = (e) => data.onChange(id, "field", e.target.value);
   const updateOperator = (e) => data.onChange(id, "operator", e.target.value);
@@ -77,6 +79,25 @@ export default function QueryFlowBuilder() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
+
+  //@ts-ignore
+  const handleNodeChange = (id, key, val) => {
+    setNodes((nds) =>
+      nds.map((node) =>
+        node.id === id ? { ...node, data: { ...node.data, [key]: val } } : node
+      )
+    );
+  };
+
+  const handleNodeDelete = (id) => {
+    setNodes((nds) => nds.filter((n) => n.id !== id));
+    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
+    setTimeout(() => {
+      reactFlowInstance.current?.fitView();
+    }, 0);
+  };
+
   const handleAddNode = () => {
     const id = uuidv4();
     const lastNode = nodes[nodes.length - 1];
@@ -96,7 +117,13 @@ export default function QueryFlowBuilder() {
         : { x: 100, y: 100 },
     };
 
-    setNodes((nds) => [...nds, newNode]);
+    setNodes((nds) => {
+      const updatedNodes = [...nds, newNode];
+      setTimeout(() => {
+        reactFlowInstance.current?.fitView({ padding: 0.2 });
+      }, 0);
+      return updatedNodes;
+    });
 
     if (lastNode) {
       const newEdge = {
@@ -109,19 +136,6 @@ export default function QueryFlowBuilder() {
       };
       setEdges((eds) => addEdge(newEdge, eds));
     }
-  };
-
-  const handleNodeChange = (id, key, val) => {
-    setNodes((nds) =>
-      nds.map((node) =>
-        node.id === id ? { ...node, data: { ...node.data, [key]: val } } : node
-      )
-    );
-  };
-
-  const handleNodeDelete = (id) => {
-    setNodes((nds) => nds.filter((n) => n.id !== id));
-    setEdges((eds) => eds.filter((e) => e.source !== id && e.target !== id));
   };
 
   const handleExport = () => {
@@ -162,9 +176,9 @@ export default function QueryFlowBuilder() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        onInit={(instance) => (reactFlowInstance.current = instance)}
         fitView
       >
-        <MiniMap />
         <Controls />
         <Background />
       </ReactFlow>

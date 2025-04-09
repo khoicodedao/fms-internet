@@ -19,6 +19,8 @@ interface DataTableProps {
   dataFieldName: string;
   body?: any;
   reload?: boolean; // Add onReload prop
+  showFilter?: boolean; // Add showFilter prop
+  showDatepicker?: boolean; // Add showDatepicker prop
 }
 
 export default function DataTable({
@@ -28,6 +30,8 @@ export default function DataTable({
   dataFieldName,
   body,
   reload,
+  showFilter = true,
+  showDatepicker = true,
 }: // Destructure onReload
 DataTableProps) {
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
@@ -130,24 +134,26 @@ DataTableProps) {
               {title}
             </p>
           )}
-          <DatetimePicker />
+          {showDatepicker && <DatetimePicker />}
         </div>
 
-        <div style={{ marginBottom: 10, display: "flex", gap: "10px" }}>
-          <button
-            onClick={onExportClick}
-            style={{
-              backgroundColor: "#f7c31c",
-              color: "black",
-              padding: "5px 15px",
-              border: "none",
-              borderRadius: "5px",
-            }}
-          >
-            {t("export_csv")}
-          </button>
-          <SearchBar onSearch={handleSearch} />
-        </div>
+        {showFilter && (
+          <div style={{ marginBottom: 10, display: "flex", gap: "10px" }}>
+            <button
+              onClick={onExportClick}
+              style={{
+                backgroundColor: "#f7c31c",
+                color: "black",
+                padding: "5px 15px",
+                border: "none",
+                borderRadius: "5px",
+              }}
+            >
+              {t("export_csv")}
+            </button>
+            <SearchBar onSearch={handleSearch} />
+          </div>
+        )}
 
         {/* Table */}
         <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
