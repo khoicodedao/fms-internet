@@ -1,5 +1,6 @@
+/* eslint-disable */
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import {
@@ -10,6 +11,7 @@ import {
   LinkOutlined,
   GlobalOutlined,
   BugOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
 import API_URL from "@/common/api-url";
@@ -19,10 +21,42 @@ import formatDateTime from "@/common/formatDate";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+import { usePostApi } from "@/common/usePostApi";
+
 import QueryFlowBuilder from "./query-builder/query-flow-builder";
+import { Collapse } from "antd";
 export default function Investigation() {
+  const [reload, setReload] = React.useState(false);
+  const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
+    usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
+  const onDelete = (id: string) => {
+    mutationDelete.mutate(
+      {
+        id: id,
+      },
+      {
+        onSuccess: (response: any) => {
+          setReload(!reload);
+        },
+      }
+    );
+  };
   const { t } = useTranslation(); //multi-language support
   const columns = [
+    {
+      headerName: t("Function"),
+      width: 100,
+      field: "id",
+      cellRenderer: (params: any) => {
+        return (
+          //@ts-ignore
+          <DeleteOutlined
+            style={{ color: "red", cursor: "pointer" }}
+            onClick={() => onDelete(params.data.id)}
+          />
+        );
+      },
+    },
     { headerName: "filter", field: "filter", width: 500 },
     {
       headerName: "Created at",
@@ -43,6 +77,7 @@ export default function Investigation() {
 
   return (
     <div className="grid py-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]">
+      {contextHolderDelete}
       <div
         style={{ background: "#FCFBFB" }}
         className="grid p-4 pb-20 gap-3  font-[family-name:var(--font-geist-sans)]"
@@ -68,9 +103,6 @@ export default function Investigation() {
       >
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 min-w-[300px]">
-            <QueryFlowBuilder />
-          </div>
-          <div className="flex-1 min-w-[300px]">
             <section>
               <DataTable
                 showDatepicker={false}
@@ -79,10 +111,23 @@ export default function Investigation() {
                 dataFieldName="filters"
                 apiUrl={API_URL.INVESTIGATION_PAGE.DEFAULT}
                 columns={columns}
+                reload={reload}
               />
             </section>
           </div>
         </div>
+        <Collapse
+          size="large"
+          className="w-full h-auto"
+          bordered={false}
+          items={[
+            {
+              key: "1",
+              label: "Create query",
+              children: <QueryFlowBuilder setReload={setReload} />,
+            },
+          ]}
+        />
       </div>
     </div>
   );

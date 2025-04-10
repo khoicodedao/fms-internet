@@ -12,6 +12,10 @@ const API_URL = {
     REMOTE: "/api/ndrs/update-remote",
   },
   LOGS_PAGE: { DEFAULT: "/api/error-logs/paginate" },
-  INVESTIGATION_PAGE: { DEFAULT: "/api/filter/paginate" },
+  INVESTIGATION_PAGE: {
+    DEFAULT: "/api/filter/paginate",
+    DELETE: "/api/filter/delete",
+    ADD: "/api/filter/add",
+  },
 };
 export default API_URL;

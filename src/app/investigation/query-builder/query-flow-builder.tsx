@@ -12,10 +12,11 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { v4 as uuidv4 } from "uuid";
-
-const fields = ["Age", "Name", "Status"];
-const operators = ["==", "!=", ">", "<", ">=", "<="];
-
+import ResultBuilder from "./result-builder";
+const operators = ["=", "!=", ">", "<", ">=", "<=", "like"];
+import { usePostApi } from "@/common/usePostApi";
+import API_URL from "@/common/api-url";
+import { on } from "events";
 //@ts-ignore
 const CustomNode = ({ data, id }) => {
   const updateField = (e) => data.onChange(id, "field", e.target.value);
@@ -27,17 +28,12 @@ const CustomNode = ({ data, id }) => {
     <div className="bg-white rounded-lg shadow-md p-3 w-64 border border-gray-200">
       <div className="mb-2">
         <label className="block text-xs text-gray-500">Field</label>
-        <select
+        <input
+          type="text"
           value={data.field}
           onChange={updateField}
           className="w-full border p-1 rounded"
-        >
-          {fields.map((f) => (
-            <option key={f} value={f}>
-              {f}
-            </option>
-          ))}
-        </select>
+        />
       </div>
       <div className="mb-2">
         <label className="block text-xs text-gray-500">Operator</label>
@@ -75,7 +71,19 @@ const CustomNode = ({ data, id }) => {
 
 const nodeTypes = { customNode: CustomNode };
 
-export default function QueryFlowBuilder() {
+interface QueryFlowBuilderProps {
+  setReload: React.Dispatch<React.SetStateAction<boolean>>;
+  reload: boolean;
+}
+
+export default function QueryFlowBuilder({
+  setReload,
+  reload,
+}: QueryFlowBuilderProps) {
+  const { mutation, contextHolder } = usePostApi(
+    API_URL.INVESTIGATION_PAGE.ADD,
+    true
+  );
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
@@ -106,8 +114,8 @@ export default function QueryFlowBuilder() {
       id,
       type: "customNode",
       data: {
-        field: "Age",
-        operator: "==",
+        field: "",
+        operator: "=",
         value: "",
         onChange: handleNodeChange,
         onDelete: handleNodeDelete,
@@ -138,13 +146,21 @@ export default function QueryFlowBuilder() {
     }
   };
 
-  const handleExport = () => {
-    const result = nodes.map(({ data }) => ({
-      field: data.field,
-      operator: data.operator,
-      value: data.value,
-    }));
-    console.log("Exported query:", result);
+  const handleAdd = () => {
+    const result = nodes.map(({ data }) => {
+      return `${data.field} ${data.operator} '${data.value}'`;
+    });
+    console.log(result);
+    mutation.mutate(
+      {
+        filter: result.join(" AND "),
+      },
+      {
+        onSuccess: () => {
+          setReload(!reload);
+        },
+      }
+    );
   };
 
   const onConnect = useCallback(
@@ -155,19 +171,27 @@ export default function QueryFlowBuilder() {
 
   return (
     <div style={{ height: "400px" }} className="w-full">
+      {contextHolder}
       <div className="p-4 flex gap-2">
         <button
           onClick={handleAddNode}
-          className="bg-blue-600 text-white px-3 py-1 rounded"
+          className="bg-primary text-black px-3 py-1 rounded"
         >
-          + Add Filter
+          Add
         </button>
         <button
-          onClick={handleExport}
+          onClick={handleAdd}
           className="bg-green-600 text-white px-3 py-1 rounded"
         >
-          Export Query
+          Done
         </button>
+
+        <ResultBuilder
+          current={nodes.length - 1}
+          items={nodes.map((n) => ({
+            title: `${n.data.field} ${n.data.operator} ${n.data.value}`,
+          }))}
+        />
       </div>
       <ReactFlow
         nodes={nodes}
