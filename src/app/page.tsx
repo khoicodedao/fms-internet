@@ -11,6 +11,8 @@ import {
   DatabaseOutlined,
   DeploymentUnitOutlined,
   FileOutlined,
+  SettingOutlined,
+  CloudOutlined,
 } from "@ant-design/icons";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
@@ -31,6 +33,8 @@ type DashboardData = {
   countRegistry: number;
   countFile: number;
   countFlow: number;
+  countProcess: number;
+  countHttp: number;
 };
 //@ts-ignore
 import { saveAs } from "file-saver";
@@ -75,6 +79,7 @@ export default function Home() {
     },
     tooltip: {
       trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
     },
     legend: {
       bottom: "5%",
@@ -84,11 +89,17 @@ export default function Home() {
       {
         type: "pie",
         radius: ["40%", "70%"],
+        label: {
+          show: true,
+          formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+        },
         data: [
-          { value: data.countSocket, name: "Socket Event" },
-          { value: data.countRegistry, name: "Registry Event" },
-          { value: data.countFile, name: "File Event" },
-          { value: data.countFlow, name: "Flow Event" },
+          { value: data.countSocket, name: "Socket" },
+          { value: data.countRegistry, name: "Registry" },
+          { value: data.countFile, name: "File" },
+          { value: data.countFlow, name: "Flow" },
+          { value: data.countProcess, name: "Process" },
+          { value: data.countHttp, name: "Http" },
         ],
         emphasis: {
           itemStyle: {
@@ -128,6 +139,10 @@ export default function Home() {
           { value: data.countNdrOnline, name: "Online" },
           { value: data.countNdrTotal - data.countNdrOnline, name: "Offline" },
         ],
+        label: {
+          show: true,
+          formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+        },
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -239,6 +254,10 @@ export default function Home() {
         {
           type: "pie",
           radius: ["40%", "70%"],
+          label: {
+            show: true,
+            formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+          },
           data: [
             { value: data.countEdrOnline || 0, name: "Online" },
             {
@@ -343,8 +362,30 @@ export default function Home() {
                 />
               ),
             },
+            {
+              title: "Process Event",
+              value: data.countProcess || 0,
+              icon: (
+                <SettingOutlined
+                  style={{ color: "#ff4d4f", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+            },
+            {
+              title: "Http Event",
+              value: data.countHttp || 0,
+              icon: (
+                <CloudOutlined
+                  style={{ color: "#40a9ff", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+            },
           ].map((item, index) => (
-            <Col key={index} span={6}>
+            <Col key={index} span={4}>
               <div className="text-center">
                 <Title
                   level={5}
