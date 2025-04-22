@@ -124,7 +124,9 @@ export default function Investigation() {
             {
               key: "1",
               label: "Create query",
-              children: <QueryFlowBuilder setReload={setReload} />,
+              children: (
+                <QueryFlowBuilder reload={reload} setReload={setReload} />
+              ),
             },
           ]}
         />

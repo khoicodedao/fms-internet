@@ -37,6 +37,24 @@ export default function Events() {
   const columns: ColDef<RowData>[] = [
     { headerName: t("mac"), field: "mac" },
     { headerName: t("ip"), field: "ip" },
+    {
+      headerName: t("Description"),
+      field: "computer_name",
+      cellRenderer: (params: any) => {
+        const tableTitle = params.colDef.tableTitle; // Lấy tableTitle từ colDef
+        if (tableTitle === "socket") {
+          return `${params.data.fields.image_path}  ${params.data.fields.remote_address}/${params.data.fields.remote_port}`;
+        } else if (tableTitle === "registry") {
+          return `${params.data.fields.image_path} - ${params.data.alert_type} - ${params.data.fields.value}`;
+        } else if (tableTitle === "file") {
+          return `${params.data.fields.process_name} - ${params.data.action} - ${params.data.fields.file_name}`;
+        } else if (tableTitle === "process") {
+          return `${params.data.fields.file_path} - ${params.data.action} - ${params.data.fields.image_path_created}`;
+        }
+        return <span>{params.value}</span>;
+      },
+    },
+
     { headerName: t("computerName"), field: "computer_name" },
     { headerName: t("alertSource"), field: "alert_source" },
     {
@@ -53,7 +71,7 @@ export default function Events() {
     },
   ];
   const columnFlow = [
-    { headerName: t("Src mac"), field: "src_mac" },
+    { headerName: t("Src mac"), field: "mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
     { headerName: t("Dest IP"), field: "fields.dest_ip" },
     { headerName: t("Src IP"), field: "fields.src_ip" },
@@ -86,7 +104,11 @@ export default function Events() {
           body={{ object: "socket" }}
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns}
+          // columns={columns}
+          columns={columns.map((col) => ({
+            ...col,
+            tableTitle: "socket", // Thêm tableTitle vào từng cột
+          }))}
         />
       </TabPane>
       <TabPane
@@ -106,7 +128,10 @@ export default function Events() {
           body={{ object: "registry" }}
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns}
+          columns={columns.map((col) => ({
+            ...col,
+            tableTitle: "registry", // Thêm tableTitle vào từng cột
+          }))}
         />
       </TabPane>
       <TabPane
@@ -126,7 +151,10 @@ export default function Events() {
           body={{ object: "file" }}
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns}
+          columns={columns.map((col) => ({
+            ...col,
+            tableTitle: "file", // Thêm tableTitle vào từng cột
+          }))}
         />
       </TabPane>
       <TabPane
@@ -146,7 +174,10 @@ export default function Events() {
           body={{ object: "process" }}
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns}
+          columns={columns.map((col) => ({
+            ...col,
+            tableTitle: "process", // Thêm tableTitle vào từng cột
+          }))}
         />
       </TabPane>
       <TabPane
