@@ -579,3 +579,6 @@ section::-webkit-scrollbar {
   z-index: 9999999 !important;
   overflow: scroll !important;
 }
+.ruleGroup {
+  background: var(--background) !important;
+}

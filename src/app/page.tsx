@@ -156,7 +156,7 @@ export default function Home() {
 
   const lineChartOption = {
     title: {
-      text: t("MalOps"),
+      text: "MalOps by Unit",
       left: "center",
       textStyle: {
         paddingTop: "40px",
@@ -175,7 +175,8 @@ export default function Home() {
     },
     xAxis: {
       type: "category",
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: ["TT586", "TT186", "TT286", "TT386", "TT486"],
+      axisLabel: { interval: 0, rotate: 30 },
     },
     yAxis: {
       type: "value",
@@ -184,12 +185,12 @@ export default function Home() {
       {
         name: "Total MalOps",
         type: "line",
-        data: [120, 132, 101, 134, 90, 230, 210],
+        data: [120, 132, 101, 134, 90],
       },
       {
         name: "Closed MalOps",
         type: "line",
-        data: [80, 92, 71, 94, 60, 180, 160],
+        data: [80, 92, 71, 94, 60],
       },
     ],
   };
