@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 import { Divider } from "antd";
 import { useEffect, useState } from "react";
@@ -8,8 +9,47 @@ import Communication from "./communication/communication";
 import MachineProfilePage from "./machine-profile/machine-profile";
 import ProcessPage from "./process/process";
 import { SettingOutlined } from "@ant-design/icons";
+import { usePostApi } from "@/common/usePostApi";
+import API_URL from "@/common/api-url";
+// import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 export default function MalOpsManagementDetail() {
+  const { id } = useParams(); // Lấy id từ dynamic route
+
   const [activeSection, setActiveSection] = useState("diagram");
+  const [filterData, setFilterData] = useState([]);
+  const { mutation: mutationList, contextHolder } = usePostApi(
+    API_URL.MALOPS_PAGE.DEFAULT,
+    true
+  );
+
+  useEffect(() => {
+    mutationList.mutate(
+      {
+        start_date: "2025-03-31",
+        end_date: "2026",
+        skip: 0,
+        limit: 50,
+        filter: `id = '${id}'`,
+      },
+      {
+        onSuccess: (data) => {
+          // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
+          if (data && data.data.investigation) {
+            setFilterData(data.data.investigation); // Gán dữ liệu vào state rowData
+          } else {
+            console.error("API trả về dữ liệu không phải là mảng:", data);
+            setFilterData([]);
+          }
+        },
+        onError: (error) => {
+          console.error("Lỗi khi gọi API:", error);
+          setFilterData([]); // Gán giá trị mặc định nếu có lỗi
+        },
+      }
+    );
+  }, []);
+
   useEffect(() => {
     if (typeof window === "undefined") return; // Đảm bảo chỉ chạy trên client
 
@@ -47,18 +87,21 @@ export default function MalOpsManagementDetail() {
 
   return (
     <div className="pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
+      {contextHolder}
       <ObjectDetailHeader
-        type={"Malware"}
+        // type={"Malware"}
         icon={getFileIcon("file")}
-        title="Adobe.exe"
-        description="Malware detected on your computer"
+        //@ts-ignore
+        title={filterData[0]?.filter_name || ""}
+        //@ts-ignore
+        description={filterData[0]?.filter_description || ""}
+        //@ts-ignore
+        time_start={filterData[0]?.start_time || ""}
+        //@ts-ignore
+        time_end={filterData[0]?.end_time || ""}
       />
       <section id="diagram">
-        <Description
-          rootCauseDetails="Root Cause Details"
-          scopeDetails="Scope Details"
-          communicationDetails="Communication Details"
-        />
+        <Description rootCauseDetails="Root Cause Details" />
       </section>
       <Divider />
       <section id="communication">

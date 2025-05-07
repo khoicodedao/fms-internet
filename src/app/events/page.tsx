@@ -71,7 +71,7 @@ export default function Events() {
     },
   ];
   const columnFlow = [
-    { headerName: t("Src mac"), field: "mac" },
+    { headerName: t("mac"), field: "src_mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
     { headerName: t("Dest IP"), field: "fields.dest_ip" },
     { headerName: t("Src IP"), field: "fields.src_ip" },

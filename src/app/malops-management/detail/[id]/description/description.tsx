@@ -21,67 +21,10 @@ const Flow = dynamic(() => import("../../../../../components/Flow"), {
 });
 type Props = {
   rootCauseDetails: string;
-  scopeDetails: string;
-  communicationDetails: string;
 };
 // Dữ liệu mẫu
-const sampleNodes: any[] = [
-  {
-    //ts-ignore
-    id: "computer",
-    label: "Computer",
-    icon: (
-      <DesktopOutlined
-        color="#007bff"
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-  {
-    id: "setting",
-    label: "Setting",
-    icon: (
-      <SettingOutlined
-        color="#ffc107"
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-  {
-    id: "user",
-    label: "User",
-    icon: (
-      <UserOutlined
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-  {
-    id: "cloud",
-    label: "Cloud",
-    icon: (
-      <ApartmentOutlined
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-];
 
-const sampleConnections: any[] = [
-  { source: "computer", target: "setting" },
-  { source: "computer", target: "user" },
-  { source: "setting", target: "cloud" },
-];
-
-function Description({
-  rootCauseDetails,
-  scopeDetails,
-  communicationDetails,
-}: Props) {
+function Description({ rootCauseDetails }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -100,19 +43,12 @@ function Description({
                 <Title level={5} style={{ margin: 0 }}>
                   {t("description_detail.title")}
                 </Title>
-                <Text>{t("description_detail.shortDescription")}</Text>
               </div>
             </div>
             {/* Collapses */}
-            <Collapse>
+            <Collapse defaultActiveKey={["1"]}>
               <Panel header={t("description_detail.rootCauseInfo")} key="1">
                 <p>{rootCauseDetails}</p>
-              </Panel>
-              <Panel header={t("description_detail.scope")} key="2">
-                <p>{scopeDetails}</p>
-              </Panel>
-              <Panel header={t("description_detail.communication")} key="3">
-                <p>{communicationDetails}</p>
               </Panel>
             </Collapse>
           </Card>

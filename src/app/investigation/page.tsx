@@ -24,48 +24,9 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 import { usePostApi } from "@/common/usePostApi";
 
 import QueryFlowBuilder from "./query-builder/query-flow-builder";
-import { Collapse } from "antd";
+// import { Collapse } from "antd";
 export default function Investigation() {
-  const [reload, setReload] = React.useState(false);
-  const [fields, setFields] = useState<any[]>([]);
-  const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
-    usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
-  const onDelete = (id: string) => {
-    mutationDelete.mutate(
-      {
-        id: id,
-      },
-      {
-        onSuccess: (response: any) => {
-          setReload(!reload);
-        },
-      }
-    );
-  };
   const { t } = useTranslation(); //multi-language support
-  const columns = [
-    {
-      headerName: t("Function"),
-      width: 100,
-      field: "id",
-      cellRenderer: (params: any) => {
-        return (
-          //@ts-ignore
-          <DeleteOutlined
-            style={{ color: "red", cursor: "pointer" }}
-            onClick={() => onDelete(params.data.id)}
-          />
-        );
-      },
-    },
-    { headerName: "filter", field: "filter", width: 500 },
-    {
-      headerName: "Created at",
-      field: "created_at",
-      valueFormatter: formatDateTime,
-    },
-  ];
-
   const items = [
     {
       icon: DesktopOutlined,
@@ -141,11 +102,68 @@ export default function Investigation() {
         { name: "created_at", label: "created_at" },
       ],
     },
-    { icon: FileOutlined, label: t("file") },
+    {
+      icon: FileOutlined,
+      label: t("file"),
+      fields: [
+        { name: "file_name", label: "file_name" },
+        { name: "file_path", label: "file_path" },
+        { name: "file_size", label: "file_size" },
+        { name: "file_type", label: "file_type" },
+        { name: "file_extention", label: "file_extention" },
+        { name: "file_md5", label: "file_md5" },
+        { name: "file_sha1", label: "file_sha1" },
+        { name: "file_sha256", label: "file_sha256" },
+        { name: "file_sha512", label: "file_sha512" },
+        { name: "file_ssdeep", label: "file_ssdeep" },
+        { name: "file_imphash", label: "file_imphash" },
+        { name: "file_version", label: "file_version" },
+      ],
+    },
     { icon: LinkOutlined, label: t("connection") },
     // { icon: GlobalOutlined, label: t("domain_name") },
     // { icon: BugOutlined, label: t("malop_process") },
   ];
+  const [reload, setReload] = React.useState(false);
+  const [fields, setFields] = useState<any[]>(items[0].fields || []);
+  const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
+    usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
+  const onDelete = (id: string) => {
+    mutationDelete.mutate(
+      {
+        id: id,
+      },
+      {
+        onSuccess: (response: any) => {
+          setReload(!reload);
+        },
+      }
+    );
+  };
+
+  const columns = [
+    {
+      headerName: t("Function"),
+      width: 100,
+      field: "id",
+      cellRenderer: (params: any) => {
+        return (
+          //@ts-ignore
+          <DeleteOutlined
+            style={{ color: "red", cursor: "pointer" }}
+            onClick={() => onDelete(params.data.id)}
+          />
+        );
+      },
+    },
+    { headerName: "filter", field: "filter", width: 500 },
+    {
+      headerName: "Created at",
+      field: "created_at",
+      valueFormatter: formatDateTime,
+    },
+  ];
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   return (
     <div className="grid py-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]">
@@ -161,8 +179,13 @@ export default function Investigation() {
           {items.map((item, index) => (
             <div key={index} className="flex flex-col items-center gap-2">
               <div
-                className="w-12 h-12 rounded-full bg-[#F6BD03] flex items-center justify-center"
-                onClick={() => setFields(item.fields || [])}
+                className={`w-12 h-12 rounded-full  ${
+                  activeIndex == index ? "bg-[#F6BD03]" : "bg-[#F2F2F2]"
+                }  flex items-center justify-center`}
+                onClick={() => {
+                  setFields(item.fields || []);
+                  setActiveIndex(index);
+                }}
               >
                 {React.createElement(item.icon)}
               </div>

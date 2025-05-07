@@ -3,20 +3,26 @@ import { NextResponse } from "next/server";
 export async function middleware(request) {
   const backendUrlBase = process.env.NEXT_PUBLIC_BACKEND_URL;
   const url = request.nextUrl.clone();
-  // Get auth token from cookies
   const authToken = request.cookies.get("auth_token")?.value;
-  // Check if path is /login
+
+  // ✅ Cho phép Next.js xử lý các API nội bộ
+  if (url.pathname.startsWith("/api/filters")) {
+    return NextResponse.next(); // không proxy, xử lý bằng route.ts
+  }
+
+  // Redirect nếu đã đăng nhập và vào /login
   if (url.pathname === "/login") {
-    // If user has valid token, redirect to home
     if (authToken) {
       return NextResponse.redirect(new URL("/", request.url));
     }
     return NextResponse.next();
   }
-  // For API routes
+
+  // ✅ Proxy các API khác sang backend
   if (url.pathname.startsWith("/api")) {
     const backendUrl = `${backendUrlBase}${url.pathname}`;
     const body = request.method !== "GET" ? await request.json() : null;
+
     try {
       const response = await fetch(backendUrl, {
         method: request.method,
@@ -26,7 +32,7 @@ export async function middleware(request) {
         },
         body: body ? JSON.stringify(body) : null,
       });
-      // Check if response status is 401 (Unauthorized) or 403 (Forbidden)
+
       const data = await response.json();
       return NextResponse.json(data, { status: response.status });
     } catch (error) {
@@ -36,7 +42,8 @@ export async function middleware(request) {
       );
     }
   }
-  // Protect all other routes
+
+  // Bảo vệ route không có token
   if (!authToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }

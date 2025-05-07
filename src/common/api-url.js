@@ -17,5 +17,11 @@ const API_URL = {
     DELETE: "/api/filter/delete",
     ADD: "/api/filter/add",
   },
+  MALOPS_PAGE: {
+    DEFAULT: "/api/investigation/paginate",
+    DELETE: "/api/investigation/delete",
+    ADD: "/api/investigation/add",
+    EDIT: "/api/investigation/edit",
+  },
 };
 export default API_URL;
