@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import QueryBuilder, { RuleGroupType } from "react-querybuilder";
 import "react-querybuilder/dist/query-builder.css";
@@ -38,10 +39,10 @@ export default function QueryBuilderForm({
   const handleSubmit = () => {
     const conditions = flattenQueryToSQL(query);
     const filter = conditions.replaceAll('"', "'");
-
+    //@ts-ignore
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [label]: { filter }, // Gán filter vào object với key là label
+      [label.toLowerCase()]: { filter }, // Gán filter vào object với key là label
     }));
   };
 

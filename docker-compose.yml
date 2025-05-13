@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "443:443" # Map cổng 443 của container ra cổng 443 của host
+    volumes:
+      - .:/app # Gắn thư mục hiện tại vào container
+    environment:
+      NODE_ENV: production

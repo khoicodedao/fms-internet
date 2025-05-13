@@ -10,7 +10,7 @@ import {
   LinkOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { AgGridReact } from "ag-grid-react";
+// import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,17 @@ type Filter = {
   end_time: string;
   created_at: string;
 };
-import ReactJson from "react-json-view";
+// import ReactJson from "react-json-view";
+import dynamic from "next/dynamic";
+
+// Tắt SSR cho ReactJson
+const ReactJson = dynamic(() => import("react-json-view"), { ssr: false });
+
+// Tắt SSR cho AgGridReact
+const AgGridReact = dynamic(
+  () => import("ag-grid-react").then((mod) => mod.AgGridReact),
+  { ssr: false }
+);
 export default function MalOpsManagement() {
   const { mutation: mutationList } = usePostApi(
     API_URL.MALOPS_PAGE.DEFAULT,
