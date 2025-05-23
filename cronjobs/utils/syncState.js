@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, writeFileSync } from "fs";
+/* eslint-disable @typescript-eslint/no-require-imports */
+const { existsSync, readFileSync, writeFileSync } = require("fs");
 const path = "./sync-state.json";
 
 function loadSyncState() {
@@ -20,5 +21,4 @@ function updateLastId(filterId, type, newId, state) {
   saveSyncState(state);
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { loadSyncState, saveSyncState, getLastId, updateLastId };
+module.exports = { loadSyncState, saveSyncState, getLastId, updateLastId };

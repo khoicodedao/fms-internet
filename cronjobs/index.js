@@ -1,18 +1,50 @@
-import { get, post } from "axios";
-import { schedule } from "node-cron";
-import { loadSyncState, getLastId, updateLastId } from "./utils/syncState";
+/* eslint-disable @typescript-eslint/no-require-imports */
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { post } = require("axios");
+const { schedule } = require("node-cron");
+const { loadSyncState, getLastId, updateLastId } = require("./utils/syncState");
+const { retrieveToken } = require("./utils/tokenManager");
+const FILTER_TYPES = ["registry", "process", "file", "socket"];
 
-const FILTER_TYPES = ["machine", "process", "file", "socket"];
-
-const API_INVESTIGATION = "http://your-api.com/api/investigations"; // 🔁 thay bằng API thật
-const API_QUERY_BASE = "http://your-query-api.com/api/query"; // 🔁 API query dữ liệu
+const API_INVESTIGATION =
+  "http://10.32.116.244:5000/api/investigation/paginate"; // 🔁 thay bằng API thật
+const API_QUERY_BASE = "http://10.32.116.244:5000/api/events/paginate"; // 🔁 API query dữ liệu
 const API_SAVE_BASE = "http://10.32.116.244:5000/api"; // ✅ API lưu dữ liệu
 
-async function fetchInvestigations() {
-  const res = await get(API_INVESTIGATION);
-  return res.data?.data?.investigation || [];
-}
+async function fetchInvestigationsWithPost() {
+  try {
+    // Lấy token từ API xác thực
+    const token = await retrieveToken();
 
+    // JSON body để gửi đến API
+    const requestBody = {
+      start_date: "2025-03-31",
+      end_date: "2026",
+      skip: 0,
+      limit: 50,
+      filter: "",
+    };
+
+    // Gửi yêu cầu POST đến API investigation
+    const response = await post(API_INVESTIGATION, requestBody, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+        "Content-Type": "application/json", // Đảm bảo gửi đúng định dạng JSON
+      },
+    });
+    // Kiểm tra phản hồi từ API
+    if (response?.data?.code === 200) {
+      return response.data.data; // Trả về dữ liệu investigation
+    } else {
+      throw new Error(
+        response?.data?.message || "Failed to fetch investigations."
+      );
+    }
+  } catch (error) {
+    console.error("Error fetching investigations:", error.message);
+    throw error;
+  }
+}
 async function processFilter(type, rawFilter, start, end, filterId) {
   const syncState = loadSyncState();
   const lastId = getLastId(filterId, type, syncState);
@@ -23,23 +55,52 @@ async function processFilter(type, rawFilter, start, end, filterId) {
   }
 
   console.log(`[${type}] Querying: ${finalFilter}`);
-
-  const queryRes = await post(`${API_QUERY_BASE}/${type}`, {
+  const token = await retrieveToken();
+  console.log({
     filter: finalFilter,
-    start_time: start,
-    end_time: end,
+    start_date: start,
+    end_date: end,
+    object: type,
+    limit: 1000,
+    skip: 0,
   });
-
-  const records = queryRes.data.records || [];
+  const queryRes = await post(
+    `${API_QUERY_BASE}`,
+    {
+      filter: finalFilter,
+      start_date: start,
+      end_date: end,
+      object: type,
+      limit: 1000,
+      skip: 0,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+        "Content-Type": "application/json", // Đảm bảo gửi đúng định dạng JSON
+      },
+    }
+  );
+  console.log("Query response:", queryRes.data.data.events);
+  const records = queryRes.data.data.events || [];
   if (records.length === 0) {
     console.log(`[${type}] No new data.`);
     return;
   }
 
-  await post(`${API_SAVE_BASE}/${type}-profile/add`, {
-    data: records,
-    filter_id: filterId,
-  });
+  await post(
+    `${API_SAVE_BASE}/${type}-profile/add`,
+    {
+      data: records,
+      filter_id: filterId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Gửi token trong header
+        "Content-Type": "application/json", // Đảm bảo gửi đúng định dạng JSON
+      },
+    }
+  );
 
   const ids = records.map((r) => r.id).filter(Boolean);
   const maxId = ids.sort().slice(-1)[0];
@@ -52,18 +113,16 @@ async function processFilter(type, rawFilter, start, end, filterId) {
 
 async function mainJob() {
   try {
-    const investigations = await fetchInvestigations();
-
-    for (const inv of investigations) {
+    const investigations = await fetchInvestigationsWithPost();
+    console.log("🔁 Fetched investigations:", investigations);
+    for (const inv of investigations.investigation) {
       const { filters, start_time, end_time, id: filterId } = inv;
 
-      const parsedFilters = JSON.parse(filters || "{}");
-
       for (const type of FILTER_TYPES) {
-        if (parsedFilters[type]?.filter) {
+        if (filters[type]?.filter) {
           await processFilter(
             type,
-            parsedFilters[type].filter,
+            filters[type].filter,
             start_time,
             end_time,
             filterId
@@ -81,3 +140,4 @@ schedule("* * * * *", () => {
   console.log(`🔁 Cron running: ${new Date().toISOString()}`);
   mainJob();
 });
+mainJob();

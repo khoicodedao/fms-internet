@@ -9,6 +9,9 @@ import {
   CloseCircleFilled,
   DesktopOutlined,
   DisconnectOutlined,
+  DownloadOutlined,
+  CopyOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import Cookies from "js-cookie";
 // const  = process.env.SOCKET_SERVER_URL;
@@ -60,7 +63,7 @@ const CLIPage = () => {
   }, []);
 
   const connectToWebSocket = () => {
-    const ws = new WebSocket("wss://10.32.116.195:8443");
+    const ws = new WebSocket("ws://localhost:3001");
     setSocket(ws);
 
     ws.onopen = () => {
@@ -79,6 +82,7 @@ const CLIPage = () => {
     };
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("Received data from server:", data);
       if (data) {
         if (data.type === "response") {
           setDir(data.dir);
@@ -111,8 +115,7 @@ const CLIPage = () => {
       wss.send(
         JSON.stringify({
           type: "request",
-          token: token,
-          from_user: "webclient",
+          from_user: "server",
           to_user: computer,
           message: "Get directory",
         })
@@ -139,10 +142,10 @@ const CLIPage = () => {
       socket.send(
         JSON.stringify({
           type: "request",
-          from_user: "webclient",
-          token: token,
+          from_user: "server",
           to_user: selectedMac,
           message: terminalInput,
+          dir: dir,
         })
       );
     } else {
@@ -167,7 +170,7 @@ const CLIPage = () => {
             <Tooltip title=" Click here to Check server status">
               <Button
                 type="link"
-                href="https://10.32.116.195:8443"
+                href="https://10.32.116.195:8444"
                 target="_blank"
                 icon={
                   <DisconnectOutlined

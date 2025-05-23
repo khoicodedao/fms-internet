@@ -55,7 +55,7 @@ export default function MalOpsManagement() {
     true
   );
   const { t } = useTranslation(); // multi-language support
-  const [filter, setFilter] = useState<any>(null);
+  const [filter, setFilter] = useState<any>({});
   const [filterName, setFilterName] = useState<string>("");
   const [filterDescription, setFilterDescription] = useState<string>("");
   const [startTime, setStartTime] = useState<string>("");
@@ -64,14 +64,14 @@ export default function MalOpsManagement() {
   const items = [
     {
       icon: DesktopOutlined,
-      label: t("machine"),
+      label: t("Registry"),
       fields: [
         { name: "internal_ip", label: "internal_ip" },
         { name: "public_ip", label: "public_ip" },
         { name: "os", label: "os" },
         { name: "last_seen", label: "last_seen" },
         { name: "cpu_use", label: "cpu_use" },
-        { name: "mac_address", label: "mac_address" },
+        { name: "mac", label: "mac" },
         { name: "version string", label: "version string" },
         { name: "last_update", label: "last_update" },
         { name: "is_remote", label: "is_remote" },
@@ -155,7 +155,7 @@ export default function MalOpsManagement() {
     },
     {
       icon: LinkOutlined,
-      label: t("connection"),
+      label: t("Flow"),
       fields: [
         { name: "mac", label: "mac" },
         { name: "ip", label: "ip" },
@@ -253,7 +253,6 @@ export default function MalOpsManagement() {
       !endTime ||
       !filter
     ) {
-      console.log(filter);
       message.error("Vui lòng nhập đầy đủ thông tin!"); // Sử dụng Ant Design message
       return;
     }

@@ -6,7 +6,7 @@ export async function middleware(request) {
   const authToken = request.cookies.get("auth_token")?.value;
 
   // ✅ Cho phép Next.js xử lý các API nội bộ
-  if (url.pathname.startsWith("/api/filters")) {
+  if (url.pathname.startsWith("/api/proxy")) {
     return NextResponse.next(); // không proxy, xử lý bằng route.ts
   }
 
@@ -22,7 +22,6 @@ export async function middleware(request) {
   if (url.pathname.startsWith("/api")) {
     const backendUrl = `${backendUrlBase}${url.pathname}`;
     const body = request.method !== "GET" ? await request.json() : null;
-
     try {
       const response = await fetch(backendUrl, {
         method: request.method,
@@ -32,7 +31,6 @@ export async function middleware(request) {
         },
         body: body ? JSON.stringify(body) : null,
       });
-
       const data = await response.json();
       return NextResponse.json(data, { status: response.status });
     } catch (error) {
