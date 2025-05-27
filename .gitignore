@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 
+/socket_be/node_modules
 # testing
 /coverage
 

@@ -1,8 +1,9 @@
 const WebSocket = require("ws");
 const fs = require("fs");
 const path = require("path");
+require("dotenv").config();
+const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
 
-const externalServerUrl = "wss://10.32.116.195:8444";
 const cert = fs.readFileSync(path.join(__dirname, "./certs/client.crt"));
 const key = fs.readFileSync(path.join(__dirname, "./certs/client.key"));
 // const ca = fs.readFileSync(path.join(__dirname, "../certs/root_ca.crt"));

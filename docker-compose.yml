@@ -1,13 +1,30 @@
 version: "3.8"
 
 services:
-  app:
+  nextjs:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile # Dockerfile của Next.js (bạn đã có)
     ports:
-      - "443:443" # Map cổng 443 của container ra cổng 443 của host
+      - "443:443"
+      - "445:445"
     volumes:
-      - .:/app # Gắn thư mục hiện tại vào container
+      - .:/app
     environment:
       NODE_ENV: production
+
+  socket_be:
+    build:
+      context: ./socket_be
+      dockerfile: Dockerfile # Dockerfile vừa tạo ở trên cho socket_be
+    ports:
+      - "3001:3001" # WebSocket server
+    volumes:
+      - ./socket_be:/app
+    environment:
+      - NODE_ENV=production
+      - EXTERNAL_SERVER_URL=${EXTERNAL_SERVER_URL} # Lấy từ .env nếu cần
+    depends_on:
+      - nextjs
+
+  # Nếu bạn muốn chạy nginx riêng, có thể thêm service nginx ở đây

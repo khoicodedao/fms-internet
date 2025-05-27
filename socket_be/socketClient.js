@@ -1,7 +1,9 @@
 // socketClient.js
+require("dotenv").config();
 const WebSocket = require("ws");
 const fs = require("fs");
 const path = require("path");
+const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
 
 let socket = null;
 
@@ -11,7 +13,7 @@ function connectToSocketServer() {
   // Nếu cần CA, bỏ comment dòng dưới
   // const ca = fs.readFileSync(path.join(__dirname, "../certs/root_ca.crt"));
 
-  socket = new WebSocket("wss://10.32.116.195:8444", {
+  socket = new WebSocket(externalServerUrl, {
     cert,
     key,
     // ca,
