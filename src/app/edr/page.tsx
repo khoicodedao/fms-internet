@@ -1,50 +1,26 @@
 /*eslint-disable*/
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 // import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
 import { useTranslation } from "react-i18next";
+import HeaderDrawer from "./HeaderDrawer";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
 import { usePostApi } from "@/common/usePostApi";
 import formatDateTime from "@/common/formatDate";
-import { Progress, Switch } from "antd";
+import { message, Progress, Switch } from "antd";
 export default function Edr() {
   const { mutation, contextHolder } = usePostApi(
-    API_URL.EDR_PAGE.REMOTE,
+    API_URL.EDR_PAGE.SOCKET_EDR,
     false
   );
   const [reload, setReload] = React.useState(false);
   const { t } = useTranslation();
-  const onChange = (checked: boolean, mac: string) => {
-    mutation.mutate(
-      {
-        mac: mac,
-        is_remote: checked,
-      },
-      {
-        onSuccess: (response: any) => {
-          setReload(!reload);
-        },
-      }
-    );
-  };
 
   const columns = [
-    {
-      headerName: t("Function"),
-      field: "mac_address",
-      cellRenderer: (params: any) => {
-        return (
-          <Switch
-            value={params.data.is_remote}
-            onClick={(checked) => onChange(checked, params.value)}
-          />
-        );
-      },
-    },
     {
       headerName: t("macAddress"),
       field: "mac_address",
@@ -118,6 +94,8 @@ export default function Edr() {
         //@ts-ignore
         columns={columns}
         reload={reload}
+        // @ts-ignore
+        HeaderDrawer={HeaderDrawer}
       />
     </div>
   );

@@ -21,6 +21,7 @@ interface DataTableProps {
   reload?: boolean; // Add onReload prop
   showFilter?: boolean; // Add showFilter prop
   showDatepicker?: boolean; // Add showDatepicker prop
+  HeaderDrawer?: React.ReactNode; //show component here
 }
 
 export default function DataTable({
@@ -32,8 +33,8 @@ export default function DataTable({
   reload,
   showFilter = true,
   showDatepicker = true,
-}: // Destructure onReload
-DataTableProps) {
+  HeaderDrawer,
+}: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
   const handleSearch = (query: string) => {
     setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm
@@ -181,7 +182,12 @@ DataTableProps) {
 
       {/* Drawer hiển thị chi tiết dữ liệu */}
       <Drawer
-        title="Data Details"
+        title={
+          HeaderDrawer && typeof HeaderDrawer === "function"
+            ? // @ts-ignore
+              HeaderDrawer({ selectedRow })
+            : "Detail"
+        }
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}

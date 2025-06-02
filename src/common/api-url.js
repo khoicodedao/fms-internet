@@ -6,6 +6,7 @@ const API_URL = {
   EDR_PAGE: {
     DEFAULT: "/api/edrs/paginate",
     REMOTE: "/api/edrs/update-remote",
+    SOCKET_EDR: "/api/remote_edrs",
   },
   NDR_PAGE: {
     DEFAULT: "/api/ndrs/paginate",

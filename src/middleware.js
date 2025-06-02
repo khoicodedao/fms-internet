@@ -6,10 +6,12 @@ export async function middleware(request) {
   const authToken = request.cookies.get("auth_token")?.value;
 
   // ✅ Cho phép Next.js xử lý các API nội bộ
-  if (url.pathname.startsWith("/api/proxy")) {
+  if (url.pathname.startsWith("/api/remote_edrs")) {
     return NextResponse.next(); // không proxy, xử lý bằng route.ts
   }
-
+  if (url.pathname.startsWith("/api/remote_ndrs")) {
+    return NextResponse.next(); // không proxy, xử lý bằng route.ts
+  }
   // Redirect nếu đã đăng nhập và vào /login
   if (url.pathname === "/login") {
     if (authToken) {
