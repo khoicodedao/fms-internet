@@ -76,7 +76,7 @@ const CLIPage = () => {
   }, []);
 
   const connectToWebSocket = () => {
-    const ws = new WebSocket("ws://10.32.116.205:3001");
+    const ws = new WebSocket("wss://10.32.116.205:3001");
     setSocket(ws);
 
     ws.onopen = () => {

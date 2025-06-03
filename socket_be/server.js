@@ -1,32 +1,39 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 require("dotenv").config();
+
 const WebSocket = require("ws");
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
 const express = require("express");
-const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
 const axios = require("axios");
+
 const cert = fs.readFileSync(path.join(__dirname, "./certs/client.crt"));
 const key = fs.readFileSync(path.join(__dirname, "./certs/client.key"));
 const ca = fs.readFileSync(path.join(__dirname, "./certs/root_ca.crt"));
 
+const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
+const socketServerUrl = process.env.SOCKET_SERVER_URL;
+
 const app = express();
-app.use(express.json()); // parse JSON body
+app.use(express.json());
+
 let externalSocket = null;
 let reconnectTimeout = null;
-// Tạo Agent dùng client certificate
+
+// Agent dùng client cert
 const httpsAgent = new https.Agent({
   cert,
   key,
   ca,
-  rejectUnauthorized: false, // hoặc true nếu server ngoài có chứng chỉ hợp lệ
+  rejectUnauthorized: false,
 });
+
+// 🔌 Kết nối tới WebSocket ngoài
 function connectExternalSocket() {
   externalSocket = new WebSocket(externalServerUrl, {
     cert,
     key,
-    // ca,
     rejectUnauthorized: false,
   });
 
@@ -45,24 +52,29 @@ function connectExternalSocket() {
 
   externalSocket.on("close", () => {
     console.log("External websocket disconnected");
-    // Tự động reconnect sau 3 giây
     reconnectTimeout = setTimeout(connectExternalSocket, 3000);
   });
 
   externalSocket.on("error", (err) => {
     console.error("External websocket error:", err);
-    // Nếu socket bị lỗi và đã đóng, thử reconnect
     if (externalSocket.readyState !== WebSocket.OPEN && !reconnectTimeout) {
       reconnectTimeout = setTimeout(connectExternalSocket, 3000);
     }
   });
 }
 
-// Gọi hàm kết nối lần đầu
 connectExternalSocket();
 
-// WebSocket server cho FE
-const wss = new WebSocket.Server({ port: 3001 });
+// 📦 HTTPS server cho API (port 3002)
+const apiServer = https.createServer({ key, cert }, app);
+apiServer.listen(3002, () => {
+  console.log("HTTPS API server running on port 3002");
+});
+
+// 🛰️ WSS WebSocket server cho frontend (port 3001)
+const wssServer = https.createServer({ key, cert });
+const wss = new WebSocket.Server({ server: wssServer });
+
 let frontendClients = [];
 
 wss.on("connection", (ws) => {
@@ -71,7 +83,6 @@ wss.on("connection", (ws) => {
 
   ws.on("message", (message) => {
     console.log("Received from FE:", message.toString());
-    // Nếu externalSocket chưa kết nối, thử reconnect
     if (!externalSocket || externalSocket.readyState !== WebSocket.OPEN) {
       console.log("External socket not connected, reconnecting...");
       connectExternalSocket();
@@ -100,27 +111,20 @@ function broadcastToFrontendClients(data) {
   });
 }
 
-console.log("WebSocket server listening on port 3001");
-// ✅ API route: POST /api/edrs
-app.post("/api/edrs", async (req, res) => {
-  const body = req.body;
-  console.log("Received data:", body);
-  try {
-    const response = await axios.post(
-      `${process.env.SOCKET_SERVER_URL}/api/edrs`,
-      body,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        httpsAgent, // gắn agent để xử lý SSL
-      }
-    );
+wssServer.listen(3001, () => {
+  console.log("Secure WebSocket (wss) server running on port 3001");
+});
 
+// ✅ API routes
+app.post("/api/edrs", async (req, res) => {
+  try {
+    const response = await axios.post(`${socketServerUrl}/api/edrs`, req.body, {
+      headers: { "Content-Type": "application/json" },
+      httpsAgent,
+    });
     res.status(response.status).json(response.data);
   } catch (error) {
-    console.error("Failed to send to socket server:", error.message);
-
+    console.error("Error /api/edrs:", error.message);
     if (error.response) {
       res.status(error.response.status).json(error.response.data);
     } else {
@@ -128,24 +132,20 @@ app.post("/api/edrs", async (req, res) => {
     }
   }
 });
+
 app.post("/api/edrs/get", async (req, res) => {
-  const body = req.body;
   try {
     const response = await axios.post(
-      `${process.env.SOCKET_SERVER_URL}/api/edrs/get`,
-      body,
+      `${socketServerUrl}/api/edrs/get`,
+      req.body,
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        httpsAgent, // gắn agent để xử lý SSL
+        headers: { "Content-Type": "application/json" },
+        httpsAgent,
       }
     );
-
     res.status(response.status).json(response.data);
   } catch (error) {
-    console.error("Failed to send to socket server:", error.message);
-
+    console.error("Error /api/edrs/get:", error.message);
     if (error.response) {
       res.status(error.response.status).json(error.response.data);
     } else {
@@ -155,48 +155,33 @@ app.post("/api/edrs/get", async (req, res) => {
 });
 
 app.post("/api/ndrs", async (req, res) => {
-  const body = req.body;
-
   try {
-    const response = await fetch(`${process.env.SOCKET_SERVER_URL}/api/ndrs`, {
+    const response = await fetch(`${socketServerUrl}/api/ndrs`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body.columns),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body.columns),
       agent: httpsAgent,
     });
-
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (error) {
-    console.error("Failed to send to socket server:", error);
+    console.error("Error /api/ndrs:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 app.post("/api/ndrs/get", async (req, res) => {
-  const body = req.body;
-
   try {
-    const response = await fetch(`${process.env.SOCKET_SERVER_URL}/api/ndrs`, {
+    const response = await fetch(`${socketServerUrl}/api/ndrs`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
       agent: httpsAgent,
     });
-
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (error) {
-    console.error("Failed to send to socket server:", error);
+    console.error("Error /api/ndrs/get:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-});
-
-// HTTP server
-const server = https.createServer({ key, cert }, app);
-server.listen(3002, () => {
-  console.log("HTTPS + WebSocket server running on port 3002");
 });

@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000" # chỉ expose trong mạng nội bộ Docker
     depends_on:
       - socket_be
 
@@ -18,7 +18,20 @@ services:
       - "3001:3001"
       - "3002:3002"
     environment:
-      - EXTERNAL_SERVER_URL=wss://10.32.116.158
-      - SOCKET_SERVER_URL=https://10.32.116.158
+      - EXTERNAL_SERVER_URL=wss://10.32.116.158:444
+      - SOCKET_SERVER_URL=https://10.32.116.158:8443
     volumes:
       - ./socket_be/certs:/app/certs
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_reverse_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - nextjs
