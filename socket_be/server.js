@@ -4,7 +4,6 @@ const WebSocket = require("ws");
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
-
 const express = require("express");
 const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
 const axios = require("axios");

@@ -4,27 +4,21 @@ services:
   nextjs:
     build:
       context: .
-      dockerfile: Dockerfile # Dockerfile của Next.js (bạn đã có)
+      dockerfile: Dockerfile
     ports:
-      - "443:443"
-      - "445:445"
-    volumes:
-      - .:/app
-    environment:
-      NODE_ENV: production
+      - "3000:3000"
+    depends_on:
+      - socket_be
 
   socket_be:
     build:
       context: ./socket_be
-      dockerfile: Dockerfile # Dockerfile vừa tạo ở trên cho socket_be
+      dockerfile: Dockerfile
     ports:
-      - "3001:3001" # WebSocket server
-    volumes:
-      - ./socket_be:/app
+      - "3001:3001"
+      - "3002:3002"
     environment:
-      - NODE_ENV=production
-      - EXTERNAL_SERVER_URL=${EXTERNAL_SERVER_URL} # Lấy từ .env nếu cần
-    depends_on:
-      - nextjs
-
-  # Nếu bạn muốn chạy nginx riêng, có thể thêm service nginx ở đây
+      - EXTERNAL_SERVER_URL=wss://10.32.116.158
+      - SOCKET_SERVER_URL=https://10.32.116.158
+    volumes:
+      - ./socket_be/certs:/app/certs
