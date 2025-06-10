@@ -18,8 +18,8 @@ services:
       - "3001:3001"
       - "3002:3002"
     environment:
-      - EXTERNAL_SERVER_URL=wss://10.32.116.158:444
-      - SOCKET_SERVER_URL=https://10.32.116.158:8443
+      - EXTERNAL_SERVER_URL=wss://10.32.116.222:444
+      - SOCKET_SERVER_URL=https://10.32.116.222:8443
     volumes:
       - ./socket_be/certs:/app/certs
 
