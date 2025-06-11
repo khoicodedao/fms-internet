@@ -1,4 +1,3 @@
-/* eslint-disable  */
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import axios from "axios";
 import { notification } from "antd";
@@ -12,16 +11,28 @@ interface PostResponse {
 }
 
 export const usePostApi = (url: string, isNotification: boolean = true) => {
-  const [notificationApi, contextHolder] = notification.useNotification(); // Đảm bảo notification được khởi tạo
+  const [notificationApi, contextHolder] = notification.useNotification();
 
-  // Định nghĩa mutation
   const mutation = useMutation<PostResponse, Error, PostRequestBody>({
     mutationFn: async (data: PostRequestBody) => {
-      const response = await axios.post(url, data);
+      // 👉 Lấy token từ cookie
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("auth_token="))
+        ?.split("=")[1];
+
+      // 👉 Gửi request kèm Bearer token
+      const response = await axios.post(url, data, {
+        headers: token
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : {},
+      });
+
       return response.data;
     },
     onMutate: () => {
-      // Hiển thị thông báo khi bắt đầu request
       if (isNotification) {
         notificationApi.info({
           message: "Đang xử lý...",
@@ -31,7 +42,6 @@ export const usePostApi = (url: string, isNotification: boolean = true) => {
       }
     },
     onSuccess: () => {
-      // Hiển thị thông báo khi thành công
       if (isNotification) {
         notificationApi.success({
           message: "Thành công!",
@@ -41,7 +51,6 @@ export const usePostApi = (url: string, isNotification: boolean = true) => {
       }
     },
     onError: (error: Error) => {
-      // Hiển thị thông báo khi có lỗi
       if (isNotification) {
         notificationApi.error({
           message: "Lỗi!",
@@ -49,25 +58,19 @@ export const usePostApi = (url: string, isNotification: boolean = true) => {
           duration: 3,
         });
       }
+
       if (
         typeof window !== "undefined" &&
         axios.isAxiosError(error) &&
         error.response?.status === 401
       ) {
-        if (
-          typeof window !== "undefined" &&
-          axios.isAxiosError(error) &&
-          error.response?.status === 401
-        ) {
-          console.error("Error:", error.response.status);
-          // Xóa cookie và chuyển hướng đến trang đăng nhập
-          document.cookie =
-            "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          window.location.href = "/login";
-        }
+        console.error("Error:", error.response.status);
+        document.cookie =
+          "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        window.location.href = "/login";
       }
     },
   });
 
-  return { mutation, contextHolder }; // Trả về mutation và contextHolder
+  return { mutation, contextHolder };
 };

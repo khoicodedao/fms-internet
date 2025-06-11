@@ -321,7 +321,7 @@ export default function Home() {
           {[
             {
               title: "Socket Event",
-              value: data.countSocket || 0,
+              value: data?.countSocket || 0,
               icon: (
                 <ClusterOutlined
                   style={{ color: "#1890ff", marginRight: "8px" }}

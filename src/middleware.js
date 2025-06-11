@@ -1,49 +1,25 @@
 import { NextResponse } from "next/server";
 
 export async function middleware(request) {
-  const backendUrlBase = process.env.NEXT_PUBLIC_BACKEND_URL;
   const url = request.nextUrl.clone();
   const authToken = request.cookies.get("auth_token")?.value;
 
-  // ✅ Cho phép Next.js xử lý các API nội bộ
-  if (url.pathname.startsWith("/api/remote_edrs")) {
-    return NextResponse.next(); // không proxy, xử lý bằng route.ts
-  }
-  if (url.pathname.startsWith("/api/remote_ndrs")) {
-    return NextResponse.next(); // không proxy, xử lý bằng route.ts
-  }
-  // Redirect nếu đã đăng nhập và vào /login
-  if (url.pathname === "/login") {
-    if (authToken) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  // ✅ Cho phép Next xử lý các route nội bộ hoặc API proxy tới backend
+  if (
+    url.pathname.startsWith("/api/remote_edrs") ||
+    url.pathname.startsWith("/api/remote_ndrs") ||
+    url.pathname.startsWith("/api/be") // 👈 thêm dòng này
+  ) {
     return NextResponse.next();
   }
 
-  // ✅ Proxy các API khác sang backend
-  if (url.pathname.startsWith("/api")) {
-    const backendUrl = `${backendUrlBase}${url.pathname}`;
-    const body = request.method !== "GET" ? await request.json() : null;
-    try {
-      const response = await fetch(backendUrl, {
-        method: request.method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authToken ? `Bearer ${authToken}` : "",
-        },
-        body: body ? JSON.stringify(body) : null,
-      });
-      const data = await response.json();
-      return NextResponse.json(data, { status: response.status });
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Internal Server Error", message: error.message },
-        { status: 500 }
-      );
-    }
+  // Cho phép truy cập login nếu chưa có token
+  if (url.pathname === "/login") {
+    if (authToken) return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.next();
   }
 
-  // Bảo vệ route không có token
+  // ✅ Cho phép mọi request khác nếu có token
   if (!authToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -52,5 +28,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/api/:path*", "/((?!_next/static|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|favicon.ico).*)"],
 };

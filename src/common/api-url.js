@@ -1,28 +1,28 @@
 const API_URL = {
-  HOME_PAGE: { DEFAULT: "/api/dashboard/statis" },
-  LOGIN_PAGE: { DEFAULT: "/api/auth/login" },
-  EVENT_PAGE: { DEFAULT: "/api/events/paginate" },
-  ALERT_PAGE: { DEFAULT: "/api/alerts/paginate" },
+  HOME_PAGE: { DEFAULT: "/api/be/dashboard/statis" },
+  LOGIN_PAGE: { DEFAULT: "/api/be/auth/login" },
+  EVENT_PAGE: { DEFAULT: "/api/be/events/paginate" },
+  ALERT_PAGE: { DEFAULT: "/api/be/alerts/paginate" },
   EDR_PAGE: {
-    DEFAULT: "/api/edrs/paginate",
-    REMOTE: "/api/edrs/update-remote",
+    DEFAULT: "/api/be/edrs/paginate",
+    REMOTE: "/api/be/edrs/update-remote",
     SOCKET_EDR: "/api/remote_edrs",
   },
   NDR_PAGE: {
-    DEFAULT: "/api/ndrs/paginate",
+    DEFAULT: "/api/be/ndrs/paginate",
     REMOTE: "/api/ndrs/update-remote",
   },
-  LOGS_PAGE: { DEFAULT: "/api/error-logs/paginate" },
+  LOGS_PAGE: { DEFAULT: "/api/be/error-logs/paginate" },
   INVESTIGATION_PAGE: {
-    DEFAULT: "/api/filter/paginate",
-    DELETE: "/api/filter/delete",
-    ADD: "/api/filter/add",
+    DEFAULT: "/api/be/filter/paginate",
+    DELETE: "/api/be/filter/delete",
+    ADD: "/api/be/filter/add",
   },
   MALOPS_PAGE: {
-    DEFAULT: "/api/investigation/paginate",
-    DELETE: "/api/investigation/delete",
-    ADD: "/api/investigation/add",
-    EDIT: "/api/investigation/edit",
+    DEFAULT: "/api/be/investigation/paginate",
+    DELETE: "/api/be/investigation/delete",
+    ADD: "/api/be/investigation/add",
+    EDIT: "/api/be/investigation/edit",
   },
 };
 export default API_URL;
