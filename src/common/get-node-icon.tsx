@@ -1,3 +1,4 @@
+//eslint-disable
 import {
   DesktopOutlined,
   LaptopOutlined,
@@ -155,7 +156,7 @@ const getNodeIcon = (label: string) => {
     js: FileOutlined,
   };
 
-  const normalizedLabel = label.toLowerCase();
+  const normalizedLabel = label?.toLowerCase();
 
   const extension = normalizedLabel.split(".").pop();
   if (extension && fileIconMap[extension]) {

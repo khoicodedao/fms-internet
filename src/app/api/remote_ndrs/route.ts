@@ -16,14 +16,12 @@ const httpsAgent = new https.Agent({
 // @ts-ignore
 export async function POST(req: any) {
   const body = await req.json();
-  console.log(body.columns);
-
   const response = await fetch(
     `${process.env.SOCKET_SERVER_URL_API}/api/ndrs`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body.columns),
+      body: JSON.stringify(body),
       agent: httpsAgent, // 👈 Thêm agent vào đây
     }
   );
@@ -33,14 +31,21 @@ export async function POST(req: any) {
 }
 
 export async function GET(req: any) {
-  const body = await req.json();
+  const url = new URL(req.url);
+  const mac_address = url.searchParams.get("mac_address");
+
+  if (!mac_address) {
+    return new Response(JSON.stringify({ error: "mac_address is required" }), {
+      status: 400,
+    });
+  }
 
   const response = await fetch(
     `${process.env.SOCKET_SERVER_URL_API}/api/ndrs/get`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ mac_address }),
       agent: httpsAgent, // 👈 Thêm agent vào đây
     }
   );

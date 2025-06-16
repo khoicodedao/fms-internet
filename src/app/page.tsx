@@ -63,7 +63,7 @@ export default function Home() {
         },
       }
     );
-  }, []);
+  }, [startDate, endDate]);
   const { t } = useTranslation();
   const statusPieOption = {
     title: {

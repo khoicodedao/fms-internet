@@ -14,6 +14,7 @@ const ca = fs.readFileSync(path.join(__dirname, "./certs/root_ca.crt"));
 
 const externalServerUrl = process.env.EXTERNAL_SERVER_URL;
 const socketServerUrl = process.env.SOCKET_SERVER_URL;
+const certServerUrl = process.env.CERTIFICATE_URL;
 
 const app = express();
 app.use(express.json());
@@ -118,10 +119,37 @@ wssServer.listen(3001, () => {
 // ✅ API routes
 app.post("/api/edrs", async (req, res) => {
   try {
-    const response = await axios.post(`${socketServerUrl}/api/edrs`, req.body, {
-      headers: { "Content-Type": "application/json" },
-      httpsAgent,
-    });
+    const macAddress = req.body?.mac_address;
+    console.log("macAddress", macAddress);
+    if (!macAddress) {
+      return res.status(400).json({ error: "Missing mac_address" });
+    }
+
+    // Lấy certificate từ server
+    const certResponse = await axios.post(
+      `${certServerUrl}/get-certificate`,
+      { common_name: macAddress },
+      { httpsAgent } // agent có client cert để truy cập server
+    );
+    console.log("certResponse", certResponse.data);
+    const { certificate, private_key } = certResponse.data;
+
+    // Thêm vào body trước khi gửi
+    const bodyWithCert = {
+      ...req.body,
+      crt: certificate,
+      key: private_key,
+    };
+    console.log("bodyWithCert", bodyWithCert);
+    const response = await axios.post(
+      `${socketServerUrl}/api/edrs`,
+      bodyWithCert,
+      {
+        headers: { "Content-Type": "application/json" },
+        httpsAgent,
+      }
+    );
+
     res.status(response.status).json(response.data);
   } catch (error) {
     console.error("Error /api/edrs:", error.message);
@@ -156,32 +184,59 @@ app.post("/api/edrs/get", async (req, res) => {
 
 app.post("/api/ndrs", async (req, res) => {
   try {
-    const response = await fetch(`${socketServerUrl}/api/ndrs`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req.body.columns),
-      agent: httpsAgent,
-    });
-    const data = await response.json();
-    res.status(response.status).json(data);
+    const macAddress = req.body?.mac_address;
+    const columns = req.body;
+    if (!macAddress) {
+      return res.status(400).json({ error: "Missing mac_address or columns" });
+    }
+
+    // Lấy certificate từ server
+    const certResponse = await axios.post(
+      `${certServerUrl}/get-certificate`,
+      { common_name: macAddress },
+      { httpsAgent }
+    );
+
+    const { certificate, private_key } = certResponse.data;
+    const bodyWithCert = {
+      ...columns,
+      crt: certificate,
+      key: private_key,
+    };
+    const response = await axios.post(
+      `${socketServerUrl}/api/ndrs`,
+      bodyWithCert,
+      {
+        headers: { "Content-Type": "application/json" },
+        httpsAgent,
+      }
+    );
+
+    res.status(response.status).json(response.data);
   } catch (error) {
-    console.error("Error /api/ndrs:", error);
+    console.error("Error /api/ndrs:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 app.post("/api/ndrs/get", async (req, res) => {
+  console.log("req.body", req.body);
   try {
-    const response = await fetch(`${socketServerUrl}/api/ndrs`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(req.body),
-      agent: httpsAgent,
-    });
-    const data = await response.json();
-    res.status(response.status).json(data);
+    const response = await axios.post(
+      `${socketServerUrl}/api/ndrs/get`,
+      req.body,
+      {
+        headers: { "Content-Type": "application/json" },
+        httpsAgent,
+      }
+    );
+    res.status(response.status).json(response.data);
   } catch (error) {
-    console.error("Error /api/ndrs/get:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error /api/ndrs/get:", error.message);
+    if (error.response) {
+      res.status(error.response.status).json(error.response.data);
+    } else {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
   }
 });

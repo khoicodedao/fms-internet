@@ -11,6 +11,7 @@ const API_URL = {
   NDR_PAGE: {
     DEFAULT: "/api/be/ndrs/paginate",
     REMOTE: "/api/ndrs/update-remote",
+    SOCKET_NDR: "/api/remote_ndrs",
   },
   LOGS_PAGE: { DEFAULT: "/api/be/error-logs/paginate" },
   INVESTIGATION_PAGE: {

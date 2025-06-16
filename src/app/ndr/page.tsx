@@ -6,6 +6,7 @@ import type { ColDef } from "ag-grid-community";
 // import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
+import HeaderDrawer from "./HeaderDrawer";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
@@ -33,33 +34,8 @@ export default function Ndr() {
     mac_address: string;
     is_remote: boolean;
   };
-  const onChange = (checked: boolean, mac: string) => {
-    mutation.mutate(
-      {
-        mac: mac,
-        is_remote: checked,
-      },
-      {
-        onSuccess: (response: any) => {
-          setReload(!reload);
-        },
-      }
-    );
-  };
 
   const columns: ColDef<RowData>[] = [
-    {
-      headerName: t("Function"),
-      field: "mac_address",
-      cellRenderer: (params: any) => {
-        return (
-          <Switch
-            value={params.data.is_remote}
-            onClick={(checked) => onChange(checked, params.value)}
-          />
-        );
-      },
-    },
     {
       headerName: t("macAddress"),
       field: "mac_address",
@@ -97,6 +73,8 @@ export default function Ndr() {
         apiUrl={API_URL.NDR_PAGE.DEFAULT}
         columns={columns}
         reload={reload}
+        // @ts-ignore
+        HeaderDrawer={HeaderDrawer}
       />
     </div>
   );
