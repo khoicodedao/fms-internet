@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { usePostApi } from "@/common/usePostApi";
 import { Form, Input, Button, Spin, message } from "antd";
 import API_URL from "@/common/api-url";
@@ -14,10 +14,38 @@ const LoginForm = () => {
     API_URL.LOGIN_PAGE.DEFAULT,
     false
   );
-  let isLoading = mutation.isPending;
   const router = useRouter();
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockTime, setLockTime] = useState<number | null>(null);
+  const [timer, setTimer] = useState(0);
+
+  let isLoading = mutation.isPending;
+
+  // ⏲️ Đồng hồ đếm ngược
+  useEffect(() => {
+    if (lockTime !== null) {
+      const interval = setInterval(() => {
+        const secondsLeft = Math.max(
+          0,
+          Math.floor((lockTime - Date.now()) / 1000)
+        );
+        setTimer(secondsLeft);
+        if (secondsLeft <= 0) {
+          setLockTime(null);
+          setLoginAttempts(0);
+          clearInterval(interval);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [lockTime]);
 
   const onFinish = async (values: { username: string; password: string }) => {
+    if (lockTime) {
+      messageApi.error(`Too many attempts. Try again in ${timer}s`);
+      return;
+    }
+
     const loginData = {
       user_name: values.username,
       password: values.password,
@@ -25,29 +53,35 @@ const LoginForm = () => {
 
     mutation.mutate(loginData, {
       onSuccess: (response: any) => {
-        // Kiểm tra nếu API trả về thành công\
         if (response?.code === 200) {
           const token = response?.data[0]?.token;
-          console.log("Token:", response);
           if (token) {
-            // Lưu token vào cookie hoặc localStorage
-            Cookies.set("auth_token", token, { expires: 7 }); // Lưu trong 7 ngày
+            Cookies.set("auth_token", token, { expires: 7 });
             messageApi.success("Login successful!");
-            router.push("/"); // Điều hướng đến trang dashboard
+            router.push("/");
           } else {
             messageApi.error("Login failed: Token not found.");
           }
         } else {
-          messageApi.error(response?.message || "Login failed.");
-          isLoading = false;
+          handleFailedAttempt(response?.message || "Login failed.");
         }
       },
       onError: (error) => {
-        messageApi.error(
-          error?.message || "An error occurred. Please try again."
-        );
+        handleFailedAttempt(error?.message || "An error occurred.");
       },
     });
+  };
+
+  const handleFailedAttempt = (msg: string) => {
+    const attempts = loginAttempts + 1;
+    setLoginAttempts(attempts);
+    messageApi.error(msg);
+
+    if (attempts >= 5) {
+      const lockUntil = Date.now() + 30 * 1000; // Lock 30s
+      setLockTime(lockUntil);
+      messageApi.warning("Too many failed attempts. Try again in 30 seconds.");
+    }
   };
 
   return (
@@ -56,7 +90,7 @@ const LoginForm = () => {
         <Image src={logo} alt="FMS Logo" className="object-contain" priority />
       </div>
 
-      <div className="w-full max-w-[1200px] grid px-4 border-l border-gray-300 ">
+      <div className="w-full max-w-[1200px] grid px-4 border-l border-gray-300">
         <div className="flex items-center justify-center">
           <div className="w-full max-w-md">
             {contextHolder}
@@ -79,8 +113,12 @@ const LoginForm = () => {
               </Form.Item>
               <Form.Item>
                 <div className="flex justify-between items-center">
-                  <Button type="primary" htmlType="submit" disabled={isLoading}>
-                    Login
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={isLoading || lockTime !== null}
+                  >
+                    {lockTime ? `Wait ${timer}s` : "Login"}
                   </Button>
                   {isLoading && <Spin tip="Logging in..." />}
                 </div>
