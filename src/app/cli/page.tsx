@@ -21,7 +21,7 @@ type SOCKET_DATA = {
   //upload: data:{file_path:"", upload_url:"", dir:""}
   //download: data:"data:{"file_path":"", download_url:"",message:"",dir:"" }
 };
-
+const token = Cookies.get("auth_token");
 // const  = process.env.SOCKET_SERVER_URL;
 const CLIPage = () => {
   const [cmdType, setCmdType] = useState<
@@ -77,7 +77,7 @@ const CLIPage = () => {
 
   const connectToWebSocket = () => {
     //IP của server web không phải server ngoài, connect tới socket server của web
-    const ws = new WebSocket("wss://localhost:3001");
+    const ws = new WebSocket("wss://localhost:3001?token=" + token);
     setSocket(ws);
 
     ws.onopen = () => {

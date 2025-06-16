@@ -1,6 +1,6 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 require("dotenv").config();
-
+const url = require("url");
 const WebSocket = require("ws");
 const fs = require("fs");
 const path = require("path");
@@ -78,8 +78,16 @@ const wss = new WebSocket.Server({ server: wssServer });
 
 let frontendClients = [];
 
-wss.on("connection", (ws) => {
+wss.on("connection", (ws, req) => {
   console.log("Frontend client connected");
+  const parsedUrl = url.parse(req.url, true); // parse query string
+  const token = parsedUrl.query.token;
+
+  // Nếu không có token thì từ chối kết nối
+  if (!token) {
+    ws.send(JSON.stringify({ type: "error", message: "Unauthorized" }));
+    return ws.close();
+  }
   frontendClients.push(ws);
 
   ws.on("message", (message) => {
