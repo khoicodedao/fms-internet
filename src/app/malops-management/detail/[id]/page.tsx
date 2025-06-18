@@ -15,30 +15,28 @@ import API_URL from "@/common/api-url";
 import { useParams } from "next/navigation";
 export default function MalOpsManagementDetail() {
   const { id } = useParams(); // Lấy id từ dynamic route
-
   const [activeSection, setActiveSection] = useState("diagram");
   const [filterData, setFilterData] = useState([]);
   const { mutation: mutationList, contextHolder } = usePostApi(
     API_URL.MALOPS_PAGE.DEFAULT,
     true
   );
-
   useEffect(() => {
     mutationList.mutate(
       {
-        start_date: "2025-03-31",
+        start_date: "2025-03-31 00",
         end_date: "2026",
         skip: 0,
         limit: 50,
-        filter: `id = '${id}'`,
+        filter: id,
       },
       {
         onSuccess: (data) => {
           // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
-          if (data && data.data.investigation) {
-            setFilterData(data.data.investigation); // Gán dữ liệu vào state rowData
+          console.log(data.data.alerts);
+          if (data.data.alerts) {
+            setFilterData(data.data.alerts);
           } else {
-            console.error("API trả về dữ liệu không phải là mảng:", data);
             setFilterData([]);
           }
         },
@@ -101,7 +99,7 @@ export default function MalOpsManagementDetail() {
         time_end={filterData[0]?.end_time || ""}
       />
       <section id="diagram">
-        <Description rootCauseDetails="Root Cause Details" />
+        <Description data={filterData} rootCauseDetails="Root Cause Details" />
       </section>
       <Divider />
       <section id="communication">

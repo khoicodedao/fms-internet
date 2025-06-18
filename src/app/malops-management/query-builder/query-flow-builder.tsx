@@ -20,7 +20,18 @@ export default function QueryBuilderForm({
   const [query, setQuery] = useState(initialQuery);
   const [fields, setFields] = useState(propsFields || []);
   const [currentLabel, setCurrentLabel] = useState(label);
-
+  const customOperators = [
+    { name: "have", label: "have" },
+    { name: "=", label: "=" },
+    { name: "!=", label: "!=" },
+    { name: ">", label: ">" },
+    { name: "<", label: "<" },
+    { name: ">=", label: ">=" },
+    { name: "<=", label: "<=" },
+    { name: "contains", label: "Contains" },
+    { name: "startsWith", label: "Starts with" },
+    { name: "endsWith", label: "Ends with" },
+  ];
   // Reset QueryBuilder khi label thay đổi
   useEffect(() => {
     if (label !== currentLabel) {
@@ -37,13 +48,14 @@ export default function QueryBuilderForm({
   }, [propsFields]);
 
   const handleSubmit = () => {
-    const conditions = flattenQueryToSQL(query);
-    const filter = conditions.replaceAll('"', "'");
-    //@ts-ignore
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [label.toLowerCase()]: { filter }, // Gán filter vào object với key là label
-    }));
+    console.log("Query:", query);
+    // const conditions = flattenQueryToSQL(query);
+    // const filter = conditions.replaceAll('"', "'");
+    // //@ts-ignore
+    // setFilters((prevFilters) => ({
+    //   ...prevFilters,
+    //   [label.toLowerCase()]: { filter }, // Gán filter vào object với key là label
+    // }));
   };
 
   return (
@@ -61,6 +73,7 @@ export default function QueryBuilderForm({
         <QueryBuilder
           fields={fields}
           query={query}
+          operators={customOperators}
           onQueryChange={setQuery}
           resetOnOperatorChange
           showCombinatorsBetweenRules

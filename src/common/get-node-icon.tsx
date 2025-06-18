@@ -158,7 +158,8 @@ const getNodeIcon = (label: string) => {
 
   const normalizedLabel = label?.toLowerCase();
 
-  const extension = normalizedLabel.split(".").pop();
+  //@ts-ignore
+  const extension = normalizedLabel?.split(".").pop();
   if (extension && fileIconMap[extension]) {
     const IconComponent = fileIconMap[extension];
     return (
@@ -167,7 +168,7 @@ const getNodeIcon = (label: string) => {
   }
 
   const matchedNode = Object.keys(nodeIconMap).find((key) =>
-    normalizedLabel.includes(key)
+    normalizedLabel?.includes(key)
   );
 
   if (matchedNode) {

@@ -24,6 +24,7 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 import { usePostApi } from "@/common/usePostApi";
 
 import QueryFlowBuilder from "./query-builder/query-flow-builder";
+import Link from "next/link";
 // import { Collapse } from "antd";
 export default function Investigation() {
   const { t } = useTranslation(); //multi-language support
@@ -156,7 +157,21 @@ export default function Investigation() {
         );
       },
     },
-    { headerName: "filter", field: "filter", width: 500 },
+
+    {
+      headerName: "Description",
+      field: "description",
+      width: 200,
+      cellRenderer: (params: any) => {
+        return (
+          <Link href={`/malops-management/detail/${params.data.id}`}>
+            {params.value}
+          </Link>
+        );
+      },
+    },
+
+    { headerName: "Filter", field: "filter", width: 500 },
     {
       headerName: "Created at",
       field: "created_at",

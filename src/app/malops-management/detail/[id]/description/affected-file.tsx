@@ -1,37 +1,51 @@
 "use client";
-import API_URL from "@/common/api-url";
-import { usePostApi } from "@/common/usePostApi";
 import { FileOutlined } from "@ant-design/icons";
 import { Typography, Divider, Collapse } from "antd";
-import React, { useEffect } from "react";
+import React from "react";
 import getNodeIcon from "@/common/get-node-icon";
 
-export default function AffectedFile() {
-  const { mutation } = usePostApi(API_URL.EVENT_PAGE.DEFAULT, false);
-  const [dataFile, setDataFile] = React.useState<any[]>([]);
+type FileEvent = {
+  fields: {
+    file_name: string;
+    file_path: string;
+  };
+};
 
-  useEffect(() => {
-    mutation.mutate(
-      {
-        start_date: "2025",
-        end_date: "2026",
-        skip: 0,
-        limit: 10,
-        object: "File",
-      },
-      {
-        onSuccess: (response: any) => {
-          console.log(response.data.events);
-          const mappedData = response.data.events.map((event: any) => ({
-            icon: getNodeIcon(event.fields.file_name),
-            name: event.fields.file_name,
-            path: event.fields.file_path,
-          }));
-          setDataFile(mappedData);
-        },
-      }
-    );
-  }, []);
+type ResultItem = {
+  computer_name: string;
+  mac: string;
+  file_events: FileEvent[];
+};
+
+type Props = {
+  data: any[];
+};
+
+export default function AffectedFile({ data }: Props) {
+  const dataFile = React.useMemo(() => {
+    const uniqueFiles = new Map<
+      string,
+      { name: string; path: string; icon: React.ReactNode }
+    >();
+
+    data.forEach((machine: any) => {
+      machine.file_events.forEach((event: any) => {
+        const { file_name, file_path } = event.fields || {};
+        if (file_name && file_path) {
+          const key = `${file_name}|${file_path}`;
+          if (!uniqueFiles.has(key)) {
+            uniqueFiles.set(key, {
+              name: file_name,
+              path: file_path,
+              icon: getNodeIcon(file_name),
+            });
+          }
+        }
+      });
+    });
+
+    return Array.from(uniqueFiles.values());
+  }, [data]);
 
   const items = [
     {
@@ -57,7 +71,7 @@ export default function AffectedFile() {
   ];
 
   return (
-    <div className="w-full">
+    <div className="w-full" style={{ maxHeight: "600px", overflowY: "scroll" }}>
       <div className="flex items-center space-x-2 mb-4">
         <FileOutlined
           style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
