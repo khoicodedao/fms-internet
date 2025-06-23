@@ -74,6 +74,7 @@ export default function MalOpsManagement() {
     },
 
     { headerName: "Filter", field: "filter", width: 500 },
+    { headerName: "Time line", field: "time_line", width: 500 },
     {
       headerName: "Created at",
       field: "created_at",

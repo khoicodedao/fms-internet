@@ -77,7 +77,7 @@ const CLIPage = () => {
 
   const connectToWebSocket = () => {
     //IP của server web không phải server ngoài, connect tới socket server của web
-    const ws = new WebSocket("wss://localhost:3001?token=" + token);
+    const ws = new WebSocket("wss://10.10.60.56:3001?token=" + token);
     setSocket(ws);
 
     ws.onopen = () => {
