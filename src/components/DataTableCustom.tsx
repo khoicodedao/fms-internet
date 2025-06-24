@@ -40,7 +40,6 @@ export default function DataTable({
     setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm
     setSearchQuery(query.replaceAll('"', "'")); // Cập nhật state khi nhận giá trị từ component con
   };
-  console.log(searchQuery, body);
   const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

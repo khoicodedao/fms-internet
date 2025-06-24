@@ -64,9 +64,9 @@ const KQLSearchBox: React.FC<KQLSearchBoxProps> = ({ onSearch }) => {
             insertText: "ip= ",
           },
           {
-            label: "mac",
+            label: "mac_address",
             kind: monaco.languages.CompletionItemKind.Keyword,
-            insertText: "mac= ",
+            insertText: "mac_address= ",
           }, // Bổ sung "mac"
           {
             label: "description",
@@ -102,7 +102,7 @@ const KQLSearchBox: React.FC<KQLSearchBoxProps> = ({ onSearch }) => {
   return (
     <div className="flex items-center border border-gray-300 rounded-md">
       <Editor
-        height="30px"
+        height="40px"
         width="calc(100vw - 300px)"
         defaultLanguage="kql"
         theme="light"
@@ -117,6 +117,10 @@ const KQLSearchBox: React.FC<KQLSearchBoxProps> = ({ onSearch }) => {
           renderLineHighlight: "none",
           folding: false,
           automaticLayout: true,
+          suggest: {
+            matchOnWordStartOnly: true,
+            showIcons: false,
+          },
         }}
         onMount={(_, monaco) => handleEditorDidMount(monaco)}
         onChange={(value) => setQuery(value || "")} // Cập nhật state khi editor thay đổi
