@@ -19,7 +19,8 @@ export type SocketStatusType =
   | "Create"
   | "Terminate"
   | "Delete"
-  | "Write";
+  | "Write"
+  | "Edit";
 
 interface SocketStatusProps {
   status: SocketStatusType;
@@ -112,6 +113,16 @@ const socketStatusConfig: Record<
   Write: {
     label: "Write",
     color: "green",
+    icon: (
+      <EditOutlined
+        onPointerEnterCapture={undefined}
+        onPointerLeaveCapture={undefined}
+      />
+    ),
+  },
+  Edit: {
+    label: "Edit",
+    color: "Gray",
     icon: (
       <EditOutlined
         onPointerEnterCapture={undefined}

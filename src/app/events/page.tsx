@@ -71,7 +71,7 @@ export default function Events() {
     },
   ];
   const columnFlow = [
-    { headerName: t("mac"), field: "src_mac" },
+    { headerName: t("mac"), field: "mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
     { headerName: t("Dest IP"), field: "fields.dest_ip" },
     { headerName: t("Src IP"), field: "fields.src_ip" },
@@ -101,7 +101,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "socket" }}
+          body="object = 'socket'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           // columns={columns}
@@ -125,7 +125,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "registry" }}
+          body="object = 'registry'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columns.map((col) => ({
@@ -148,7 +148,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "file" }}
+          body="object = 'file'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columns.map((col) => ({
@@ -171,7 +171,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "process" }}
+          body="object = 'process'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columns.map((col) => ({
@@ -194,7 +194,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "flow" }}
+          body="object = 'flow'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columnFlow}
@@ -214,7 +214,7 @@ export default function Events() {
       >
         <DataTable
           title=""
-          body={{ object: "http" }}
+          body="object = 'http'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columnFlow}

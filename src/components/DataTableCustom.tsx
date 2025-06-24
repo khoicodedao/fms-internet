@@ -40,6 +40,7 @@ export default function DataTable({
     setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm
     setSearchQuery(query.replaceAll('"', "'")); // Cập nhật state khi nhận giá trị từ component con
   };
+  console.log(searchQuery, body);
   const { t } = useTranslation();
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function DataTable({
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
   const [rowTotal, setRowTotal] = useState(0); // Tổng số row từ API
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
-  const bodyData = body || {};
+  const bodyData = body || "";
   const idColumn: ColDef = {
     headerName: "#",
     field: "autoId",
@@ -69,12 +70,12 @@ export default function DataTable({
   const fetchData = () => {
     mutation.mutate(
       {
-        filter: searchQuery,
+        filter: searchQuery + bodyData,
         start_date: startDate,
         end_date: endDate,
         skip: (pagination.current - 1) * pagination.pageSize,
         limit: pagination.pageSize,
-        ...bodyData,
+        // ...bodyData,
       },
       {
         onSuccess: (response: any) => {
