@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
   i18n: {
     locales: ["en", "vi"], // Danh sách ngôn ngữ
     defaultLocale: "en", // Ngôn ngữ mặc định
+    localeDetection: false,
   },
 };
 
