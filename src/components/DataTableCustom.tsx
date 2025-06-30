@@ -69,7 +69,7 @@ export default function DataTable({
   const fetchData = () => {
     mutation.mutate(
       {
-        filter: searchQuery + bodyData,
+        filter: searchQuery ? searchQuery + " and " + bodyData : bodyData,
         start_date: startDate,
         end_date: endDate,
         skip: (pagination.current - 1) * pagination.pageSize,
