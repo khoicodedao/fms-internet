@@ -20,6 +20,7 @@ import {
   PartitionOutlined,
   ProfileOutlined,
   WifiOutlined,
+  UsbOutlined,
 } from "@ant-design/icons";
 export default function Events() {
   const { t } = useTranslation();
@@ -215,6 +216,26 @@ export default function Events() {
         <DataTable
           title=""
           body="object = 'http'"
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columnFlow}
+        />
+      </TabPane>
+      <TabPane
+        tab={
+          <span>
+            <UsbOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            File Usb
+          </span>
+        }
+        key="7"
+      >
+        <DataTable
+          title=""
+          body="object = 'FileUSB'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columnFlow}
