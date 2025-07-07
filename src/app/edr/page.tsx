@@ -29,7 +29,7 @@ export default function Edr() {
     },
     { headerName: t("internalIp"), field: "internal_ip" },
     { headerName: t("machineName"), field: "machine_name" },
-    { headerName: t("version"), field: "version string" },
+    { headerName: t("version"), field: "version" },
     {
       headerName: t("memoryUse"),
       field: "memory_use",
