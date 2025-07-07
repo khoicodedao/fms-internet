@@ -84,7 +84,6 @@ export default function Events() {
     { headerName: t("object"), field: "object" },
     { headerName: t("action"), field: "action" },
   ];
-
   return (
     <Tabs tabPosition="left" type="card" defaultActiveKey="1">
       <TabPane
@@ -238,7 +237,10 @@ export default function Events() {
           body="object = 'FileUSB'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columnFlow}
+          columns={columns.map((col) => ({
+            ...col,
+            tableTitle: "file", // Thêm tableTitle vào từng cột
+          }))}
         />
       </TabPane>
     </Tabs>
