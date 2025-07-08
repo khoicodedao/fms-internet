@@ -2,7 +2,6 @@
 import React from "react";
 import type { ColDef } from "ag-grid-community";
 // import DataTable from "@/components/DataTableCustom";
-import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
@@ -26,15 +25,19 @@ export default function Alerts() {
 
   const columns: ColDef<RowData>[] = [
     {
-      headerName: t("mac"),
-      field: "mac",
+      headerName: t("id"),
+      field: "_id",
       cellRenderer: (params: any) => {
         return (
-          <Link href={`/malops-management/detail/${params.value}`}>
-            {params.value}
+          <Link href={`/malops-management/detail/64e7e35c6a1f4c0001a2b345`}>
+            64e7e35c6a1f4c0001a2b345
           </Link>
         );
       },
+    },
+    {
+      headerName: t("mac"),
+      field: "mac",
     },
     { headerName: t("Score level"), field: "score_level" },
     { headerName: t("computerName"), field: "computer_name" },

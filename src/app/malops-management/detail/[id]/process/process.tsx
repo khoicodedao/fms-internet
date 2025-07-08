@@ -1,150 +1,101 @@
-/* eslint-disable */
-"use client";
-import React, { useEffect } from "react";
-import { Card, Table, Row, Col, Typography, Badge, Button } from "antd";
-import {
-  ApartmentOutlined,
-  // DesktopOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import "reactflow/dist/style.css";
-const { Title } = Typography;
-import Detail from "./detail";
-// import dynamic from "next/dynamic";
-import getNodeIcon from "../../../../../common/get-node-icon";
-import { usePostApi } from "@/common/usePostApi";
-import API_URL from "@/common/api-url";
+// ProcessTable.tsx
+import React, { useMemo } from "react";
+import { Table, Tag, Descriptions, Typography } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import { DesktopOutlined, SettingOutlined } from "@ant-design/icons";
 
-// const Flow = dynamic(() => import("../../../../../components/Flow"), {
-//   ssr: false,
-// });
+interface ProcessData {
+  alert_time: string;
+  object: string;
+  action: string;
+  mitre_tactic: string;
+  mitre_tecnique: string;
+  mitre_desc: string;
+  fields: Record<string, any>;
+}
 
-function Process() {
-  const { mutation, contextHolder } = usePostApi(
-    API_URL.EVENT_PAGE.DEFAULT,
-    false
-  );
-  const [dataDetail, setDataDetail] = React.useState<any[]>([]);
-  useEffect(() => {
-    mutation.mutate(
-      {
-        start_date: "2025",
-        end_date: "2026",
-        skip: 0,
-        limit: 2,
-        object: "Process",
-      },
-      {
-        onSuccess: (response: any) => {
-          setDataDetail(response.data.events);
-        },
-      }
-    );
-  }, []);
-  // Dữ liệu mẫu
-  // const sampleNodes: any[] = [
-  //   {
-  //     //ts-ignore
-  //     id: "computer1",
-  //     label: "Computer",
-  //     icon: getNodeIcon("Computer"),
-  //   },
-  //   {
-  //     id: "setting1",
-  //     label: "Setting",
-  //     icon: getNodeIcon("Setting"),
-  //   },
-  //   {
-  //     id: "user1",
-  //     label: "User",
-  //     icon: (
-  //       <UserOutlined
-  //         onPointerEnterCapture={undefined}
-  //         onPointerLeaveCapture={undefined}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     id: "cloud1",
-  //     label: "Cloud",
-  //     icon: (
-  //       <ApartmentOutlined
-  //         onPointerEnterCapture={undefined}
-  //         onPointerLeaveCapture={undefined}
-  //       />
-  //     ),
-  //   },
-  // ];
+interface Props {
+  data: ProcessData[];
+}
 
-  const columns = [
+const ProcessTable: React.FC<Props> = ({ data }) => {
+  const columns: ColumnsType<ProcessData> = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (text: string) => (
-        <div className="flex items-center">
-          {getNodeIcon(text)}
-          <span className="ml-2">{text}</span>
-        </div>
-      ),
+      title: "Time",
+      dataIndex: "alert_time",
+      key: "alert_time",
     },
     {
       title: "Action",
       dataIndex: "action",
       key: "action",
-      render: (text: string) => (
-        <Button type="primary" danger>
-          {text}
-        </Button>
-      ),
+      render: (text) => <Tag color="blue">{text}</Tag>,
+    },
+    {
+      title: "Image",
+      key: "image",
+      render: (_, record) => record.fields?.exe || "N/A",
+    },
+    {
+      title: "PID / PPID",
+      key: "pid",
+      render: (_, record) => `${record.fields?.pid} / ${record.fields?.ppid}`,
+    },
+    {
+      title: "MITRE Technique",
+      dataIndex: "mitre_tecnique",
+      key: "mitre_tecnique",
+    },
+    {
+      title: "Parent",
+      key: "parent_exe",
+      render: (_, record) => record.fields?.parent_exe || "N/A",
     },
   ];
 
-  let overviewDataProcess = dataDetail.map((item, index) => ({
-    key: index,
-    name: item.fields.exe,
-    action: item.action,
-  }));
   return (
-    <div className="top-0 z-10 p-4 bg-white">
-      {contextHolder}
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card style={{ height: 500 }} className="shadow pb-8">
-            <div className="flex items-center space-x-2 mb-4">
-              <SettingOutlined
-                style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              />
-              <div>
-                <Title level={5} style={{ margin: 0 }}>
-                  Processes Profile
-                </Title>
-              </div>
-            </div>
-            <Table
-              columns={columns}
-              dataSource={overviewDataProcess}
-              pagination={false}
-            />
-          </Card>
-        </Col>
-
-        <Col span={16}>
-          {/* <Row gutter={16}>
-            <Flow nodes={sampleNodes} connections={sampleConnections} />
-          </Row> */}
-          <Row gutter={16}>
-            <Detail dataList={dataDetail} />
-          </Row>
-        </Col>
-      </Row>
+    <div className="bg-white p-4 rounded-md shadow-md">
+      <div className=" ant-card-body flex items-center space-x-2  mb-4 ml-6">
+        <SettingOutlined
+          style={{ fontSize: "24px", color: "red" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+        <div>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            Process Information
+          </Typography.Title>
+        </div>
+      </div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey={"alert_time"}
+        expandable={{
+          expandedRowRender: (record) => (
+            <Descriptions bordered size="small" column={1}>
+              <Descriptions.Item label="Command Line">
+                {record.fields?.command_line}
+              </Descriptions.Item>
+              <Descriptions.Item label="Image Path">
+                {record.fields?.image_path}
+              </Descriptions.Item>
+              <Descriptions.Item label="Parent Image Path">
+                {record.fields?.parent_image_path}
+              </Descriptions.Item>
+              <Descriptions.Item label="xxHash Path">
+                {record.fields?.xxHash_path}
+              </Descriptions.Item>
+              <Descriptions.Item label="MITRE Description">
+                {record.mitre_desc}
+              </Descriptions.Item>
+            </Descriptions>
+          ),
+        }}
+        pagination={{ pageSize: 5 }}
+      />
     </div>
   );
-}
+};
 
-export default function ProcessPage() {
-  return <Process />;
-}
+export default ProcessTable;

@@ -14,6 +14,131 @@ import API_URL from "@/common/api-url";
 // import { useRouter } from "next/router";
 import { useParams } from "next/navigation";
 export default function MalOpsManagementDetail() {
+  const processData = [
+    {
+      alert_time: "2025-07-02 15:35:57",
+      object: "Process",
+      action: "Create",
+      mitre_tactic: "TA0005--Defense Evasion",
+      mitre_tecnique: "T1057--Discovery: Process Discovery",
+      mitre_desc: "Suspicious Silent CMD Execution with Network Recon",
+      fields: {
+        command_line:
+          "\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1",
+        image_path: "C:\\Windows\\System32\\conhost.exe",
+        exe: "conhost.exe",
+        current_working_directory: "",
+        pid: 1032,
+        ppid: 13860,
+        parent_image_path: "C:\\Windows\\System32\\Defrag.exe",
+        parent_exe: ".exe",
+        xxHash_path: "B81F3A87",
+      },
+    },
+    {
+      alert_time: "2025-07-02 15:41:45",
+      object: "Process",
+      action: "Create",
+      mitre_tactic: "TA0005--Defense Evasion",
+      mitre_tecnique: "T1057--Discovery: Process Discovery",
+      mitre_desc: "Suspicious Silent CMD Execution with Network Recon",
+      fields: {
+        command_line:
+          "\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1",
+        image_path: "C:\\Windows\\System32\\conhost.exe",
+        exe: "conhost.exe",
+        current_working_directory: "",
+        pid: 13020,
+        ppid: 1280,
+        parent_image_path: "C:\\Windows\\System32\\Defrag.exe",
+        parent_exe: ".exe",
+        xxHash_path: "B81F3A87",
+      },
+    },
+    {
+      alert_time: "2025-07-02 16:29:02",
+      object: "Process",
+      action: "Create",
+      mitre_tactic: "TA0005--Defense Evasion",
+      mitre_tecnique: "T1057--Discovery: Process Discovery",
+      mitre_desc: "Suspicious Silent CMD Execution with Network Recon",
+      fields: {
+        command_line:
+          "\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1",
+        image_path: "C:\\Windows\\System32\\conhost.exe",
+        exe: "conhost.exe",
+        current_working_directory: "",
+        pid: 2968,
+        ppid: 11672,
+        parent_image_path: "C:\\Windows\\System32\\Defrag.exe",
+        parent_exe: ".exe",
+        xxHash_path: "B81F3A87",
+      },
+    },
+    {
+      alert_time: "2025-07-02 16:42:06",
+      object: "Process",
+      action: "Create",
+      mitre_tactic: "TA0005--Defense Evasion",
+      mitre_tecnique: "T1057--Discovery: Process Discovery",
+      mitre_desc: "Suspicious Silent CMD Execution with Network Recon",
+      fields: {
+        command_line:
+          "\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1",
+        image_path: "C:\\Windows\\System32\\conhost.exe",
+        exe: "conhost.exe",
+        current_working_directory: "",
+        pid: 14260,
+        ppid: 2112,
+        parent_image_path: "C:\\Windows\\System32\\Defrag.exe",
+        parent_exe: ".exe",
+        xxHash_path: "B81F3A87",
+      },
+    },
+    {
+      alert_time: "2025-07-02 16:31:53",
+      object: "Process",
+      action: "Create",
+      mitre_tactic: "TA0005--Defense Evasion",
+      mitre_tecnique: "T1057--Discovery: Process Discovery",
+      mitre_desc: "Suspicious Silent CMD Execution with Network Recon",
+      fields: {
+        command_line:
+          "\\??\\C:\\Windows\\system32\\conhost.exe 0xffffffff -ForceV1",
+        image_path: "C:\\Windows\\System32\\conhost.exe",
+        exe: "conhost.exe",
+        current_working_directory: "",
+        pid: 3332,
+        ppid: 13112,
+        parent_image_path:
+          "C:\\Program Files (x86)\\Foxit Software\\Foxit Reader\\FoxitReaderConnectedPDFService.exe",
+        parent_exe: ".exe",
+        md5_hash: "972A57DA2118408F7617096EAD48FC33",
+        sha1_hash: "2EAD094611E9B7EE9B916A0B54810CCA01E1E332",
+        sha256_hash: "",
+        fqdn: "DESKTOP-DV2CAPI",
+        host_name: "DESKTOP-DV2CAPI",
+        integrity_level: "",
+        sid: "",
+        user: "",
+        uid: 0,
+        signature_valid: "",
+        signer: "FOXIT SOFTWARE INC.",
+        access_level: null,
+        call_trace: null,
+        env_vars: null,
+        guid: null,
+        parent_commandline: null,
+        parent_guid: null,
+        target_address: null,
+        target_guid: null,
+        target_name: null,
+        target_pid: null,
+        xxHash_path: "EC034312",
+      },
+    },
+  ];
+
   const { id } = useParams(); // Lấy id từ dynamic route
   const [activeSection, setActiveSection] = useState("diagram");
   const [filterData, setFilterData] = useState([]);
@@ -110,7 +235,7 @@ export default function MalOpsManagementDetail() {
         <MachineProfilePage />
       </section>
       <section id="process-profile">
-        <ProcessPage />
+        <ProcessPage data={processData} />
       </section>
 
       {/* Fixed Bottom Navigation */}
