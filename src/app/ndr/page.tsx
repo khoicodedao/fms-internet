@@ -68,6 +68,7 @@ export default function Ndr() {
     <div className="flex flex-col gap-1">
       {contextHolder}
       <DataTable
+        tableHeight="calc(-283px + 100vh)"
         title={t("ndrManagement")}
         dataFieldName="ndrs"
         apiUrl={API_URL.NDR_PAGE.DEFAULT}

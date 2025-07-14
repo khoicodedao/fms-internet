@@ -299,12 +299,12 @@ const CLIPage = () => {
           )}
         />
       </div>
-      <div style={{ width: "80%", padding: "10px" }}>
+      <div style={{ width: "80%", paddingRight: "10px" }}>
         <Form
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
-          style={{ marginBottom: "10px" }}
+          style={{ marginBottom: "5px" }}
         >
           <Form.Item label="Command Type">
             <Radio.Group
@@ -386,7 +386,7 @@ const CLIPage = () => {
 
         <Terminal
           name="Terminal"
-          colorMode={ColorMode.Dark}
+          colorMode={ColorMode.Light}
           prompt={`${dir}>`}
           onInput={handleCommandInput}
           startingInputValue=""

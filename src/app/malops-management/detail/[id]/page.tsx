@@ -226,11 +226,9 @@ export default function MalOpsManagementDetail() {
       <section id="diagram">
         <Description data={filterData} rootCauseDetails="Root Cause Details" />
       </section>
-      <Divider />
       <section id="communication">
         <Communication />
       </section>
-      <Divider />
       <section id="machine-profile">
         <MachineProfilePage />
       </section>

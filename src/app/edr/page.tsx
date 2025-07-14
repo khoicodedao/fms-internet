@@ -88,6 +88,7 @@ export default function Edr() {
     <div className="flex flex-col gap-1">
       {contextHolder}
       <DataTable
+        tableHeight="calc(-283px + 100vh)"
         title={t("edrManagement")}
         dataFieldName="edrs"
         apiUrl={API_URL.EDR_PAGE.DEFAULT}

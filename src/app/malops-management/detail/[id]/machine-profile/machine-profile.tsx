@@ -119,7 +119,7 @@ function MachineProfile() {
     <div className="top-0 z-10 p-4 bg-white">
       <Row gutter={16}>
         <Col span={8}>
-          <Card style={{ height: 500 }} className="shadow pb-8">
+          <div style={{ height: 500 }}>
             <div className="flex items-center space-x-2 mb-4">
               <DesktopOutlined
                 style={{ fontSize: "24px", color: "#1890ff" }}
@@ -139,7 +139,7 @@ function MachineProfile() {
               pagination={false}
               scroll={{ x: true }}
             />
-          </Card>
+          </div>
         </Col>
 
         <Col span={16}>

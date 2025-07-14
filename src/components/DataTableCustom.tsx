@@ -5,12 +5,13 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { usePostApi } from "@/common/usePostApi";
-import { Card, Drawer, Pagination } from "antd";
+import { Button, Card, Drawer, Pagination } from "antd";
 import ReactJson from "react-json-view";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import SearchBar from "@/components/SearchBar";
 import { useTranslation } from "react-i18next";
+import { ExportOutlined } from "@ant-design/icons";
 
 interface DataTableProps {
   title?: string;
@@ -22,6 +23,7 @@ interface DataTableProps {
   showFilter?: boolean; // Add showFilter prop
   showDatepicker?: boolean; // Add showDatepicker prop
   HeaderDrawer?: React.ReactNode; //show component here
+  tableHeight?: string;
 }
 
 export default function DataTable({
@@ -34,6 +36,7 @@ export default function DataTable({
   showFilter = true,
   showDatepicker = true,
   HeaderDrawer,
+  tableHeight = "calc(100vh - 220px)",
 }: DataTableProps) {
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
   const handleSearch = (query: string) => {
@@ -128,7 +131,7 @@ export default function DataTable({
   return (
     <div className="gap-16 font-[family-name:var(--font-geist-sans)]">
       {contextHolder}
-      <Card className="mt-3 py-6">
+      <Card>
         <div className="flex justify-between items-center mb-4">
           {title && (
             <p className="text-gray-600 text-sm leading-relaxed font-bold">
@@ -140,24 +143,27 @@ export default function DataTable({
 
         {showFilter && (
           <div style={{ marginBottom: 10, display: "flex", gap: "10px" }}>
-            <button
+            <Button
+              icon={
+                <ExportOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              }
               onClick={onExportClick}
-              style={{
-                backgroundColor: "#f7c31c",
-                color: "black",
-                padding: "5px 15px",
-                border: "none",
-                borderRadius: "5px",
-              }}
+              type="primary"
             >
               {t("export_csv")}
-            </button>
+            </Button>
             <SearchBar onSearch={handleSearch} />
           </div>
         )}
 
         {/* Table */}
-        <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+        <div
+          className="ag-theme-alpine"
+          style={{ height: tableHeight, width: "100%" }}
+        >
           <AgGridReact
             ref={gridRef}
             rowData={data}

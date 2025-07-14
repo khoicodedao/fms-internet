@@ -51,10 +51,10 @@ function Communication() {
   }));
 
   return (
-    <div className="top-0 z-10 p-4 bg-white">
+    <Card className="top-0 z-10 p-1">
       <Row gutter={16}>
         <Col span={8}>
-          <Card style={{ height: 500 }} className="shadow pb-8">
+          <div style={{ height: 500 }}>
             <div className="flex items-center space-x-2 mb-4">
               <WifiOutlined
                 style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
@@ -68,17 +68,17 @@ function Communication() {
             <div style={{ overflowX: "auto" }}>
               <Table columns={columns} dataSource={data} pagination={false} />
             </div>
-          </Card>
+          </div>
         </Col>
 
         <Col span={16}>
-          <Card style={{ height: 500, overflow: "hidden" }}>
+          <div style={{ height: 500, overflow: "hidden" }}>
             <NetworkGraph />
-          </Card>
+          </div>
           <Detail></Detail>
         </Col>
       </Row>
-    </div>
+    </Card>
   );
 }
 

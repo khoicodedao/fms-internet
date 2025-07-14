@@ -87,5 +87,6 @@
   "File": "Tệp",
   "Process": "Quá trình",
   "Export": "Xuất",
-  "Refresh": "Làm mới"
+  "Refresh": "Làm mới",
+  "storageElasticUse": "Dung lượng sử dụng Elastic"
 }

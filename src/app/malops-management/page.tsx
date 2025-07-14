@@ -85,7 +85,7 @@ export default function MalOpsManagement() {
   return (
     <div
       style={{ background: "#FCFBFB" }}
-      className="flex-1 p-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]"
+      className="flex-1 gap-3 font-[family-name:var(--font-geist-sans)]"
     >
       <div className="flex flex-wrap gap-4">
         <div className="flex-1 min-w-[300px]">

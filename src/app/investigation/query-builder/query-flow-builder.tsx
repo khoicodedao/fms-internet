@@ -4,6 +4,7 @@ import "react-querybuilder/dist/query-builder.css";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 import { QueryBuilderAntD } from "@react-querybuilder/antd";
+import { Button, Card } from "antd";
 
 interface QueryBuilderFormProps {
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
@@ -61,16 +62,9 @@ export default function QueryBuilderForm({
   }, [propsFields]);
 
   return (
-    <div className="p-4">
+    <Card className="p-4" style={{ minHeight: "calc(100vh - 300px)" }}>
       {contextHolder}
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={handleSubmit}
-          className="bg-green-600 text-white px-3 py-1 rounded"
-        >
-          Done
-        </button>
-      </div>
+
       <input
         type="text"
         value={description}
@@ -79,7 +73,7 @@ export default function QueryBuilderForm({
         className="border px-2 py-1 rounded w-full mb-2"
       />
 
-      <QueryBuilderAntD className="bg-white rounded-lg shadow-md p-4">
+      <QueryBuilderAntD className="p-1">
         <QueryBuilder
           // Buộc re-render khi fields thay đổi
           fields={fields}
@@ -90,7 +84,12 @@ export default function QueryBuilderForm({
           showCombinatorsBetweenRules
         />
       </QueryBuilderAntD>
-    </div>
+      <div className="flex gap-2 mt-4">
+        <Button type="primary" onClick={handleSubmit}>
+          Create
+        </Button>
+      </div>
+    </Card>
   );
 }
 

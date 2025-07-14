@@ -84,7 +84,7 @@ export default function AffectedFile({ data }: Props) {
           </Typography.Title>
         </div>
       </div>
-      <Divider />
+
       <Collapse items={items} defaultActiveKey={["1"]} />
     </div>
   );

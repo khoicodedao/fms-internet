@@ -64,7 +64,6 @@ export default function Events() {
       cellRenderer: (params: any) => <AlertLevel level={params.value} />,
     },
     { headerName: t("eventTime"), field: "event_time" },
-    { headerName: t("object"), field: "object" },
     {
       headerName: t("action"),
       field: "action",
@@ -81,7 +80,6 @@ export default function Events() {
       field: "fields.timestamp",
       valueFormatter: formatDateTime,
     },
-    { headerName: t("object"), field: "object" },
     { headerName: t("action"), field: "action" },
   ];
   return (
@@ -103,6 +101,7 @@ export default function Events() {
           title=""
           body="object = 'socket'"
           dataFieldName="events"
+          tableHeight="calc(-282px + 100vh)"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           // columns={columns}
           columns={columns.map((col) => ({
@@ -125,6 +124,7 @@ export default function Events() {
       >
         <DataTable
           title=""
+          tableHeight="calc(-282px + 100vh)"
           body="object = 'registry'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
@@ -147,6 +147,7 @@ export default function Events() {
         key="3"
       >
         <DataTable
+          tableHeight="calc(-282px + 100vh)"
           title=""
           body="object = 'file'"
           dataFieldName="events"
@@ -170,6 +171,7 @@ export default function Events() {
         key="4"
       >
         <DataTable
+          tableHeight="calc(-282px + 100vh)"
           title=""
           body="object = 'process'"
           dataFieldName="events"
@@ -193,6 +195,7 @@ export default function Events() {
         key="5"
       >
         <DataTable
+          tableHeight="calc(-282px + 100vh)"
           title=""
           body="object = 'flow'"
           dataFieldName="events"
@@ -213,6 +216,7 @@ export default function Events() {
         key="6"
       >
         <DataTable
+          tableHeight="calc(-282px + 100vh)"
           title=""
           body="object = 'http'"
           dataFieldName="events"
@@ -233,6 +237,7 @@ export default function Events() {
         key="7"
       >
         <DataTable
+          tableHeight="calc(-282px + 100vh)"
           title=""
           body="object = 'FileUSB'"
           dataFieldName="events"

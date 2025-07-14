@@ -25,6 +25,7 @@ import { usePostApi } from "@/common/usePostApi";
 
 import QueryFlowBuilder from "./query-builder/query-flow-builder";
 import Link from "next/link";
+import { Card } from "antd";
 // import { Collapse } from "antd";
 export default function Investigation() {
   const { t } = useTranslation(); //multi-language support
@@ -181,50 +182,50 @@ export default function Investigation() {
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   return (
-    <div className="grid py-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]">
+    <div className="grid gap-3 font-[family-name:var(--font-geist-sans)]">
       {contextHolderDelete}
-      <div
-        style={{ background: "#FCFBFB" }}
-        className="grid p-4 pb-20 gap-3  font-[family-name:var(--font-geist-sans)]"
-      >
-        <h2 className="text-2xl ml-4 pt-7 font-bold text-gray-800 mb-4">
-          {t("build_query")}
-        </h2>
-        <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-          {items.map((item, index) => (
-            <div key={index} className="flex flex-col items-center gap-2">
-              <div
-                className={`w-12 h-12 rounded-full  ${
-                  activeIndex == index ? "bg-[#F6BD03]" : "bg-[#F2F2F2]"
-                }  flex items-center justify-center`}
-                onClick={() => {
-                  setFields(item.fields || []);
-                  setActiveIndex(index);
-                }}
-              >
-                {React.createElement(item.icon)}
+      <Card className="p-2">
+        {" "}
+        <div className="grid  gap-3  font-[family-name:var(--font-geist-sans)]">
+          {" "}
+          <h2 className="text-2xl ml-4  font-bold text-gray-800">
+            {t("build_query")}
+          </h2>
+          <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {items.map((item, index) => (
+              <div key={index} className="flex flex-col items-center gap-2">
+                <div
+                  className={`w-12 h-12 rounded-full  ${
+                    activeIndex == index ? "bg-[#F6BD03]" : "bg-[#F2F2F2]"
+                  }  flex items-center justify-center`}
+                  onClick={() => {
+                    setFields(item.fields || []);
+                    setActiveIndex(index);
+                  }}
+                >
+                  {React.createElement(item.icon)}
+                </div>
+                <span className="text-sm text-center">{item.label}</span>
               </div>
-              <span className="text-sm text-center">{item.label}</span>
-            </div>
-          ))}
-        </section>
-      </div>
+            ))}
+          </section>
+        </div>
+      </Card>
+
       <div className="flex w-full justify-stretch">
-        <div style={{ background: "#FCFBFB" }} className="flex-1 min-w-[300px]">
+        <div className="flex-3 min-w-[300px]">
           <QueryFlowBuilder
             fields={fields}
             reload={reload}
             setReload={setReload}
           />
         </div>
-        <div
-          style={{ background: "#FCFBFB" }}
-          className="flex-1 p-4 pb-20 gap-3 sm:pt-10 font-[family-name:var(--font-geist-sans)]"
-        >
+        <div className="flex-1 gap-3 font-[family-name:var(--font-geist-sans)]">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[300px]">
               <section>
                 <DataTable
+                  tableHeight="calc(100vh - 416px)"
                   showDatepicker={false}
                   showFilter={false}
                   title="Query Flow"

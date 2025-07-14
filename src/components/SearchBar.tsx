@@ -18,7 +18,7 @@ const KQLSearchBox: React.FC<KQLSearchBoxProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center border border-gray-300 rounded-md w-full max-w-4xl">
+    <div className="flex items-center border border-gray-300 rounded-md w-full">
       <input
         type="text"
         value={query}

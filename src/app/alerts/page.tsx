@@ -37,6 +37,7 @@ export default function Alerts() {
 
   return (
     <DataTable
+      tableHeight=" calc(-273px + 100vh)"
       title={t("alertManagement")}
       dataFieldName="alert"
       apiUrl={`https://70cf656b-838a-4d1c-8f2e-2b9569df066e.mock.pstmn.io/api/alerts`}

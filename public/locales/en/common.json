@@ -87,5 +87,6 @@
   "File": "File",
   "Process": "Process",
   "Export": "Export",
-  "Refresh": "Refresh"
+  "Refresh": "Refresh",
+  "storageElasticUse": "Storage Elastic Use"
 }
