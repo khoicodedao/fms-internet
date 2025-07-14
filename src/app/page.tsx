@@ -271,13 +271,12 @@ export default function Home() {
     };
   }, [data]); //
   return (
-    <div className="grid  p-8 pb-20 gap-3 font-[family-name:var(--font-geist-sans)]">
-      <div className="w-full flex justify-between items-center bg-gray-100 py-4 rounded-lg">
-        <div className="flex gap-4">
+    <div className="home-page grid p-2 gap-1 font-[family-name:var(--font-geist-sans)]">
+      <div className="w-full flex justify-end items-center  rounded-lg">
+        <div className="flex gap-1 mr-1">
           <DatetimePicker />
         </div>
-
-        <div className="flex gap-4">
+        <div className="flex">
           <Button
             type="primary"
             icon={
@@ -286,6 +285,7 @@ export default function Home() {
                 onPointerLeaveCapture={undefined}
               />
             }
+            className="mr-1"
             onClick={exportToJson}
           >
             {t("Export")}
@@ -417,69 +417,66 @@ export default function Home() {
           ))}
         </Row>
       </Card>
-      <Row
-        style={{ height: "max-content" }}
-        gutter={[16, 16]}
-        className="w-full"
-      >
-        <Col span={12}>
-          <Card>
-            <ReactECharts
-              option={statusPieOption}
-              style={{ height: "400px", fontFamily: "Roboto" }}
-            />
-          </Card>
-        </Col>
-        {/* <Col span={6}>
-          <Card>
-            <ReactECharts
-              option={severityPieOption}
-              style={{ height: "400px" }}
-            />
-          </Card>
-        </Col> */}
-        <Col span={12}>
-          <Card>
-            <ReactECharts
-              option={lineChartOption}
-              style={{ height: "400px" }}
-            />
-          </Card>
-        </Col>
-      </Row>
-      <Row gutter={[16, 16]} className="w-full">
-        <Col span={12}>
-          <Card>
-            <ReactECharts
-              option={columnChartOption}
-              style={{ height: "400px", fontFamily: "inherit" }}
-            />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card className="h-full">
-            <ReactECharts option={ndrPieOption} style={{ height: "400px" }} />
-          </Card>
-        </Col>
-        <Col span={6}>
-          <Card>
-            {data.countEdrTotal !== undefined &&
-            data.countEdrOnline !== undefined ? (
+      <Card>
+        <Row
+          style={{ height: "max-content" }}
+          gutter={[16, 16]}
+          className="w-full"
+        >
+          <Col span={12}>
+            <div>
               <ReactECharts
-                option={machineStatusPieOption}
-                style={{ height: "400px" }}
+                option={statusPieOption}
+                style={{ height: "300px", fontFamily: "Roboto" }}
               />
-            ) : (
-              <div
-                style={{ height: "400px" }}
-                className="flex justify-center items-center"
-              >
-                Loading...
-              </div>
-            )}
-          </Card>
-        </Col>
-      </Row>
+            </div>
+          </Col>
+
+          <Col span={12}>
+            <div>
+              <ReactECharts
+                option={lineChartOption}
+                style={{ height: "300px" }}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Card>
+      <Card>
+        <Row gutter={[16, 16]} className="w-full">
+          <Col span={12}>
+            <div>
+              <ReactECharts
+                option={columnChartOption}
+                style={{ height: "300px", fontFamily: "inherit" }}
+              />
+            </div>
+          </Col>
+          <Col span={6}>
+            <div className="h-full">
+              <ReactECharts option={ndrPieOption} style={{ height: "300px" }} />
+            </div>
+          </Col>
+          <Col span={6}>
+            <div>
+              {data.countEdrTotal !== undefined &&
+              data.countEdrOnline !== undefined ? (
+                <ReactECharts
+                  option={machineStatusPieOption}
+                  style={{ height: "300px" }}
+                />
+              ) : (
+                <div
+                  style={{ height: "300px" }}
+                  className="flex justify-center items-center"
+                >
+                  Loading...
+                </div>
+              )}
+            </div>
+          </Col>
+        </Row>
+      </Card>
     </div>
   );
 }
