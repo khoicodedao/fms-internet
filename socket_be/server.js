@@ -32,7 +32,7 @@ const httpsAgent = new https.Agent({
 
 // 🔌 Kết nối tới WebSocket ngoài
 function connectExternalSocket() {
-  externalSocket = new WebSocket("wss://10.10.60.56:444", {
+  externalSocket = new WebSocket("wss://10.32.116.195:444", {
     cert,
     key,
     rejectUnauthorized: false,

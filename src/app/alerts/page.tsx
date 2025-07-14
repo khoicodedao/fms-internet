@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+import API_URL from "@/common/api-url";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 
@@ -24,17 +25,6 @@ export default function Alerts() {
   };
 
   const columns: ColDef<RowData>[] = [
-    {
-      headerName: t("id"),
-      field: "_id",
-      cellRenderer: (params: any) => {
-        return (
-          <Link href={`/malops-management/detail/64e7e35c6a1f4c0001a2b345`}>
-            64e7e35c6a1f4c0001a2b345
-          </Link>
-        );
-      },
-    },
     {
       headerName: t("mac"),
       field: "mac",

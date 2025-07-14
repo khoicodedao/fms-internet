@@ -236,7 +236,7 @@ const CLIPage = () => {
             <Tooltip title=" Click here to Check server status">
               <Button
                 type="link"
-                href="https://10.32.116.195:8444"
+                href="https://10.32.116.195:444"
                 target="_blank"
                 icon={
                   <DisconnectOutlined
