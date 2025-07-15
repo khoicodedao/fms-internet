@@ -88,5 +88,7 @@
   "Process": "Process",
   "Export": "Export",
   "Refresh": "Refresh",
-  "storageElasticUse": "Storage Elastic Use"
+  "storageElasticUse": "Storage Elastic Use",
+  "export_current_page": "Export Current Page",
+  "export_all_data": "Export 2000 rows"
 }

@@ -5,13 +5,15 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { usePostApi } from "@/common/usePostApi";
-import { Button, Card, Drawer, Pagination } from "antd";
+import { Button, Card, Drawer, Pagination, Select } from "antd";
 import ReactJson from "react-json-view";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
 import SearchBar from "@/components/SearchBar";
 import { useTranslation } from "react-i18next";
 import { ExportOutlined } from "@ant-design/icons";
+// @ts-ignore
+import { unparse } from "papaparse";
 
 interface DataTableProps {
   title?: string;
@@ -47,9 +49,11 @@ export default function DataTable({
   const { startDate, endDate } = useDateContext();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
+  const [exportMode, setExportMode] = useState<"current" | "all">("current");
+
   const [data, setData] = useState([]); // Dữ liệu hiển thị trong bảng
   const gridRef = useRef<any>(null);
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10 });
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 50 });
   const [rowTotal, setRowTotal] = useState(0); // Tổng số row từ API
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
   const bodyData = body || "";
@@ -125,8 +129,43 @@ export default function DataTable({
 
   // Xuất CSV
   const onExportClick = useCallback(() => {
-    gridRef.current?.api.exportDataAsCsv();
-  }, []);
+    if (exportMode === "current") {
+      gridRef.current?.api.exportDataAsCsv();
+    } else {
+      mutation.mutate(
+        {
+          filter: searchQuery ? searchQuery + " and " + bodyData : bodyData,
+          start_date: startDate,
+          end_date: endDate,
+          skip: 0,
+          limit: 2000,
+        },
+        {
+          onSuccess: (response: any) => {
+            const allData = response?.data?.[dataFieldName];
+            if (allData?.length) {
+              const csv = unparse(allData); // Convert JSON -> CSV
+
+              // Tạo và tải file CSV
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute("download", "export-all.csv");
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            } else {
+              console.warn("No data to export");
+            }
+          },
+          onError: (error: any) => {
+            console.error("Failed to export all data:", error);
+          },
+        }
+      );
+    }
+  }, [exportMode, searchQuery, startDate, endDate]);
 
   return (
     <div className="gap-16 font-[family-name:var(--font-geist-sans)]">
@@ -143,6 +182,22 @@ export default function DataTable({
 
         {showFilter && (
           <div style={{ marginBottom: 10, display: "flex", gap: "10px" }}>
+            <Select
+              defaultValue="current"
+              style={{ width: 160 }}
+              // @ts-ignore
+              onChange={(value) => setExportMode(value)}
+              options={[
+                {
+                  label: t("export_current_page") || "Export current page",
+                  value: "current",
+                },
+                {
+                  label: t("export_all_data") || "Export all data",
+                  value: "all",
+                },
+              ]}
+            />
             <Button
               icon={
                 <ExportOutlined

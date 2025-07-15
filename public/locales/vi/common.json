@@ -88,5 +88,7 @@
   "Process": "Quá trình",
   "Export": "Xuất",
   "Refresh": "Làm mới",
-  "storageElasticUse": "Dung lượng sử dụng Elastic"
+  "storageElasticUse": "Dung lượng sử dụng Elastic",
+  "export_current_page": "Xuất trang hiện tại",
+  "export_all_data": "Xuất 2000 bản ghi đầu tiên"
 }

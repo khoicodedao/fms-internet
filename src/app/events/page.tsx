@@ -36,11 +36,12 @@ export default function Events() {
   };
 
   const columns: ColDef<RowData>[] = [
-    { headerName: t("mac"), field: "mac" },
-    { headerName: t("ip"), field: "ip" },
+    { headerName: t("mac"), field: "mac", width: 170 },
+    { headerName: t("ip"), field: "ip", width: 150 },
     {
       headerName: t("Description"),
       field: "computer_name",
+      width: 500,
       cellRenderer: (params: any) => {
         const tableTitle = params.colDef.tableTitle; // Lấy tableTitle từ colDef
         if (tableTitle === "socket") {
@@ -57,15 +58,17 @@ export default function Events() {
     },
 
     { headerName: t("computerName"), field: "computer_name" },
-    { headerName: t("alertSource"), field: "alert_source" },
+    { headerName: t("alertSource"), field: "alert_source", width: 120 },
     {
       headerName: t("alertLevelId"),
       field: "alert_level_id",
+      width: 120,
       cellRenderer: (params: any) => <AlertLevel level={params.value} />,
     },
     { headerName: t("eventTime"), field: "event_time" },
     {
       headerName: t("action"),
+      width: 320,
       field: "action",
       cellRenderer: (params: any) => <SocketStatus status={params.value} />,
     },

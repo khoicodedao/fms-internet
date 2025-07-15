@@ -32,6 +32,7 @@ export default function Edr() {
     { headerName: t("version"), field: "version" },
     {
       headerName: t("memoryUse"),
+      width: 160,
       field: "memory_use",
       cellRenderer: (params: any) => {
         const match = params.value.match(/Total:\s*([\d.]+Gb)/);
@@ -40,7 +41,14 @@ export default function Edr() {
         const usage = usageMatch ? parseInt(usageMatch[1], 10) : 0; // Extract usage percentage
 
         return (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              justifyContent: "center",
+            }}
+          >
             <Progress
               type="circle"
               percent={usage}
@@ -55,6 +63,7 @@ export default function Edr() {
     {
       headerName: t("cpuUse"),
       field: "cpu_use",
+      width: 100,
       cellRenderer: (params: any) => {
         const match = params.value.match(/([\d.]+)%\s*\((.+)\)/);
         const usage = match ? parseFloat(match[1]) : 0; // Extract CPU usage percentage
@@ -81,7 +90,7 @@ export default function Edr() {
       field: "last_seen",
       valueFormatter: formatDateTime,
     },
-    { headerName: t("os"), field: "os" },
+    { headerName: t("os"), field: "os", width: 400 },
   ];
 
   return (

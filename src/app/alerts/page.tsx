@@ -21,6 +21,7 @@ export default function Alerts() {
     created_at: string;
     object: string;
     action: string;
+    version: string;
     _id: string;
   };
 
@@ -32,7 +33,10 @@ export default function Alerts() {
     { headerName: t("Score level"), field: "score_level" },
     { headerName: t("computerName"), field: "computer_name" },
     { headerName: t("Score tatic"), field: "score_tatic" },
-    { headerName: t("Created at"), field: "created_at" },
+    { headerName: t("Created at"), field: "created_at", width: 450 },
+    { headerName: t("Version"), field: "version", width: 150 },
+
+    { headerName: t("Created at"), field: "created_at", width: 450 },
   ];
 
   return (
