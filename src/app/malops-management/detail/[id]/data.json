@@ -1,0 +1,221 @@
+{
+  "process_tree": [
+    {
+      "xxHash_path": "7430DC68",
+      "parent": null,
+      "level": 0,
+      "file_info": {
+        "name": "explorer.exe",
+        "pid": 1234,
+        "path": "C:\\Windows\\explorer.exe",
+        "hash": "abc123def456"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0",
+      "parent": "7430DC68",
+      "level": 1,
+      "file_info": {
+        "name": "cmd.exe",
+        "pid": 4321,
+        "path": "C:\\Windows\\System32\\cmd.exe",
+        "hash": "def456abc123"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D",
+      "parent": "7430DC68/A3F4E9B0",
+      "level": 2,
+      "file_info": {
+        "name": "powershell.exe",
+        "pid": 5678,
+        "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "hash": "hash7890"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/ABCDEF12",
+      "parent": "7430DC68/A3F4E9B0",
+      "level": 2,
+      "file_info": {
+        "name": "notepad.exe",
+        "pid": 8888,
+        "path": "C:\\Windows\\System32\\notepad.exe",
+        "hash": "hashnotepad"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1234ABCD",
+      "parent": "7430DC68/A3F4E9B0",
+      "level": 2,
+      "file_info": {
+        "name": "calc.exe",
+        "pid": 9999,
+        "path": "C:\\Windows\\System32\\calc.exe",
+        "hash": "hashcalc"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D/9Z8Y7X6W",
+      "parent": "7430DC68/A3F4E9B0/1A2B3C4D",
+      "level": 3,
+      "file_info": {
+        "name": "curl.exe",
+        "pid": 6789,
+        "path": "C:\\Tools\\curl.exe",
+        "hash": "curlhash123"
+      }
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D/9Z8Y7X6W/FFEEDD11",
+      "parent": "7430DC68/A3F4E9B0/1A2B3C4D/9Z8Y7X6W",
+      "level": 4,
+      "file_info": {
+        "name": "malware.exe",
+        "pid": 9876,
+        "path": "C:\\Temp\\malware.exe",
+        "hash": "badfile999"
+      }
+    }
+  ],
+  "events": [
+    {
+      "xxHash_path": "7430DC68",
+      "Process": [
+        {
+          "action": "create",
+          "timestamp": "2025-07-15T10:00:00Z",
+          "target": "notepad.exe",
+          "pid": 2345
+        }
+      ],
+      "Registry": [
+        {
+          "action": "read",
+          "timestamp": "2025-07-15T10:00:01Z",
+          "key": "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        }
+      ],
+      "File": [
+        {
+          "action": "open",
+          "timestamp": "2025-07-15T10:00:02Z",
+          "path": "C:\\Users\\User\\Documents\\file.txt"
+        }
+      ],
+      "Socket": [
+        {
+          "action": "connect",
+          "timestamp": "2025-07-15T10:00:03Z",
+          "ip": "8.8.8.8",
+          "port": 80
+        }
+      ],
+      "Other": []
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0",
+      "Process": [
+        {
+          "action": "terminate",
+          "timestamp": "2025-07-15T10:05:00Z",
+          "target": "notepad.exe",
+          "pid": 2345
+        }
+      ],
+      "Registry": [],
+      "File": [
+        {
+          "action": "delete",
+          "timestamp": "2025-07-15T10:05:01Z",
+          "path": "C:\\Users\\User\\Documents\\file.txt"
+        }
+      ],
+      "Socket": [],
+      "Other": [
+        {
+          "type": "clipboard_read",
+          "timestamp": "2025-07-15T10:05:02Z"
+        }
+      ]
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D",
+      "Process": [
+        {
+          "action": "spawn",
+          "timestamp": "2025-07-15T10:10:00Z",
+          "target": "curl.exe",
+          "pid": 6789
+        }
+      ],
+      "Registry": [],
+      "File": [],
+      "Socket": [],
+      "Other": []
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/ABCDEF12",
+      "Process": [],
+      "Registry": [],
+      "File": [
+        {
+          "action": "save",
+          "timestamp": "2025-07-15T10:12:00Z",
+          "path": "C:\\Logs\\note_log.txt"
+        }
+      ],
+      "Socket": [],
+      "Other": []
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1234ABCD",
+      "Process": [],
+      "Registry": [
+        {
+          "action": "write",
+          "timestamp": "2025-07-15T10:13:00Z",
+          "key": "HKEY_CURRENT_USER\\Software\\Calculator\\Settings"
+        }
+      ],
+      "File": [],
+      "Socket": [],
+      "Other": []
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D/9Z8Y7X6W",
+      "Process": [],
+      "Registry": [],
+      "File": [],
+      "Socket": [
+        {
+          "action": "connect",
+          "timestamp": "2025-07-15T10:10:01Z",
+          "ip": "1.2.3.4",
+          "port": 8080
+        }
+      ],
+      "Other": []
+    },
+    {
+      "xxHash_path": "7430DC68/A3F4E9B0/1A2B3C4D/9Z8Y7X6W/FFEEDD11",
+      "Process": [],
+      "Registry": [],
+      "File": [
+        {
+          "action": "drop",
+          "timestamp": "2025-07-15T10:10:02Z",
+          "path": "C:\\Temp\\evil.dll"
+        }
+      ],
+      "Socket": [],
+      "Other": [
+        {
+          "type": "evasion_technique",
+          "timestamp": "2025-07-15T10:10:03Z",
+          "detail": "Bypassed AMSI"
+        }
+      ]
+    }
+  ]
+}

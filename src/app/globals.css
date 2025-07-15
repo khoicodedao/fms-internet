@@ -530,8 +530,7 @@ canvas {
 }
 
 .ant-tabs-tab-active {
-  color: black !important;
-  background-color: rgb(247, 195, 28) !important;
+  color: rgb(247, 195, 28) !important;
 }
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: black !important;

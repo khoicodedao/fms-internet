@@ -1,101 +1,181 @@
-// ProcessTable.tsx
-import React, { useMemo } from "react";
-import { Table, Tag, Descriptions, Typography } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import { DesktopOutlined, SettingOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Tree, Card, Tabs, List } from "antd";
+import type { DataNode } from "antd/es/tree";
+import {
+  DesktopOutlined,
+  FileOutlined,
+  DatabaseOutlined,
+  ClusterOutlined,
+  ThunderboltOutlined,
+  AppstoreOutlined,
+} from "@ant-design/icons";
 
-interface ProcessData {
-  alert_time: string;
-  object: string;
-  action: string;
-  mitre_tactic: string;
-  mitre_tecnique: string;
-  mitre_desc: string;
-  fields: Record<string, any>;
+interface FileInfo {
+  name: string;
+  pid: number;
+  path: string;
+  hash: string;
 }
 
-interface Props {
-  data: ProcessData[];
+interface ProcessNode {
+  xxHash_path: string;
+  parent: string | null;
+  level: number;
+  file_info: FileInfo;
 }
 
-const ProcessTable: React.FC<Props> = ({ data }) => {
-  const columns: ColumnsType<ProcessData> = [
+interface EventItem {
+  xxHash_path: string;
+  Process: any[];
+  Registry: any[];
+  File: any[];
+  Socket: any[];
+  Other: any[];
+}
+
+interface ProcessViewerProps {
+  process_tree: ProcessNode[];
+  events: EventItem[];
+}
+
+export default function ProcessViewer({
+  process_tree,
+  events,
+}: ProcessViewerProps) {
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+
+  // Hàm chuyển process_tree thành dạng tree của Antd
+  const buildTreeData = (): DataNode[] => {
+    const map = new Map<string, DataNode & { children: DataNode[] }>();
+    const roots: DataNode[] = [];
+
+    process_tree.forEach((node) => {
+      const treeNode: DataNode & { children: DataNode[] } = {
+        title: (
+          <>
+            <DesktopOutlined style={{ marginRight: 8 }} />
+            {node.file_info.name} (PID: {node.file_info.pid})
+          </>
+        ),
+        key: node.xxHash_path,
+        children: [],
+      };
+      map.set(node.xxHash_path, treeNode);
+    });
+
+    process_tree.forEach((node) => {
+      const treeNode = map.get(node.xxHash_path)!;
+      if (node.parent && map.has(node.parent)) {
+        map.get(node.parent)!.children.push(treeNode);
+      } else {
+        roots.push(treeNode);
+      }
+    });
+
+    return roots;
+  };
+
+  const handleSelect = (keys: any[]) => {
+    if (keys.length > 0) {
+      setSelectedPath(keys[0]);
+    }
+  };
+
+  const currentEvent = events.find((e) => e.xxHash_path === selectedPath);
+
+  const eventTabs = [
     {
-      title: "Time",
-      dataIndex: "alert_time",
-      key: "alert_time",
+      key: "Process",
+      label: (
+        <span>
+          <AppstoreOutlined />
+          Process
+        </span>
+      ),
     },
     {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      render: (text) => <Tag color="blue">{text}</Tag>,
+      key: "Registry",
+      label: (
+        <span>
+          <DatabaseOutlined />
+          Registry
+        </span>
+      ),
     },
     {
-      title: "Image",
-      key: "image",
-      render: (_, record) => record.fields?.exe || "N/A",
+      key: "File",
+      label: (
+        <span>
+          <FileOutlined />
+          File
+        </span>
+      ),
     },
     {
-      title: "PID / PPID",
-      key: "pid",
-      render: (_, record) => `${record.fields?.pid} / ${record.fields?.ppid}`,
+      key: "Socket",
+      label: (
+        <span>
+          <ClusterOutlined />
+          Socket
+        </span>
+      ),
     },
     {
-      title: "MITRE Technique",
-      dataIndex: "mitre_tecnique",
-      key: "mitre_tecnique",
-    },
-    {
-      title: "Parent",
-      key: "parent_exe",
-      render: (_, record) => record.fields?.parent_exe || "N/A",
+      key: "Other",
+      label: (
+        <span>
+          <ThunderboltOutlined />
+          Other
+        </span>
+      ),
     },
   ];
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-md">
-      <div className=" ant-card-body flex items-center space-x-2  mb-4 ml-6">
-        <SettingOutlined
-          style={{ fontSize: "24px", color: "red" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-        <div>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Process Information
-          </Typography.Title>
-        </div>
+    <div style={{ display: "flex", gap: "16px", height: "100%" }}>
+      {/* LEFT: Process Tree */}
+      <div style={{ width: "30%", overflow: "auto" }}>
+        <Card title=" Process Tree" style={{ height: "100%" }}>
+          <Tree
+            treeData={buildTreeData()}
+            onSelect={handleSelect}
+            defaultExpandAll
+          />
+        </Card>
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey={"alert_time"}
-        expandable={{
-          expandedRowRender: (record) => (
-            <Descriptions bordered size="small" column={1}>
-              <Descriptions.Item label="Command Line">
-                {record.fields?.command_line}
-              </Descriptions.Item>
-              <Descriptions.Item label="Image Path">
-                {record.fields?.image_path}
-              </Descriptions.Item>
-              <Descriptions.Item label="Parent Image Path">
-                {record.fields?.parent_image_path}
-              </Descriptions.Item>
-              <Descriptions.Item label="xxHash Path">
-                {record.fields?.xxHash_path}
-              </Descriptions.Item>
-              <Descriptions.Item label="MITRE Description">
-                {record.mitre_desc}
-              </Descriptions.Item>
-            </Descriptions>
-          ),
-        }}
-        pagination={{ pageSize: 5 }}
-      />
+
+      {/* RIGHT: Event Viewer */}
+      <div style={{ flex: 1, overflow: "auto" }}>
+        <Card
+          title={`Events for ${selectedPath || "..."}`}
+          style={{ height: "100%" }}
+        >
+          {selectedPath && currentEvent ? (
+            <Tabs
+              defaultActiveKey="Process"
+              items={eventTabs.map((tab) => ({
+                key: tab.key,
+                label: tab.label,
+                children: (
+                  <List
+                    //@ts-ignore
+                    dataSource={currentEvent[tab.key as keyof EventItem]}
+                    renderItem={(item, idx) => (
+                      <List.Item>
+                        <pre style={{ whiteSpace: "pre-wrap", margin: 0 }}>
+                          {JSON.stringify(item, null, 2)}
+                        </pre>
+                      </List.Item>
+                    )}
+                  />
+                ),
+              }))}
+            />
+          ) : (
+            <p>Please select a process to view its events.</p>
+          )}
+        </Card>
+      </div>
     </div>
   );
-};
-
-export default ProcessTable;
+}

@@ -44,7 +44,7 @@ export default function Alerts() {
       tableHeight=" calc(-273px + 100vh)"
       title={t("alertManagement")}
       dataFieldName="alert"
-      apiUrl={`https://70cf656b-838a-4d1c-8f2e-2b9569df066e.mock.pstmn.io/api/alerts`}
+      apiUrl={`https://567c1e7d-7161-45bb-a356-b733e003d043.mock.pstmn.io/api/alerts`}
       columns={columns}
     />
   );
