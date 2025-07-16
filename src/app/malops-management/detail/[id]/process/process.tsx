@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tree, Card, Tabs, List } from "antd";
+import { Tree, Card, Tabs, List, Typography } from "antd";
 import type { DataNode } from "antd/es/tree";
 import {
   DesktopOutlined,
@@ -8,13 +8,15 @@ import {
   ClusterOutlined,
   ThunderboltOutlined,
   AppstoreOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 interface FileInfo {
   name: string;
-  pid: number;
+  tatics: string;
   path: string;
   hash: string;
+  file_path: string;
 }
 
 interface ProcessNode {
@@ -53,8 +55,12 @@ export default function ProcessViewer({
       const treeNode: DataNode & { children: DataNode[] } = {
         title: (
           <>
-            <DesktopOutlined style={{ marginRight: 8 }} />
-            {node.file_info.name} (PID: {node.file_info.pid})
+            <DesktopOutlined
+              style={{ marginRight: 8 }}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+            {node.file_info.file_path}
           </>
         ),
         key: node.xxHash_path,
@@ -88,7 +94,10 @@ export default function ProcessViewer({
       key: "Process",
       label: (
         <span>
-          <AppstoreOutlined />
+          <AppstoreOutlined
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
           Process
         </span>
       ),
@@ -97,7 +106,10 @@ export default function ProcessViewer({
       key: "Registry",
       label: (
         <span>
-          <DatabaseOutlined />
+          <DatabaseOutlined
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
           Registry
         </span>
       ),
@@ -106,7 +118,10 @@ export default function ProcessViewer({
       key: "File",
       label: (
         <span>
-          <FileOutlined />
+          <FileOutlined
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
           File
         </span>
       ),
@@ -115,7 +130,10 @@ export default function ProcessViewer({
       key: "Socket",
       label: (
         <span>
-          <ClusterOutlined />
+          <ClusterOutlined
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
           Socket
         </span>
       ),
@@ -124,7 +142,10 @@ export default function ProcessViewer({
       key: "Other",
       label: (
         <span>
-          <ThunderboltOutlined />
+          <ThunderboltOutlined
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
           Other
         </span>
       ),
@@ -135,7 +156,23 @@ export default function ProcessViewer({
     <div style={{ display: "flex", gap: "16px", height: "100%" }}>
       {/* LEFT: Process Tree */}
       <div style={{ width: "30%", overflow: "auto" }}>
-        <Card title=" Process Tree" style={{ height: "100%" }}>
+        <Card
+          title={
+            <div className="flex items-center space-x-2 ">
+              <SettingOutlined
+                style={{ fontSize: "24px", color: "Yellow" }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
+              <div>
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                  Process
+                </Typography.Title>
+              </div>
+            </div>
+          }
+          style={{ height: "100%" }}
+        >
           <Tree
             treeData={buildTreeData()}
             onSelect={handleSelect}

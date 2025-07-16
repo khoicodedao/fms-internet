@@ -14,6 +14,140 @@ import API_URL from "@/common/api-url";
 // import { useRouter } from "next/router";
 import { useParams } from "next/navigation";
 import data from "./data.json";
+const socket = [
+  {
+    type: "event",
+    name: "SYN-SENT Socket",
+    log_time: "2025-07-14 14:19:06",
+    data: {
+      alert_time: "2025-07-14 14:18:06",
+      object: "Socket",
+      action: "SYN-SENT ",
+      fields: {
+        family: "ipv4",
+        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
+        local_address: "192.168.18.175",
+        local_port: 50141,
+        pid: 572,
+        protocol: "tcp",
+        remote_address: "152.32.217.10",
+        remote_port: 236,
+        success: "true",
+        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
+        signature_valid: "True",
+        signer: "Microsoft Windows Publisher",
+        user: "DESKTOP-8GP8UNV\\admin",
+        uid: 3556,
+      },
+    },
+    time_sent: "2025-07-14 14:20:06",
+    level: 0,
+    pid_path: "5872/8632/8052/572",
+    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
+    deleted: "False",
+    alert_time: "2025-07-14 14:24:06",
+    id: 3829,
+  },
+  {
+    type: "event",
+    name: "SYN-SENT Socket",
+    log_time: "2025-07-14 14:23:06",
+    data: {
+      alert_time: "2025-07-14 14:22:06",
+      object: "Socket",
+      action: "SYN-SENT ",
+      fields: {
+        family: "ipv4",
+        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
+        local_address: "192.168.18.175",
+        local_port: 50158,
+        pid: 572,
+        protocol: "tcp",
+        remote_address: "152.32.217.10",
+        remote_port: 111,
+        success: "true",
+        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
+        signature_valid: "True",
+        signer: "Microsoft Windows Publisher",
+        user: "DESKTOP-8GP8UNV\\admin",
+        uid: 3556,
+      },
+    },
+    time_sent: "2025-07-14 14:24:06",
+    level: 0,
+    pid_path: "5872/8632/8052/572",
+    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
+    deleted: "False",
+    alert_time: "2025-07-14 14:24:06",
+    id: 3840,
+  },
+  {
+    type: "event",
+    name: "SYN-SENT Socket",
+    log_time: "2025-07-14 14:39:09",
+    data: {
+      alert_time: "2025-07-14 14:38:09",
+      object: "Socket",
+      action: "SYN-SENT ",
+      fields: {
+        family: "ipv4",
+        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
+        local_address: "192.168.18.175",
+        local_port: 50235,
+        pid: 572,
+        protocol: "tcp",
+        remote_address: "152.32.217.10",
+        remote_port: 438,
+        success: "true",
+        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
+        signature_valid: "True",
+        signer: "Microsoft Windows Publisher",
+        user: "DESKTOP-8GP8UNV\\admin",
+        uid: 3556,
+      },
+    },
+    time_sent: "2025-07-14 14:40:10",
+    level: 0,
+    pid_path: "5872/8632/8052/572",
+    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
+    deleted: "False",
+    alert_time: "2025-07-14 14:44:14",
+    id: 3881,
+  },
+  {
+    type: "event",
+    name: "SYN-SENT Socket",
+    log_time: "2025-07-14 14:43:10",
+    data: {
+      alert_time: "2025-07-14 14:42:10",
+      object: "Socket",
+      action: "SYN-SENT ",
+      fields: {
+        family: "ipv4",
+        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
+        local_address: "192.168.18.175",
+        local_port: 50251,
+        pid: 572,
+        protocol: "tcp",
+        remote_address: "152.32.217.10",
+        remote_port: 108,
+        success: "true",
+        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
+        signature_valid: "True",
+        signer: "Microsoft Windows Publisher",
+        user: "DESKTOP-8GP8UNV\\admin",
+        uid: 3556,
+      },
+    },
+    time_sent: "2025-07-14 14:44:14",
+    level: 0,
+    pid_path: "5872/8632/8052/572",
+    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
+    deleted: "False",
+    alert_time: "2025-07-14 14:44:14",
+    id: 3893,
+  },
+];
 export default function MalOpsManagementDetail() {
   const { id } = useParams(); // Lấy id từ dynamic route
   const [activeSection, setActiveSection] = useState("diagram");
@@ -103,12 +237,13 @@ export default function MalOpsManagementDetail() {
         <Description data={filterData} rootCauseDetails="Root Cause Details" />
       </section>
       <section id="communication">
-        <Communication />
+        <Communication data={socket} />
       </section>
       <section id="machine-profile">
         <MachineProfilePage />
       </section>
       <section id="process-profile">
+        {/* @ts-ignore */}
         <ProcessPage process_tree={data.process_tree} events={data.events} />
       </section>
 

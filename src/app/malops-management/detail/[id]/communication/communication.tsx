@@ -1,87 +1,119 @@
 "use client";
-import React from "react";
-import { Card, Table, Row, Col, Typography } from "antd";
+import React, { useMemo } from "react";
+import ReactFlow, {
+  Background,
+  Controls,
+  Edge,
+  Node,
+  MarkerType,
+} from "reactflow";
+
+import "reactflow/dist/style.css";
 import {
-  WifiOutlined, // Router Icon
+  ClockCircleOutlined,
+  DeploymentUnitOutlined,
+  SwapOutlined,
 } from "@ant-design/icons";
-import "vis-network/styles/vis-network.css"; // CSS cho vis-network
-import NetworkGraph from "./network";
-const { Title } = Typography;
-import Detail from "./detail";
-function Communication() {
-  const sampleConnections: any[] = [
-    {
-      source: "DESKTOP-I9T8DIF",
-      target: "DESKTOP-AS",
-      ip: "192.168.1.1",
-      port: "8080",
-      mac: "00:1A:2B:3C:4D:5E",
-    },
-    {
-      source: "My_PC",
-      target: "DESKTOP-AZ",
-      ip: "192.168.1.2",
-      port: "8081",
-      mac: "00:1A:2B:3C:4D:5F",
-    },
-    {
-      source: "My_PC",
-      target: "DESKTOP-AZ",
-      ip: "192.168.1.3",
-      port: "8082",
-      mac: "00:1A:2B:3C:4D:60",
-    },
-  ];
+import { Typography } from "antd";
 
-  const columns = [
-    { title: "MAC Address", dataIndex: "mac", key: "mac" },
-    { title: "Source", dataIndex: "source", key: "source" },
-    { title: "Target", dataIndex: "target", key: "target" },
-    { title: "IP", dataIndex: "ip", key: "ip" },
-    { title: "Port", dataIndex: "port", key: "port" },
-  ];
+type SocketEvent = {
+  log_time: string;
+  data: {
+    fields: {
+      image_path: string;
+      local_address: string;
+      local_port: number;
+      remote_address: string;
+      remote_port: number;
+      protocol: string;
+    };
+  };
+};
 
-  const data = sampleConnections.map((connection, index) => ({
-    key: index.toString(),
-    source: connection.source,
-    target: connection.target,
-    ip: connection.ip,
-    port: connection.port,
-    mac: connection.mac,
-  }));
+type Props = {
+  data: SocketEvent[];
+};
+
+const SocketGraph: React.FC<Props> = ({ data }) => {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const getNodeId = (ip: string, port: number, label = "") =>
+    `${ip}:${port}${label ? ` (${label})` : ""}`;
+
+  const nodeMap = new Map<string, boolean>(); // để tránh trùng node
+
+  data.forEach((item, index) => {
+    const {
+      local_address,
+      local_port,
+      remote_address,
+      remote_port,
+      image_path,
+      protocol,
+    } = item.data.fields;
+
+    const localLabel = image_path.split("\\").pop() || "app.exe";
+    const localId = getNodeId(local_address, local_port, localLabel);
+    const remoteId = getNodeId(remote_address, remote_port);
+
+    // Tạo nodes nếu chưa có
+    if (!nodeMap.has(localId)) {
+      nodeMap.set(localId, true);
+      nodes.push({
+        id: localId,
+        data: { label: localId },
+        position: { x: 50, y: index * 150 },
+        style: { background: "#e6f7ff", border: "1px solid #1890ff" },
+      });
+    }
+
+    if (!nodeMap.has(remoteId)) {
+      nodeMap.set(remoteId, true);
+      nodes.push({
+        id: remoteId,
+        data: { label: remoteId },
+        position: { x: 400, y: index * 150 },
+        style: { background: "#fff1f0", border: "1px solid #f5222d" },
+      });
+    }
+
+    // Tạo edge từ local → remote
+    edges.push({
+      id: `edge-${index}`,
+      source: localId,
+      target: remoteId,
+      label: `${protocol.toUpperCase()} - ${item.log_time.slice(11, 19)}`,
+      type: "default",
+      animated: true,
+      style: { stroke: "#52c41a" },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: "#52c41a",
+      },
+    });
+  });
 
   return (
-    <Card className="top-0 z-10 p-1">
-      <Row gutter={16}>
-        <Col span={8}>
-          <div style={{ height: 500 }}>
-            <div className="flex items-center space-x-2 mb-4">
-              <WifiOutlined
-                style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              />
-              <Title level={5} style={{ margin: 0 }}>
-                Communication Profile
-              </Title>
-            </div>
-            <div style={{ overflowX: "auto" }}>
-              <Table columns={columns} dataSource={data} pagination={false} />
-            </div>
-          </div>
-        </Col>
-
-        <Col span={16}>
-          <div style={{ height: 500, overflow: "hidden" }}>
-            <NetworkGraph />
-          </div>
-          <Detail></Detail>
-        </Col>
-      </Row>
-    </Card>
+    <div style={{ height: 600, width: "100%" }}>
+      <div className="flex items-center p-4 space-x-2 mb-4">
+        <DeploymentUnitOutlined
+          style={{ fontSize: "24px", color: "red" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+        <div>
+          <Typography.Title level={5} style={{ margin: 0 }}>
+            Communication
+          </Typography.Title>
+        </div>
+      </div>
+      <ReactFlow nodes={nodes} edges={edges} fitView>
+        {/* <Background /> */}
+        <Controls />
+      </ReactFlow>
+    </div>
   );
-}
+};
 
-export default function CommunicationPage() {
-  return <Communication />;
-}
+export default SocketGraph;

@@ -27,24 +27,6 @@ export default function DetailDirectory() {
         { path: "C:\\Users", size: "25.3 GB", lastModified: "2023-10-15" },
       ],
     },
-    {
-      name: "Desktop-02",
-      osVersion: "Windows 11 Enterprise",
-      status: "Offline",
-      directories: [
-        {
-          path: "C:\\Windows\\System32",
-          size: "4.5 GB",
-          lastModified: "2023-10-15",
-        },
-        {
-          path: "C:\\Program Files",
-          size: "20.1 GB",
-          lastModified: "2023-10-15",
-        },
-        { path: "C:\\Users", size: "18.7 GB", lastModified: "2023-10-14" },
-      ],
-    },
   ];
 
   const items = [

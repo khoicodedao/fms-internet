@@ -99,19 +99,11 @@ function MachineProfile() {
   const data = [
     {
       key: "1",
-      machineName: "DESKTOP-ABC123",
-      user: "john.doe",
-      mac: "00:1A:2B:3C:4D:5E",
+      machineName: "DESKTOP-8GP8UNV",
+      user: "admin",
+      mac: "00-1A-2B-3C-4D-5E",
       ip: "192.168.1.1",
       os: "Windows 10 Pro",
-    },
-    {
-      key: "2",
-      machineName: "LAPTOP-XYZ789",
-      user: "jane.smith",
-      mac: "00:2C:4E:6F:8G:9H",
-      ip: "10.0.0.1",
-      os: "Ubuntu 22.04",
     },
   ];
 
@@ -119,7 +111,7 @@ function MachineProfile() {
     <div className="top-0 z-10 p-4 bg-white">
       <Row gutter={16}>
         <Col span={8}>
-          <div style={{ height: 500 }}>
+          <div>
             <div className="flex items-center space-x-2 mb-4">
               <DesktopOutlined
                 style={{ fontSize: "24px", color: "#1890ff" }}

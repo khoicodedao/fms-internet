@@ -4,7 +4,9 @@ import React from "react";
 import { Card, Collapse, Row, Col, Typography } from "antd";
 import {
   ApartmentOutlined,
+  ClockCircleOutlined,
   DesktopOutlined,
+  FileOutlined,
   InfoCircleOutlined,
   SettingOutlined,
   UserOutlined,
@@ -19,6 +21,8 @@ import dynamic from "next/dynamic";
 const Flow = dynamic(() => import("../../../../../components/Flow"), {
   ssr: false,
 });
+import dataProcess from "../data.json";
+
 type Props = {
   rootCauseDetails: string;
   data: any[]; // hoặc kiểu cụ thể nếu bạn có
@@ -56,10 +60,22 @@ function Description({ rootCauseDetails, data }: Props) {
   ];
 
   return (
-    <div className=" top-0 pt-2 z-10 bg-white">
+    <div className=" top-0 pt-2 z-10  bg-white">
       <Card>
-        <TimeLine result={data} />
-        <AffectedFile data={data[0]?.result || []} />
+        <div className="flex items-center space-x-2 mb-4">
+          <ClockCircleOutlined
+            style={{ fontSize: "24px", color: "green" }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />
+          <div>
+            <Typography.Title level={5} style={{ margin: 0 }}>
+              Time line
+            </Typography.Title>
+          </div>
+        </div>
+        <TimeLine processList={dataProcess.process_tree} />
+        {/* <AffectedFile data={data[0]?.result || []} /> */}
       </Card>
     </div>
   );
