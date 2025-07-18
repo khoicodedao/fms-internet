@@ -184,13 +184,8 @@ export default function Home() {
     series: [
       {
         name: "Total MalOps",
-        type: "line",
+        type: "bar",
         data: [120, 132, 101, 134, 90],
-      },
-      {
-        name: "Closed MalOps",
-        type: "line",
-        data: [80, 92, 71, 94, 60],
       },
     ],
   };

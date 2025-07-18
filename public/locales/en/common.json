@@ -90,5 +90,7 @@
   "Refresh": "Refresh",
   "storageElasticUse": "Storage Elastic Use",
   "export_current_page": "Export Current Page",
-  "export_all_data": "Export 2000 rows"
+  "export_all_data": "Export 2000 rows",
+  "mitreTatic": "Mitre Tatic",
+  "mitreTechnique": "Mitre Technique"
 }

@@ -33,6 +33,8 @@ export default function Events() {
     event_time: string;
     object: string;
     action: string;
+    mitre_tatic: string;
+    mitre_technique: string;
   };
 
   const columns: ColDef<RowData>[] = [
@@ -43,17 +45,31 @@ export default function Events() {
       field: "computer_name",
       width: 500,
       cellRenderer: (params: any) => {
-        const tableTitle = params.colDef.tableTitle; // Lấy tableTitle từ colDef
+        const tableTitle = params.colDef.tableTitle;
+        const fields = params.data?.fields || {};
+        const action = params.data?.action || "";
+        const alertType = params.data?.alert_type || "";
+
         if (tableTitle === "socket") {
-          return `${params.data.fields.image_path}  ${params.data.fields.remote_address}/${params.data.fields.remote_port}`;
+          const imagePath = fields.image_path || "";
+          const remoteAddress = fields.remote_address || "";
+          const remotePort = fields.remote_port || "";
+          return `${imagePath}  ${remoteAddress}/${remotePort}`;
         } else if (tableTitle === "registry") {
-          return `${params.data.fields.image_path} - ${params.data.alert_type} - ${params.data.fields.value}`;
+          const imagePath = fields.image_path || "";
+          const value = fields.value || "";
+          return `${imagePath} - ${alertType} - ${value}`;
         } else if (tableTitle === "file") {
-          return `${params.data.fields.process_name} - ${params.data.action} - ${params.data.fields.file_name}`;
+          const processName = fields.process_name || "";
+          const fileName = fields.file_name || "";
+          return `${processName} - ${action} - ${fileName}`;
         } else if (tableTitle === "process") {
-          return `${params.data.fields.file_path} - ${params.data.action} - ${params.data.fields.image_path_created}`;
+          const filePath = fields.file_path || "";
+          const imagePathCreated = fields.image_path_created || "";
+          return `${filePath} - ${action} - ${imagePathCreated}`;
         }
-        return <span>{params.value}</span>;
+
+        return params.value ?? ""; // fallback
       },
     },
 
@@ -65,6 +81,9 @@ export default function Events() {
       width: 120,
       cellRenderer: (params: any) => <AlertLevel level={params.value} />,
     },
+    { headerName: t("mitreTatic"), field: "mitre_tatic", width: 120 },
+    { headerName: t("mitreTechnique"), field: "mitre_technique", width: 120 },
+
     { headerName: t("eventTime"), field: "event_time" },
     {
       headerName: t("action"),
@@ -86,7 +105,7 @@ export default function Events() {
     { headerName: t("action"), field: "action" },
   ];
   return (
-    <Tabs tabPosition="left" type="card" defaultActiveKey="1">
+    <Tabs id="event-page" tabPosition="left" type="card" defaultActiveKey="1">
       <TabPane
         tab={
           <span>
