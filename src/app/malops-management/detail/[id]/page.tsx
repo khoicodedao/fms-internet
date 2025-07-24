@@ -103,7 +103,8 @@ export default function MalOpsManagementDetail() {
         />
       </section>
       <section className="pb-8" id="communication">
-        <Communication processListProcess={dataProcessTree} />
+        {/* @ts-ignore*/}
+        <Communication alert_id={id} />
       </section>
       <section className="pb-8" id="machine-profile">
         <MachineProfilePage />
