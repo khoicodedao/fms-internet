@@ -115,7 +115,7 @@ export default function Detail() {
         </div>
       </div>
       <Divider />
-      <Collapse defaultActiveKey={["1"]} items={items} />
+      {/* <Collapse defaultActiveKey={["1"]} items={items} /> */}
     </div>
   );
 }

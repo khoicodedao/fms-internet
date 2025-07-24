@@ -12,172 +12,33 @@ import { SettingOutlined } from "@ant-design/icons";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 // import { useRouter } from "next/router";
-import { useParams } from "next/navigation";
-import data from "./data.json";
-const socket = [
-  {
-    type: "event",
-    name: "SYN-SENT Socket",
-    log_time: "2025-07-14 14:19:06",
-    data: {
-      alert_time: "2025-07-14 14:18:06",
-      object: "Socket",
-      action: "SYN-SENT ",
-      fields: {
-        family: "ipv4",
-        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
-        local_address: "192.168.18.175",
-        local_port: 50141,
-        pid: 572,
-        protocol: "tcp",
-        remote_address: "152.32.217.10",
-        remote_port: 236,
-        success: "true",
-        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
-        signature_valid: "True",
-        signer: "Microsoft Windows Publisher",
-        user: "DESKTOP-8GP8UNV\\admin",
-        uid: 3556,
-      },
-    },
-    time_sent: "2025-07-14 14:20:06",
-    level: 0,
-    pid_path: "5872/8632/8052/572",
-    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
-    deleted: "False",
-    alert_time: "2025-07-14 14:24:06",
-    id: 3829,
-  },
-  {
-    type: "event",
-    name: "SYN-SENT Socket",
-    log_time: "2025-07-14 14:23:06",
-    data: {
-      alert_time: "2025-07-14 14:22:06",
-      object: "Socket",
-      action: "SYN-SENT ",
-      fields: {
-        family: "ipv4",
-        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
-        local_address: "192.168.18.175",
-        local_port: 50158,
-        pid: 572,
-        protocol: "tcp",
-        remote_address: "152.32.217.10",
-        remote_port: 111,
-        success: "true",
-        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
-        signature_valid: "True",
-        signer: "Microsoft Windows Publisher",
-        user: "DESKTOP-8GP8UNV\\admin",
-        uid: 3556,
-      },
-    },
-    time_sent: "2025-07-14 14:24:06",
-    level: 0,
-    pid_path: "5872/8632/8052/572",
-    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
-    deleted: "False",
-    alert_time: "2025-07-14 14:24:06",
-    id: 3840,
-  },
-  {
-    type: "event",
-    name: "SYN-SENT Socket",
-    log_time: "2025-07-14 14:39:09",
-    data: {
-      alert_time: "2025-07-14 14:38:09",
-      object: "Socket",
-      action: "SYN-SENT ",
-      fields: {
-        family: "ipv4",
-        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
-        local_address: "192.168.18.175",
-        local_port: 50235,
-        pid: 572,
-        protocol: "tcp",
-        remote_address: "152.32.217.10",
-        remote_port: 438,
-        success: "true",
-        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
-        signature_valid: "True",
-        signer: "Microsoft Windows Publisher",
-        user: "DESKTOP-8GP8UNV\\admin",
-        uid: 3556,
-      },
-    },
-    time_sent: "2025-07-14 14:40:10",
-    level: 0,
-    pid_path: "5872/8632/8052/572",
-    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
-    deleted: "False",
-    alert_time: "2025-07-14 14:44:14",
-    id: 3881,
-  },
-  {
-    type: "event",
-    name: "SYN-SENT Socket",
-    log_time: "2025-07-14 14:43:10",
-    data: {
-      alert_time: "2025-07-14 14:42:10",
-      object: "Socket",
-      action: "SYN-SENT ",
-      fields: {
-        family: "ipv4",
-        image_path: "C:\\Windows\\SysWOW64\\svchost.exe",
-        local_address: "192.168.18.175",
-        local_port: 50251,
-        pid: 572,
-        protocol: "tcp",
-        remote_address: "152.32.217.10",
-        remote_port: 108,
-        success: "true",
-        md5_hash: "2D7967EE11269B0CC7D4BF89EE21730E",
-        signature_valid: "True",
-        signer: "Microsoft Windows Publisher",
-        user: "DESKTOP-8GP8UNV\\admin",
-        uid: 3556,
-      },
-    },
-    time_sent: "2025-07-14 14:44:14",
-    level: 0,
-    pid_path: "5872/8632/8052/572",
-    xxHash_path: "7430DC68/59D552F6/C6834CE4/21CF5B3A",
-    deleted: "False",
-    alert_time: "2025-07-14 14:44:14",
-    id: 3893,
-  },
-];
+import { useParams, useSearchParams } from "next/navigation";
+
 export default function MalOpsManagementDetail() {
   const { id } = useParams(); // Lấy id từ dynamic route
+  const searchParams = useSearchParams();
+  const root_process = searchParams.get("root_process");
+  const time_stamp = searchParams.get("time_stamp");
+  const summary = searchParams.get("summary ");
   const [activeSection, setActiveSection] = useState("diagram");
-  const [filterData, setFilterData] = useState([]);
-  const { mutation: mutationList, contextHolder } = usePostApi(
-    API_URL.MALOPS_PAGE.DEFAULT,
+  const [dataProcessTree, setDataProcessTree] = useState([]);
+  const [targetProcess, setTargetProcess] = useState({});
+  const { mutation: mutationProcessTree, contextHolder } = usePostApi(
+    API_URL.ALERT_PAGE.EVENTS,
     true
   );
+
   useEffect(() => {
-    mutationList.mutate(
-      {
-        start_date: "2025-03-31 00",
-        end_date: "2026",
-        skip: 0,
-        limit: 50,
-        filter: id,
-      },
+    mutationProcessTree.mutate(
+      { get_process_tree: true, xxhash: root_process, id_alert: id },
       {
         onSuccess: (data) => {
           // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
-          console.log(data.data.alerts);
-          if (data.data.alerts) {
-            setFilterData(data.data.alerts);
-          } else {
-            setFilterData([]);
-          }
+          setDataProcessTree(data.data.process_tree);
+          setTargetProcess(data.data.target_process);
         },
         onError: (error) => {
           console.error("Lỗi khi gọi API:", error);
-          setFilterData([]); // Gán giá trị mặc định nếu có lỗi
         },
       }
     );
@@ -221,30 +82,35 @@ export default function MalOpsManagementDetail() {
   return (
     <div className="pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       {contextHolder}
+      {/* @ts-ignore */}
       <ObjectDetailHeader
         // type={"Malware"}
         icon={getFileIcon("file")}
-        //@ts-ignore
-        title={filterData[0]?.filter_name || ""}
-        //@ts-ignore
-        description={filterData[0]?.filter_description || ""}
-        //@ts-ignore
-        time_start={filterData[0]?.start_time || ""}
-        //@ts-ignore
-        time_end={filterData[0]?.end_time || ""}
+        // @ts-ignore
+        title={targetProcess?.file_info?.file_path || ""}
+        description={summary}
+        time={time_stamp}
       />
-      <section id="diagram">
-        <Description data={filterData} rootCauseDetails="Root Cause Details" />
+      <section className="pb-8" id="diagram">
+        <Description
+          // @ts-ignore
+          id={id}
+          // @ts-ignore
+          tatics={targetProcess?.file_info?.tatics}
+          // @ts-ignore
+          techniques={targetProcess?.file_info?.techniques || ""}
+          targetProcess={targetProcess}
+        />
       </section>
-      <section id="communication">
-        <Communication data={socket} />
+      <section className="pb-8" id="communication">
+        <Communication processListProcess={dataProcessTree} />
       </section>
-      <section id="machine-profile">
+      <section className="pb-8" id="machine-profile">
         <MachineProfilePage />
       </section>
-      <section id="process-profile">
+      <section className="pb-8" id="process-profile">
         {/* @ts-ignore */}
-        <ProcessPage process_tree={data.process_tree} events={data.events} />
+        <ProcessPage processListProcess={dataProcessTree} alert_id={id} />
       </section>
 
       {/* Fixed Bottom Navigation */}

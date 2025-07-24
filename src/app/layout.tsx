@@ -20,6 +20,9 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "vis-network/styles/vis-network.css";
+
 import { usePathname } from "next/navigation";
 const queryClient = new QueryClient();
 // export const metadata: Metadata = {

@@ -6,13 +6,7 @@ import formatDateTime from "@/common/formatDate";
 import { ClockCircleOutlined } from "@ant-design/icons";
 
 //@ts-ignore
-const ObjectDetailHeader = ({
-  icon,
-  title,
-  description,
-  time_start,
-  time_end,
-}) => {
+const ObjectDetailHeader = ({ icon, title, description, time }) => {
   return (
     <div className="flex items-center justify-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10 shadow">
       {/* Icon bên trái */}
@@ -35,17 +29,8 @@ const ObjectDetailHeader = ({
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}
           />
-          <Text strong>Thời gian bắt đầu: </Text>{" "}
-          <Text>{formatDateTime({ value: time_start })}</Text>
-        </div>
-        <div className="flex items-center">
-          <ClockCircleOutlined
-            style={{ color: "#ff4d4f", marginRight: 8 }}
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-          />
-          <Text strong>Thời gian kết thúc: </Text>{" "}
-          <Text>{formatDateTime({ value: time_end })}</Text>
+          <Text strong>Thời gian cảnh báo: </Text>{" "}
+          <Text>{formatDateTime({ value: time })}</Text>
         </div>
       </div>
     </div>

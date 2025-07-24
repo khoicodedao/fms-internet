@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Tree, Card, Tabs, List, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { Tree, Card, Tabs, List, Typography, Collapse, Table } from "antd";
 import type { DataNode } from "antd/es/tree";
 import {
   DesktopOutlined,
@@ -10,20 +10,16 @@ import {
   AppstoreOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-
+import ReactJson from "react-json-view";
+import { usePostApi } from "@/common/usePostApi";
+import API_URL from "@/common/api-url";
+import SocketGraph from "./socket-graph";
 interface FileInfo {
   name: string;
   tatics: string;
   path: string;
   hash: string;
   file_path: string;
-}
-
-interface ProcessNode {
-  xxHash_path: string;
-  parent: string | null;
-  level: number;
-  file_info: FileInfo;
 }
 
 interface EventItem {
@@ -36,58 +32,117 @@ interface EventItem {
 }
 
 interface ProcessViewerProps {
-  process_tree: ProcessNode[];
-  events: EventItem[];
+  processListProcess: Process[];
+  alert_id: string;
+}
+type Process = {
+  process_name: string;
+  xxhash_path: string;
+};
+
+function buildProcessTree(processList: Process[]) {
+  const pathMap: Record<string, any> = {};
+
+  processList.forEach((proc) => {
+    const segments = proc.xxhash_path.split("/");
+    let currentPath = "";
+    let currentNode = null;
+
+    segments.forEach((segment, index) => {
+      currentPath = index === 0 ? segment : `${currentPath}/${segment}`;
+
+      if (!pathMap[currentPath]) {
+        const isLeaf = index === segments.length - 1;
+        const processInfo = isLeaf ? proc.process_name : segment;
+
+        const newNode = {
+          title: processInfo,
+          key: currentPath,
+          children: [],
+        };
+        pathMap[currentPath] = newNode;
+
+        if (index > 0) {
+          const parentPath = segments.slice(0, index).join("/");
+          pathMap[parentPath].children.push(newNode);
+        }
+      }
+    });
+  });
+
+  const roots = Object.values(pathMap).filter(
+    (node: any) => !node.key.includes("/")
+  );
+  return roots;
 }
 
 export default function ProcessViewer({
-  process_tree,
-  events,
+  processListProcess,
+  alert_id,
 }: ProcessViewerProps) {
+  const [treeData, setTreeData] = useState<any[]>([]);
+  const [dataEvents, setDataEvents] = useState([]);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const { mutation: mutationEvents } = usePostApi(
+    API_URL.ALERT_PAGE.EVENTS,
+    true
+  );
+  useEffect(() => {
+    const builtTree = buildProcessTree(processListProcess);
+    setTreeData(builtTree);
+
+    const firstParentKey = builtTree.find((node) => node.children?.length)?.key;
+    if (firstParentKey) {
+      setExpandedKeys([firstParentKey]);
+    }
+  }, [processListProcess]);
+  useEffect(() => {
+    mutationEvents.mutate(
+      {
+        id_alert: alert_id,
+        get_process_tree: "False",
+        xxhash: selectedPath,
+      },
+      {
+        onSuccess: (data) => {
+          const rawEvents = data.data.events;
+
+          // Phân loại theo name
+          const grouped = {
+            Process: [],
+            Registry: [],
+            File: [],
+            Socket: [],
+            Other: [],
+          };
+
+          rawEvents.forEach((event: any) => {
+            const name = event.name.toLowerCase();
+
+            if (name.includes("process")) grouped.Process.push(event);
+            else if (name.includes("registry")) grouped.Registry.push(event);
+            else if (name.includes("file")) grouped.File.push(event);
+            else if (name.includes("socket")) grouped.Socket.push(event);
+            else grouped.Other.push(event);
+          });
+
+          setDataEvents(grouped);
+        },
+        onError: (error) => {
+          console.error("Lỗi khi gọi API:", error);
+        },
+      }
+    );
+  }, [selectedPath]);
 
   // Hàm chuyển process_tree thành dạng tree của Antd
-  const buildTreeData = (): DataNode[] => {
-    const map = new Map<string, DataNode & { children: DataNode[] }>();
-    const roots: DataNode[] = [];
-
-    process_tree.forEach((node) => {
-      const treeNode: DataNode & { children: DataNode[] } = {
-        title: (
-          <>
-            <DesktopOutlined
-              style={{ marginRight: 8 }}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />
-            {node.file_info.file_path}
-          </>
-        ),
-        key: node.xxHash_path,
-        children: [],
-      };
-      map.set(node.xxHash_path, treeNode);
-    });
-
-    process_tree.forEach((node) => {
-      const treeNode = map.get(node.xxHash_path)!;
-      if (node.parent && map.has(node.parent)) {
-        map.get(node.parent)!.children.push(treeNode);
-      } else {
-        roots.push(treeNode);
-      }
-    });
-
-    return roots;
-  };
 
   const handleSelect = (keys: any[]) => {
     if (keys.length > 0) {
       setSelectedPath(keys[0]);
     }
   };
-
-  const currentEvent = events.find((e) => e.xxHash_path === selectedPath);
 
   const eventTabs = [
     {
@@ -174,9 +229,13 @@ export default function ProcessViewer({
           style={{ height: "100%" }}
         >
           <Tree
-            treeData={buildTreeData()}
+            treeData={treeData}
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys as string[])}
+            height={450}
+            showLine
+            blockNode
             onSelect={handleSelect}
-            defaultExpandAll
           />
         </Card>
       </div>
@@ -187,25 +246,88 @@ export default function ProcessViewer({
           title={`Events for ${selectedPath || "..."}`}
           style={{ height: "100%" }}
         >
-          {selectedPath && currentEvent ? (
+          {selectedPath && dataEvents ? (
             <Tabs
               defaultActiveKey="Process"
               items={eventTabs.map((tab) => ({
                 key: tab.key,
                 label: tab.label,
-                children: (
-                  <List
-                    //@ts-ignore
-                    dataSource={currentEvent[tab.key as keyof EventItem]}
-                    renderItem={(item, idx) => (
-                      <List.Item>
-                        <pre style={{ whiteSpace: "pre-wrap", margin: 0 }}>
-                          {JSON.stringify(item, null, 2)}
-                        </pre>
-                      </List.Item>
-                    )}
-                  />
-                ),
+                children:
+                  tab.key === "Socket" ? (
+                    <SocketGraph events={dataEvents["Socket"]} />
+                  ) : (
+                    <Table
+                      className="max-h-96 overflow-y-scroll"
+                      rowKey={(record, index) =>
+                        `${record.name}-${record.log_time}-${index}`
+                      }
+                      dataSource={dataEvents[tab.key as keyof EventItem]}
+                      columns={[
+                        {
+                          title: "Name",
+                          dataIndex: "name",
+                          key: "name",
+                        },
+                        {
+                          title: "Log Time",
+                          dataIndex: "log_time",
+                          key: "log_time",
+                        },
+                      ]}
+                      expandable={{
+                        expandedRowRender: (record) => (
+                          <div
+                            style={{ background: "#fafafa", padding: "12px" }}
+                          >
+                            <table
+                              style={{
+                                width: "100%",
+                                borderCollapse: "collapse",
+                              }}
+                            >
+                              <tbody>
+                                {Object.entries(record).map(([key, value]) => (
+                                  <tr key={key}>
+                                    <td
+                                      style={{
+                                        fontWeight: "bold",
+                                        padding: "6px",
+                                        verticalAlign: "top",
+                                        borderBottom: "1px solid #eee",
+                                        width: "30%",
+                                      }}
+                                    >
+                                      {key}
+                                    </td>
+                                    <td
+                                      style={{
+                                        padding: "6px",
+                                        borderBottom: "1px solid #eee",
+                                      }}
+                                    >
+                                      {typeof value === "object" &&
+                                      value !== null ? (
+                                        <ReactJson
+                                          src={value}
+                                          displayDataTypes={false}
+                                          enableClipboard={true}
+                                          style={{ padding: "10px" }}
+                                        />
+                                      ) : (
+                                        String(value)
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        ),
+                        rowExpandable: () => true,
+                      }}
+                      pagination={false}
+                    />
+                  ),
               }))}
             />
           ) : (

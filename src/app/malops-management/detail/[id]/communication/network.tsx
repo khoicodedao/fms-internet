@@ -1,143 +1,164 @@
+// FlowMapComponent.tsx
 "use client";
+import React from "react";
+import ReactFlow, {
+  Background,
+  Controls,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  MarkerType,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import {
+  WifiOutlined,
+  UserOutlined,
+  LaptopOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 
-import React, { useEffect, useRef } from "react";
-import { Network } from "vis-network/standalone";
-import "vis-network/styles/vis-network.css";
-import "@fortawesome/fontawesome-free/css/all.min.css";
-
-const sampleConnections: any[] = [
+const initialNodes = [
   {
-    source: "DESKTOP-I9T8DIF",
-    target: "DESKTOP-AS",
-    ip: "192.168.1.1",
-    port: "8080",
-    mac: "00:1A:2B:3C:4D:5E",
-    viaRouter: false,
+    id: "1",
+    sourcePosition: "right",
+    position: { x: 0, y: 100 },
+    data: {
+      label: (
+        <div className="text-center">
+          <LaptopOutlined style={{ fontSize: 20, color: "#1e40af" }} />{" "}
+          {/* Xanh đậm */}
+          <div className="font-bold">2 Machines</div>
+          <div className="text-sm text-gray-500">Owner machine</div>
+        </div>
+      ),
+    },
   },
   {
-    source: "DESKTOP-AZ",
-    target: "My_PC",
-    ip: "192.168.1.2",
-    port: "8081",
-    mac: "00:1A:2B:3C:4D:5F",
-    viaRouter: true, // This connection passes through a router
+    id: "2",
+    sourcePosition: "right",
+    position: { x: 0, y: 201 },
+    data: {
+      label: (
+        <div className="text-center">
+          <UserOutlined style={{ fontSize: 20, color: "#10b981" }} />{" "}
+          {/* Xanh lá */}
+          <div className="font-bold">2 Users</div>
+          <div className="text-sm text-gray-500">Owner users</div>
+        </div>
+      ),
+    },
   },
   {
-    source: "My_PC",
-    target: "DESKTOP",
-    ip: "192.168.1.3",
-    port: "8082",
-    mac: "00:1A:2B:3C:4D:60",
-    viaRouter: true,
+    id: "3",
+    position: { x: 301, y: 50 },
+    sourcePosition: "bottom",
+    data: {
+      label: (
+        <div className="text-center">
+          <SettingOutlined style={{ fontSize: 20, color: "#dc2626" }} />{" "}
+          {/* Đỏ */}
+          <div className="font-bold text-red-500">2 suspicious Processes</div>
+          <div className="text-sm text-gray-500">Processes</div>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "4",
+    sourcePosition: "right",
+    targetPosition: "left",
+    position: { x: 300, y: 200 },
+    data: {
+      label: (
+        <div className="text-center">
+          <WifiOutlined style={{ fontSize: 24, color: "#f59e0b" }} />{" "}
+          {/* Cam */}
+          <div className="font-bold">4 Connections</div>
+          <div className="text-sm text-gray-500">Connections</div>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "5",
+    position: { x: 500, y: 100 },
+    targetPosition: "left",
+    data: {
+      label: (
+        <div>
+          <div className="font-bold">No incoming connections</div>
+          <div className="text-sm text-gray-500">Incoming ports</div>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "6",
+    targetPosition: "left",
+    sourcePosition: "right",
+    position: { x: 500, y: 300 },
+    data: {
+      label: (
+        <div>
+          <div className="font-bold">TCP: 2 ports</div>
+          <div className="text-sm text-gray-500">Outgoing ports</div>
+        </div>
+      ),
+    },
+  },
+  {
+    id: "7",
+    position: { x: 700, y: 290 },
+    targetPosition: "left",
+    data: {
+      label: (
+        <div>
+          <div className="font-bold">152.32.217.10</div>
+          <div className="text-sm text-gray-500">External connections</div>
+          <div className="text-sm text-gray-500">No Elements</div>
+        </div>
+      ),
+    },
   },
 ];
 
-export default function NetworkGraph() {
-  const networkRef = useRef<HTMLDivElement>(null);
+const initialEdges = [
+  { id: "e1-4", source: "1", target: "4", animated: false, type: "smoothstep" },
+  { id: "e2-4", source: "2", target: "4", animated: false, type: "smoothstep" },
+  {
+    id: "e3-4",
+    source: "3",
+    target: "4",
 
-  useEffect(() => {
-    if (!networkRef.current) return;
+    animated: true,
+    type: "straight",
+    markerEnd: { type: MarkerType.ArrowClosed },
+  },
+  { id: "e4-5", source: "4", target: "5", type: "smoothstep" },
+  { id: "e4-6", source: "4", target: "6", type: "smoothstep" },
+  { id: "e6-7", source: "6", target: "7", type: "smoothstep" },
+];
 
-    const nodesMap = new Map<string, any>();
+export default function FlowMapComponent() {
+  const [nodes, _, onNodesChange] = useNodesState(initialNodes);
+  const [edges, __, onEdgesChange] = useEdgesState(initialEdges);
 
-    // Add router node
-    nodesMap.set("Router", {
-      id: "Router",
-      label: "Router",
-      shape: "icon",
-      icon: { face: "FontAwesome", code: "\uf6ff", size: 50, color: "#ff5722" }, // Router icon (WiFi)
-    });
-
-    // Generate nodes and edges
-    const edges: any[] = [];
-    sampleConnections.forEach((conn) => {
-      // Add source node
-      if (!nodesMap.has(conn.source)) {
-        nodesMap.set(conn.source, {
-          id: conn.source,
-          label: conn.source,
-          shape: "icon",
-          icon: {
-            face: "FontAwesome",
-            code: "\uf108",
-            size: 40,
-            color: "#007bff",
-          }, // Computer icon (Blue)
-        });
-      }
-
-      // Add target node
-      if (!nodesMap.has(conn.target)) {
-        nodesMap.set(conn.target, {
-          id: conn.target,
-          label: conn.target,
-          shape: "icon",
-          icon: {
-            face: "FontAwesome",
-            code: "\uf108",
-            size: 40,
-            color: "#28a745",
-          }, // Computer icon (Green)
-        });
-      }
-
-      // If connection goes through router, split into two edges
-      if (conn.viaRouter) {
-        edges.push(
-          {
-            from: conn.source,
-            to: "Router",
-            label: `IP: ${conn.ip}\nPort: ${conn.port}`,
-            arrows: "to",
-            color: "#ffcc00",
-            dashes: true,
-          },
-          {
-            from: "Router",
-            to: conn.target,
-            label: `MAC: ${conn.mac}`,
-            arrows: "to",
-            color: "#ffcc00",
-          }
-        );
-      } else {
-        // Direct connection
-        edges.push({
-          from: conn.source,
-          to: conn.target,
-          label: `IP: ${conn.ip}\nPort: ${conn.port}\nMAC: ${conn.mac}`,
-          arrows: { to: { enabled: true, type: "arrow" } },
-          color: "#00c2ff",
-          width: 2,
-          smooth: { type: "dynamic" },
-        });
-      }
-    });
-
-    const nodes = Array.from(nodesMap.values());
-
-    const container = networkRef.current;
-    const data = { nodes, edges };
-    const options = {
-      layout: {
-        hierarchical: {
-          enabled: true,
-          direction: "LR", // Sắp xếp Left → Right (hàng ngang)
-          nodeSpacing: 200, // Khoảng cách giữa các node
-          levelSeparation: 200, // Khoảng cách giữa các cấp
-        },
-      },
-      physics: {
-        enabled: false, // Tắt physics để tránh di chuyển tự do
-      },
-      nodes: {
-        fixed: { x: true, y: true }, // Cố định vị trí
-      },
-    };
-    const network = new Network(container, data, options);
-
-    return () => network.destroy();
-  }, []);
-
-  return <div ref={networkRef} style={{ height: "500px" }} />;
+  return (
+    <div style={{ width: "100%", height: 600 }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView
+        nodesDraggable={false} // ❌ không cho kéo node
+        nodesConnectable={false} // ❌ không cho kết nối node
+        elementsSelectable={false} // ❌ không cho chọn node/edge
+        zoomOnScroll={false} // ❌ không cho zoom bằng scroll
+        panOnScroll={false} // ❌ không cho pan bằng scroll
+        panOnDrag={false} // ❌ không cho pan bằng chuột
+        zoomOnDoubleClick={false}
+      ></ReactFlow>
+    </div>
+  );
 }

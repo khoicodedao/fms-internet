@@ -1,72 +1,216 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { Timeline } from "vis-timeline/standalone";
-import { DataItem } from "vis-timeline";
-import { WindowsOutlined, ToolOutlined, FileOutlined } from "@ant-design/icons";
-import ReactDOMServer from "react-dom/server";
+import React, { useState } from "react";
+import {
+  FileAddOutlined,
+  DeleteOutlined,
+  CloudSyncOutlined,
+  ClockCircleOutlined,
+  SwapOutlined,
+} from "@ant-design/icons";
+import { Timeline, Typography, Tag, Card, Modal, Descriptions } from "antd";
+import "./time-line.scss";
+const { Text } = Typography;
 
-type FileInfo = {
-  file_path: string;
-  created_at: string;
-  signer: string;
+const data = [
+  {
+    name: "DeleteFile",
+    log_time: "2025-07-14 16:22:38",
+    data: {
+      alert_time: "2025-07-14 16:21:35",
+      object: "File",
+      action: "Delete",
+      fields: {
+        file_path:
+          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.lnk",
+        pid: 5872,
+        process_name: "C:\\Windows\\explorer.exe",
+      },
+    },
+  },
+  {
+    name: "CreateFile",
+    log_time: "2025-07-14 16:22:38",
+    data: {
+      alert_time: "2025-07-14 16:21:35",
+      object: "File",
+      action: "Create",
+      fields: {
+        file_path:
+          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.lnk",
+        pid: 5872,
+        process_name: "C:\\Windows\\explorer.exe",
+      },
+    },
+  },
+  {
+    name: "DeleteFile",
+    log_time: "2025-07-14 16:22:38",
+    data: {
+      alert_time: "2025-07-14 16:21:34",
+      object: "File",
+      action: "Delete",
+      fields: {
+        file_path:
+          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.db.lnk",
+        pid: 5872,
+        process_name: "C:\\Windows\\explorer.exe",
+      },
+    },
+  },
+  {
+    name: "CreateFile",
+    log_time: "2025-07-14 16:22:38",
+    data: {
+      alert_time: "2025-07-14 16:21:34",
+      object: "File",
+      action: "Create",
+      fields: {
+        file_path:
+          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.db.lnk",
+        pid: 5872,
+        process_name: "C:\\Windows\\explorer.exe",
+      },
+    },
+  },
+  {
+    name: "ESTABLISHEDSocket",
+    log_time: "2025-07-14 14:19:06",
+    data: {
+      alert_time: "2025-07-14 14:18:06",
+      object: "Socket",
+      action: "ESTABLISHED",
+      fields: {
+        family: "ipv4",
+        image_path: "C:\\Windows\\explorer.exe",
+        local_address: "192.168.18.175",
+        local_port: 50140,
+        pid: 5872,
+        protocol: "tcp",
+        remote_address: "23.206.203.77",
+        remote_port: 443,
+        success: true,
+        md5_hash: "66D658B86F7FDB193D4607454F877C15",
+        signature_valid: "True",
+        signer: "Microsoft Windows",
+        user: "DESKTOP-8GP8UNV\\admin",
+        uid: 3532,
+      },
+    },
+  },
+];
+
+const getIcon = (name: string) => {
+  switch (name) {
+    case "CreateFile":
+      return (
+        <FileAddOutlined
+          style={{ color: "#1677ff" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
+    case "DeleteFile":
+      return (
+        <DeleteOutlined
+          style={{ color: "#ff4d4f" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
+    case "ESTABLISHEDSocket":
+      return (
+        <SwapOutlined
+          style={{ color: "#52c41a" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
+    default:
+      return (
+        <ClockCircleOutlined
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
+  }
 };
 
-type Process = {
-  xxHash_path: string;
-  file_info: FileInfo;
+const getTagColor = (action: string) => {
+  switch (action) {
+    case "Create":
+      return "blue";
+    case "Delete":
+      return "red";
+    case "ESTABLISHED":
+      return "green";
+    default:
+      return "default";
+  }
 };
 
-type Props = {
-  processList: Process[];
-};
-
-const getIcon = (path: string) => {
-  if (path.toLowerCase().includes("explorer")) return "🪟";
-  if (path.toLowerCase().includes("procexp")) return "🛠️";
-  return "📄";
-};
-
-export default function SimpleTimeline({ processList }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const items: DataItem[] = processList.map((proc) => ({
-      id: proc.xxHash_path,
-      content: `
-        <div style="display:flex;flex-direction:column;align-items:center;">
-          <div style="font-size:20px;">${getIcon(
-            proc.file_info.file_path
-          )}</div>
-          <div style="margin-top:2px;font-size:13px;">${proc.file_info.file_path
-            .split("\\")
-            .pop()}</div>
-        </div>
-      `,
-      start: proc.file_info.created_at,
-      title: `
-        <strong>${proc.file_info.file_path}</strong><br/>
-        Signer: ${proc.file_info.signer}<br/>
-        Created at: ${proc.file_info.created_at}
-      `,
-    }));
-
-    const options = {
-      stack: false,
-      orientation: "top",
-      margin: { item: 20 },
-      zoomKey: "ctrlKey",
-      maxHeight: "300px",
-    };
-
-    const timeline = new Timeline(containerRef.current!, items, options);
-    return () => timeline.destroy();
-  }, [processList]);
+export default function TimelineComponent() {
+  const [selected, setSelected] = useState<any | null>(null);
 
   return (
-    <div
-      className="mb-4"
-      ref={containerRef}
-      style={{ border: "1px solid #ddd" }}
-    />
+    <div>
+      <Timeline
+        mode="alternate"
+        items={data.map((item) => {
+          const { name, log_time, data: eventData } = item;
+          const { action, object, fields } = eventData;
+
+          return {
+            dot: getIcon(name),
+            children: (
+              <Card
+                hoverable
+                style={{ backgroundColor: "#f9fafb", borderRadius: 12 }}
+                onClick={() => setSelected(item)}
+              >
+                <Tag color={getTagColor(action)}>{action}</Tag>
+                <Text>{`${object} - ${
+                  fields?.file_path || fields?.image_path
+                }`}</Text>
+                <div style={{ marginTop: 4, fontSize: 12, color: "#888" }}>
+                  {log_time}
+                </div>
+              </Card>
+            ),
+          };
+        })}
+      />
+
+      <Modal
+        open={!!selected}
+        title="Chi tiết sự kiện"
+        onCancel={() => setSelected(null)}
+        footer={null}
+      >
+        {selected && (
+          <Descriptions column={1} bordered size="small">
+            <Descriptions.Item label="Tên">{selected.name}</Descriptions.Item>
+            <Descriptions.Item label="Hành động">
+              <Tag color={getTagColor(selected.data.action)}>
+                {selected.data.action}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="Đối tượng">
+              {selected.data.object}
+            </Descriptions.Item>
+            {Object.entries(selected.data.fields).map(([key, value]) => (
+              <Descriptions.Item label={key} key={key}>
+                {String(value)}
+              </Descriptions.Item>
+            ))}
+            <Descriptions.Item label="Thời gian ghi log">
+              {selected.log_time}
+            </Descriptions.Item>
+            <Descriptions.Item label="Thời gian cảnh báo">
+              {selected.data.alert_time}
+            </Descriptions.Item>
+          </Descriptions>
+        )}
+      </Modal>
+    </div>
   );
 }

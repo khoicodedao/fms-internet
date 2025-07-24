@@ -588,3 +588,8 @@ section::-webkit-scrollbar {
 #event-page .ant-tabs-tab-active {
   background-color: rgb(246, 189, 3) !important;
 }
+.react-flow__node-default {
+  border-color: #e5e7eb !important;
+  /* border: "2px dashed" !important; */
+  border-style: dashed !important;
+}

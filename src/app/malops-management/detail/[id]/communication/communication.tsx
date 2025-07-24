@@ -1,119 +1,105 @@
 "use client";
-import React, { useMemo } from "react";
-import ReactFlow, {
-  Background,
-  Controls,
-  Edge,
-  Node,
-  MarkerType,
-} from "reactflow";
+import React, { useState, useEffect } from "react";
+import { Row, Col, Typography, Tree } from "antd";
+import { WifiOutlined } from "@ant-design/icons";
+import NetworkGraph from "./network";
 
-import "reactflow/dist/style.css";
-import {
-  ClockCircleOutlined,
-  DeploymentUnitOutlined,
-  SwapOutlined,
-} from "@ant-design/icons";
-import { Typography } from "antd";
+const { Title } = Typography;
 
-type SocketEvent = {
-  log_time: string;
-  data: {
-    fields: {
-      image_path: string;
-      local_address: string;
-      local_port: number;
-      remote_address: string;
-      remote_port: number;
-      protocol: string;
-    };
-  };
+type Process = {
+  process_name: string;
+  xxhash_path: string;
 };
 
-type Props = {
-  data: SocketEvent[];
+type ProcessProps = {
+  processListProcess: Process[];
 };
 
-const SocketGraph: React.FC<Props> = ({ data }) => {
-  const nodes: Node[] = [];
-  const edges: Edge[] = [];
+function buildProcessTree(processList: Process[]) {
+  const pathMap: Record<string, any> = {};
 
-  const getNodeId = (ip: string, port: number, label = "") =>
-    `${ip}:${port}${label ? ` (${label})` : ""}`;
+  processList.forEach((proc) => {
+    const segments = proc.xxhash_path.split("/");
+    let currentPath = "";
+    let currentNode = null;
 
-  const nodeMap = new Map<string, boolean>(); // để tránh trùng node
+    segments.forEach((segment, index) => {
+      currentPath = index === 0 ? segment : `${currentPath}/${segment}`;
 
-  data.forEach((item, index) => {
-    const {
-      local_address,
-      local_port,
-      remote_address,
-      remote_port,
-      image_path,
-      protocol,
-    } = item.data.fields;
+      if (!pathMap[currentPath]) {
+        const isLeaf = index === segments.length - 1;
+        const processInfo = isLeaf ? proc.process_name : segment;
 
-    const localLabel = image_path.split("\\").pop() || "app.exe";
-    const localId = getNodeId(local_address, local_port, localLabel);
-    const remoteId = getNodeId(remote_address, remote_port);
+        const newNode = {
+          title: processInfo,
+          key: currentPath,
+          children: [],
+        };
+        pathMap[currentPath] = newNode;
 
-    // Tạo nodes nếu chưa có
-    if (!nodeMap.has(localId)) {
-      nodeMap.set(localId, true);
-      nodes.push({
-        id: localId,
-        data: { label: localId },
-        position: { x: 50, y: index * 150 },
-        style: { background: "#e6f7ff", border: "1px solid #1890ff" },
-      });
-    }
-
-    if (!nodeMap.has(remoteId)) {
-      nodeMap.set(remoteId, true);
-      nodes.push({
-        id: remoteId,
-        data: { label: remoteId },
-        position: { x: 400, y: index * 150 },
-        style: { background: "#fff1f0", border: "1px solid #f5222d" },
-      });
-    }
-
-    // Tạo edge từ local → remote
-    edges.push({
-      id: `edge-${index}`,
-      source: localId,
-      target: remoteId,
-      label: `${protocol.toUpperCase()} - ${item.log_time.slice(11, 19)}`,
-      type: "default",
-      animated: true,
-      style: { stroke: "#52c41a" },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: "#52c41a",
-      },
+        if (index > 0) {
+          const parentPath = segments.slice(0, index).join("/");
+          pathMap[parentPath].children.push(newNode);
+        }
+      }
     });
   });
 
+  const roots = Object.values(pathMap).filter(
+    (node: any) => !node.key.includes("/")
+  );
+  return roots;
+}
+
+export default function Communication({ processListProcess }: ProcessProps) {
+  const [treeData, setTreeData] = useState<any[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+
+  useEffect(() => {
+    const builtTree = buildProcessTree(processListProcess);
+    setTreeData(builtTree);
+
+    const firstParentKey = builtTree.find((node) => node.children?.length)?.key;
+    if (firstParentKey) {
+      setExpandedKeys([firstParentKey]);
+    }
+  }, [processListProcess]);
+
   return (
-    <div style={{ height: 600, width: "100%" }}>
-      <div className="flex items-center p-4 space-x-2 mb-4">
-        <DeploymentUnitOutlined
-          style={{ fontSize: "24px", color: "red" }}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        />
-        <div>
-          <Typography.Title level={5} style={{ margin: 0 }}>
-            Communication
-          </Typography.Title>
-        </div>
-      </div>
-      <ReactFlow nodes={nodes} edges={edges} fitView>
-        {/* <Background /> */}
-        <Controls />
-      </ReactFlow>
+    <div className="top-0 z-10 p-4 bg-white">
+      <Row gutter={16}>
+        <Col span={8}>
+          <div
+            style={{ height: 500, overflow: "auto" }}
+            className="pb-8 scrollbar-hide"
+          >
+            <div className="flex items-center space-x-2 mb-4">
+              <WifiOutlined
+                style={{ fontSize: "24px", color: "rgb(239, 68, 68)" }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
+              <Title level={5} style={{ margin: 0 }}>
+                Communication
+              </Title>
+            </div>
+            <Tree
+              treeData={treeData}
+              expandedKeys={expandedKeys}
+              onExpand={(keys) => setExpandedKeys(keys as string[])}
+              height={450}
+              showLine
+              blockNode
+            />
+          </div>
+        </Col>
+
+        <Col span={16}>
+          <div style={{ height: 500, overflow: "hidden" }}>
+            <NetworkGraph />
+          </div>
+        </Col>
+      </Row>
     </div>
   );
-};
-
-export default SocketGraph;
+}

@@ -58,7 +58,7 @@ async function proxyRequest(req: NextRequest, path: string[]) {
     return NextResponse.json({ error: "Missing backend URL" }, { status: 500 });
   }
 
-  const targetUrl = new URL(`/api-auth/api/${path.join("/")}`, backendUrlBase);
+  const targetUrl = new URL(`/api/${path.join("/")}`, backendUrlBase);
   console.log("[Proxy to]:", targetUrl.href);
 
   const method = req.method;
@@ -86,7 +86,7 @@ async function proxyRequest(req: NextRequest, path: string[]) {
         port: targetUrl.port,
         path: targetUrl.pathname + targetUrl.search,
         rejectUnauthorized: false,
-        agent: new https.Agent({ rejectUnauthorized: false }),
+        // agent: new https.Agent({ rejectUnauthorized: false }),
       },
       (res) => {
         const chunks: Uint8Array[] = [];

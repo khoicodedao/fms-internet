@@ -2,7 +2,11 @@ const API_URL = {
   HOME_PAGE: { DEFAULT: "/api/be/dashboard/statis" },
   LOGIN_PAGE: { DEFAULT: "/api/be/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/be/events/paginate" },
-  ALERT_PAGE: { DEFAULT: "/api/be/alerts/all" },
+  ALERT_PAGE: {
+    DEFAULT: "/api/be/alerts/paginate",
+    PROCESS_TREE: "/api/be/alerts/getProcessTree",
+    EVENTS: "/api/be/alerts/getEventAlert",
+  },
   EDR_PAGE: {
     DEFAULT: "/api/be/edrs/paginate",
     REMOTE: "/api/be/edrs/update-remote",

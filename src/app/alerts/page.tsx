@@ -9,42 +9,52 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 import API_URL from "@/common/api-url";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
-
+import ReactJson from "react-json-view";
 export default function Alerts() {
   const { t } = useTranslation();
-  type RowData = {
+  interface RowData {
+    id: string;
+    root_process: string;
+    host: string;
     mac: string;
-    score_level: string;
     computer_name: string;
-    score_tatic: string;
-    alert_level_id: string;
-    created_at: string;
-    object: string;
-    action: string;
-    version: string;
-    _id: string;
-  };
+    timestamp: string;
+    summary: string;
+    techniques: string;
+    tatics: string;
+  }
 
   const columns: ColDef<RowData>[] = [
+    {
+      headerName: t("_id"),
+      field: "id",
+      width: 150,
+      // @ts-ignore
+      cellRenderer: (params) => (
+        <Link
+          href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}`}
+        >
+          {params.value}
+        </Link>
+      ),
+    },
     {
       headerName: t("mac"),
       field: "mac",
     },
-    { headerName: t("Score level"), field: "score_level" },
-    { headerName: t("computerName"), field: "computer_name" },
-    { headerName: t("Score tatic"), field: "score_tatic" },
-    { headerName: t("Created at"), field: "created_at", width: 450 },
-    { headerName: t("Version"), field: "version", width: 150 },
-
-    { headerName: t("Created at"), field: "created_at", width: 450 },
+    { headerName: t("Root Process"), field: "root_process" },
+    { headerName: t("host"), field: "host" },
+    { headerName: t("Computer name"), field: "computer_name" },
+    { headerName: t("Time stamp"), field: "timestamp", width: 250 },
+    { headerName: t("Summary"), field: "summary", width: 450 },
   ];
 
   return (
     <DataTable
       tableHeight=" calc(-273px + 100vh)"
       title={t("alertManagement")}
-      dataFieldName="alert"
-      apiUrl={`https://567c1e7d-7161-45bb-a356-b733e003d043.mock.pstmn.io/api/alerts`}
+      dataFieldName="alerts"
+      apiUrl={`${API_URL.ALERT_PAGE.DEFAULT}`}
       columns={columns}
     />
   );
