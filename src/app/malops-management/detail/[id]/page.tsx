@@ -23,6 +23,7 @@ export default function MalOpsManagementDetail() {
   const [activeSection, setActiveSection] = useState("diagram");
   const [dataProcessTree, setDataProcessTree] = useState([]);
   const [targetProcess, setTargetProcess] = useState({});
+  const [events, setEvents] = useState([]);
   const { mutation: mutationProcessTree, contextHolder } = usePostApi(
     API_URL.ALERT_PAGE.EVENTS,
     true
@@ -36,6 +37,7 @@ export default function MalOpsManagementDetail() {
           // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
           setDataProcessTree(data.data.process_tree);
           setTargetProcess(data.data.target_process);
+          setEvents(data.data.events);
         },
         onError: (error) => {
           console.error("Lỗi khi gọi API:", error);
@@ -100,6 +102,7 @@ export default function MalOpsManagementDetail() {
           // @ts-ignore
           techniques={targetProcess?.file_info?.techniques || ""}
           targetProcess={targetProcess}
+          events={events}
         />
       </section>
       <section className="pb-8" id="communication">

@@ -11,94 +11,6 @@ import { Timeline, Typography, Tag, Card, Modal, Descriptions } from "antd";
 import "./time-line.scss";
 const { Text } = Typography;
 
-const data = [
-  {
-    name: "DeleteFile",
-    log_time: "2025-07-14 16:22:38",
-    data: {
-      alert_time: "2025-07-14 16:21:35",
-      object: "File",
-      action: "Delete",
-      fields: {
-        file_path:
-          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.lnk",
-        pid: 5872,
-        process_name: "C:\\Windows\\explorer.exe",
-      },
-    },
-  },
-  {
-    name: "CreateFile",
-    log_time: "2025-07-14 16:22:38",
-    data: {
-      alert_time: "2025-07-14 16:21:35",
-      object: "File",
-      action: "Create",
-      fields: {
-        file_path:
-          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.lnk",
-        pid: 5872,
-        process_name: "C:\\Windows\\explorer.exe",
-      },
-    },
-  },
-  {
-    name: "DeleteFile",
-    log_time: "2025-07-14 16:22:38",
-    data: {
-      alert_time: "2025-07-14 16:21:34",
-      object: "File",
-      action: "Delete",
-      fields: {
-        file_path:
-          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.db.lnk",
-        pid: 5872,
-        process_name: "C:\\Windows\\explorer.exe",
-      },
-    },
-  },
-  {
-    name: "CreateFile",
-    log_time: "2025-07-14 16:22:38",
-    data: {
-      alert_time: "2025-07-14 16:21:34",
-      object: "File",
-      action: "Create",
-      fields: {
-        file_path:
-          "C:\\Users\\admin\\AppData\\Roaming\\Microsoft\\Windows\\Recent\\data.db.lnk",
-        pid: 5872,
-        process_name: "C:\\Windows\\explorer.exe",
-      },
-    },
-  },
-  {
-    name: "ESTABLISHEDSocket",
-    log_time: "2025-07-14 14:19:06",
-    data: {
-      alert_time: "2025-07-14 14:18:06",
-      object: "Socket",
-      action: "ESTABLISHED",
-      fields: {
-        family: "ipv4",
-        image_path: "C:\\Windows\\explorer.exe",
-        local_address: "192.168.18.175",
-        local_port: 50140,
-        pid: 5872,
-        protocol: "tcp",
-        remote_address: "23.206.203.77",
-        remote_port: 443,
-        success: true,
-        md5_hash: "66D658B86F7FDB193D4607454F877C15",
-        signature_valid: "True",
-        signer: "Microsoft Windows",
-        user: "DESKTOP-8GP8UNV\\admin",
-        uid: 3532,
-      },
-    },
-  },
-];
-
 const getIcon = (name: string) => {
   switch (name) {
     case "CreateFile":
@@ -148,14 +60,17 @@ const getTagColor = (action: string) => {
   }
 };
 
-export default function TimelineComponent() {
+export default function TimelineComponent({ events }: { events: any }) {
   const [selected, setSelected] = useState<any | null>(null);
-
+  console.log(events);
   return (
-    <div>
+    <div
+      className="overflow-y-scroll scrollbar-none p-4"
+      style={{ maxHeight: "600px" }}
+    >
       <Timeline
         mode="alternate"
-        items={data.map((item) => {
+        items={events.map((item) => {
           const { name, log_time, data: eventData } = item;
           const { action, object, fields } = eventData;
 

@@ -13,15 +13,16 @@ import { useTranslation } from "react-i18next";
 import "reactflow/dist/style.css";
 const { Text, Title } = Typography;
 const { Panel } = Collapse;
-import AffectedFile from "./affected-file";
+// import AffectedFile from "./affected-file";
 import TimeLine from "./time-line";
 type Props = {
   tatics?: string;
   techniques?: string;
   targetProcess: Object;
+  events: any;
 };
 
-function Description({ tatics, techniques, targetProcess }: Props) {
+function Description({ tatics, techniques, targetProcess, events }: Props) {
   const { t } = useTranslation();
   const renderTags = (items: string) => {
     if (!items) return null;
@@ -131,7 +132,7 @@ function Description({ tatics, techniques, targetProcess }: Props) {
                 </Title>
               </div>
             </div>
-            <TimeLine />
+            <TimeLine events={events} />
           </div>
           {/* <Row gutter={16}>
             <AffectedFile />
