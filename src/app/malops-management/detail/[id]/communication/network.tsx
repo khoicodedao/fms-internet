@@ -48,7 +48,7 @@ export default function FlowMapComponent({
     {
       id: "2",
       sourcePosition: "right",
-      position: { x: 0, y: 200 },
+      position: { x: 0, y: 202 },
       data: { label: null },
     },
     {
@@ -79,7 +79,7 @@ export default function FlowMapComponent({
     },
     {
       id: "7",
-      position: { x: 700, y: 290 },
+      position: { x: 700, y: 300 },
       targetPosition: "left",
       data: { label: null },
     },

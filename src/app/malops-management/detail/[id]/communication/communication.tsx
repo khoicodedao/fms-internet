@@ -76,9 +76,12 @@ const columns = [
     render: (_: any, record: any) => (
       <div className="space-y-1">
         {record.connections.map((conn: any, idx: number) => (
-          <Tag key={idx} color="geekblue" className="uppercase">
-            {conn.protocol || "—"}
-          </Tag>
+          <div style={{ height: "38px" }}>
+            {" "}
+            <Tag key={idx} color="geekblue" className="uppercase">
+              {conn.protocol || "—"}
+            </Tag>
+          </div>
         ))}
       </div>
     ),
@@ -138,7 +141,7 @@ export default function Communication({ alert_id }: { alert_id: string }) {
         </Col>
 
         <Col span={16}>
-          <div style={{ height: 500, overflow: "hidden" }}>
+          <div>
             <NetworkGraph
               totalConnections={rawData.length}
               machineCount={1}

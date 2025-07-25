@@ -1,7 +1,15 @@
 /* eslint-disable */
 "use client";
 import React from "react";
-import { Collapse, Row, Col, Typography, Tag, Descriptions } from "antd";
+import {
+  Collapse,
+  Row,
+  Col,
+  Typography,
+  Tag,
+  Descriptions,
+  Tooltip,
+} from "antd";
 import {
   BulbOutlined,
   ClockCircleOutlined,
@@ -26,11 +34,31 @@ function Description({ tatics, techniques, targetProcess, events }: Props) {
   const { t } = useTranslation();
   const renderTags = (items: string) => {
     if (!items) return null;
-    return items.split(",").map((item) => (
-      <Tag key={item} color="blue">
-        {item}
-      </Tag>
-    ));
+
+    return items.split(",").map((item) => {
+      const trimmedItem = item.trim();
+      const isTactic = /^TA\d{4}$/.test(trimmedItem); // e.g. TA0001
+      const isTechnique = /^T\d{4}(\.\d{3})?$/.test(trimmedItem); // e.g. T1059 or T1059.001
+
+      let url = "#";
+      let description = "Thông tin chưa có";
+
+      if (isTactic) {
+        url = `https://attack.mitre.org/tactics/${trimmedItem}/`;
+        description = `Tactic ${trimmedItem} - Xem chi tiết tại MITRE`;
+      } else if (isTechnique) {
+        url = `https://attack.mitre.org/techniques/${trimmedItem}/`;
+        description = `Technique ${trimmedItem} - Xem chi tiết tại MITRE`;
+      }
+
+      return (
+        <Tooltip key={trimmedItem} title={description}>
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            <Tag color="blue">{trimmedItem}</Tag>
+          </a>
+        </Tooltip>
+      );
+    });
   };
   return (
     <div className=" top-0 z-10 p-4 bg-white">

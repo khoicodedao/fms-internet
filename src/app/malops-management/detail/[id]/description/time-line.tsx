@@ -6,6 +6,8 @@ import {
   CloudSyncOutlined,
   ClockCircleOutlined,
   SwapOutlined,
+  EditOutlined,
+  PoweroffOutlined,
 } from "@ant-design/icons";
 import { Timeline, Typography, Tag, Card, Modal, Descriptions } from "antd";
 import "./time-line.scss";
@@ -37,6 +39,22 @@ const getIcon = (name: string) => {
           onPointerLeaveCapture={undefined}
         />
       );
+    case "WriteFile":
+      return (
+        <EditOutlined
+          style={{ color: "#F5A113" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
+    case "TerminateProcess":
+      return (
+        <PoweroffOutlined
+          style={{ color: "red" }}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
+        />
+      );
     default:
       return (
         <ClockCircleOutlined
@@ -53,8 +71,12 @@ const getTagColor = (action: string) => {
       return "blue";
     case "Delete":
       return "red";
+    case "Terminate":
+      return "red";
     case "ESTABLISHED":
       return "green";
+    case "Write":
+      return "#F5A113";
     default:
       return "default";
   }
@@ -70,29 +92,35 @@ export default function TimelineComponent({ events }: { events: any }) {
     >
       <Timeline
         mode="alternate"
-        items={events.map((item) => {
-          const { name, log_time, data: eventData } = item;
-          const { action, object, fields } = eventData;
+        items={events
+          .slice() // để không mutate mảng gốc
+          .sort(
+            (a, b) =>
+              new Date(a.log_time).getTime() - new Date(b.log_time).getTime()
+          ) // sắp xếp tăng dần
+          .map((item) => {
+            const { name, log_time, data: eventData } = item;
+            const { action, object, fields } = eventData;
 
-          return {
-            dot: getIcon(name),
-            children: (
-              <Card
-                hoverable
-                style={{ backgroundColor: "#f9fafb", borderRadius: 12 }}
-                onClick={() => setSelected(item)}
-              >
-                <Tag color={getTagColor(action)}>{action}</Tag>
-                <Text>{`${object} - ${
-                  fields?.file_path || fields?.image_path
-                }`}</Text>
-                <div style={{ marginTop: 4, fontSize: 12, color: "#888" }}>
-                  {log_time}
-                </div>
-              </Card>
-            ),
-          };
-        })}
+            return {
+              dot: getIcon(name),
+              children: (
+                <Card
+                  hoverable
+                  style={{ backgroundColor: "#f9fafb", borderRadius: 12 }}
+                  onClick={() => setSelected(item)}
+                >
+                  <Tag color={getTagColor(action)}>{action}</Tag>
+                  <Text>{`${object} - ${
+                    fields?.file_path || fields?.image_path
+                  }`}</Text>
+                  <div style={{ marginTop: 4, fontSize: 12, color: "#888" }}>
+                    {log_time}
+                  </div>
+                </Card>
+              ),
+            };
+          })}
       />
 
       <Modal
