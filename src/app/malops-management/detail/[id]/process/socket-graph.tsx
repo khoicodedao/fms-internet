@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Network } from "vis-network";
 import { Card } from "antd";
 
@@ -48,7 +48,7 @@ const SocketGraph: React.FC<Props> = ({ events }) => {
       const nodes: any[] = [];
       const edges: any[] = [];
       const addedProcesses = new Map<string, string>();
-      const ipInfoCache = new Map<string, any>(); // cache IP info
+      const ipInfoCache = new Map<string, any>();
       let x = 0;
 
       for (let index = 0; index < sortedEvents.length; index++) {
@@ -62,7 +62,7 @@ const SocketGraph: React.FC<Props> = ({ events }) => {
         const processNodeId = `process-${xxHash_path}`;
         const remoteNodeId = `remote-${index}`;
 
-        // Add process node if not added
+        // Add process node if not exists
         if (!addedProcesses.has(xxHash_path)) {
           nodes.push({
             id: processNodeId,
@@ -70,21 +70,21 @@ const SocketGraph: React.FC<Props> = ({ events }) => {
             shape: "icon",
             icon: {
               face: "FontAwesome",
-              code: "\uf2db", // laptop icon
+              code: "\uf2db", // laptop
               size: 50,
               color: "#007bff",
             },
             x,
             y: 0,
             fixed: true,
-            title: `Exe path: ${fields.image_path}`,
+            title: `Executable path: ${fields.image_path}`,
           });
           addedProcesses.set(xxHash_path, processNodeId);
         }
 
         x += 250;
 
-        // Fetch IP info (with cache)
+        // Get IP Info
         const ip = fields.remote_address;
         let ipInfo = ipInfoCache.get(ip);
         if (!ipInfo) {
@@ -96,6 +96,8 @@ const SocketGraph: React.FC<Props> = ({ events }) => {
           ? `Location: ${ipInfo.city}, ${ipInfo.country}\nISP: ${ipInfo.isp}`
           : "Location: Unknown";
 
+        const onlineColor = ipInfo ? "#28a745" : "#dc3545"; // green if online, red if not
+
         // Add remote node
         nodes.push({
           id: remoteNodeId,
@@ -105,7 +107,7 @@ const SocketGraph: React.FC<Props> = ({ events }) => {
             face: "FontAwesome",
             code: "\uf0ac", // globe
             size: 40,
-            color: "#28a745",
+            color: onlineColor,
           },
           x,
           y: 0,
