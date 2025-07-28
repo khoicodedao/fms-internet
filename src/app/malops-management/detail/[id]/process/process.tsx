@@ -44,6 +44,11 @@ function buildProcessTree(processList: Process[]) {
   const pathMap: Record<string, any> = {};
 
   processList.forEach((proc) => {
+    // ✅ Kiểm tra path tồn tại và có ít nhất một dấu "/"
+    if (!proc.xxhash_path || !proc.xxhash_path.toString().includes("/")) {
+      return proc.xxhash_path.toString(); // bỏ qua nếu không hợp lệ
+    }
+
     const segments = proc.xxhash_path.split("/");
     let currentPath = "";
     let currentNode = null;

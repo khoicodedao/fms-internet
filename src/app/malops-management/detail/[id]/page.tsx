@@ -28,7 +28,10 @@ export default function MalOpsManagementDetail() {
     API_URL.ALERT_PAGE.EVENTS,
     true
   );
-
+  const { mutation: mutationEventMittre } = usePostApi(
+    API_URL.ALERT_PAGE.EVENTS_MITTRE,
+    false
+  );
   useEffect(() => {
     mutationProcessTree.mutate(
       { get_process_tree: true, xxhash: root_process, id_alert: id },
@@ -37,7 +40,20 @@ export default function MalOpsManagementDetail() {
           // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
           setDataProcessTree(data.data.process_tree);
           setTargetProcess(data.data.target_process);
-          setEvents(data.data.events);
+          // setEvents(data.data.events);
+        },
+        onError: (error) => {
+          console.error("Lỗi khi gọi API:", error);
+        },
+      }
+    );
+
+    mutationEventMittre.mutate(
+      { id_alert: id },
+      {
+        onSuccess: (data) => {
+          // Kiểm tra nếu data là mảng, nếu không thì gán giá trị mặc định là mảng rỗng
+          setEvents(data.data);
         },
         onError: (error) => {
           console.error("Lỗi khi gọi API:", error);

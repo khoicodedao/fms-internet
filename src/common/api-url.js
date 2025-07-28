@@ -6,6 +6,7 @@ const API_URL = {
     DEFAULT: "/api/be/alerts/paginate",
     PROCESS_TREE: "/api/be/alerts/getProcessTree",
     EVENTS: "/api/be/alerts/getEventAlert",
+    EVENTS_MITTRE: "/api/be/alerts/getMitreEventsbyAlert",
     EVENTS_SOCKET: "/api/be/alerts/getSocketEventsByAlert",
   },
   EDR_PAGE: {

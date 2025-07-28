@@ -100,7 +100,8 @@ export default function TimelineComponent({ events }: { events: any }) {
           ) // sắp xếp tăng dần
           .map((item) => {
             const { name, log_time, data: eventData } = item;
-            const { action, object, fields } = eventData;
+            const { action, object, fields, mitre_tactic, mitre_tecnique } =
+              eventData;
 
             return {
               dot: getIcon(name),
@@ -110,6 +111,8 @@ export default function TimelineComponent({ events }: { events: any }) {
                   style={{ backgroundColor: "#f9fafb", borderRadius: 12 }}
                   onClick={() => setSelected(item)}
                 >
+                  <Tag color={getTagColor(action)}>{mitre_tactic}</Tag>
+                  <Tag color={getTagColor(action)}>{mitre_tecnique}</Tag>
                   <Tag color={getTagColor(action)}>{action}</Tag>
                   <Text>{`${object} - ${
                     fields?.file_path || fields?.image_path
