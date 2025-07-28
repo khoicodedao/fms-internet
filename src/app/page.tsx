@@ -41,11 +41,16 @@ import { saveAs } from "file-saver";
 export default function Home() {
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
   const [data, setData] = useState<DashboardData>({} as DashboardData);
+  const [tatic, setTatic] = useState([]);
   const exportToJson = () => {
     const jsonData = JSON.stringify(data, null, 2); // Chuyển đổi dữ liệu thành JSON
     const blob = new Blob([jsonData], { type: "application/json" });
     saveAs(blob, "dashboard-data.json"); // Tải file với tên "dashboard-data.json"
   };
+  const { mutation: mutationTactic } = usePostApi(
+    API_URL.HOME_PAGE.TATIC,
+    false
+  );
   const { mutation, contextHolder } = usePostApi(
     API_URL.HOME_PAGE.DEFAULT,
     false
@@ -60,6 +65,18 @@ export default function Home() {
         onSuccess: (response: any) => {
           // Kiểm tra nếu API trả về thành công
           setData(response.data);
+        },
+      }
+    );
+    mutationTactic.mutate(
+      {
+        start_date: startDate,
+        end_date: endDate,
+      },
+      {
+        onSuccess: (response: any) => {
+          // Kiểm tra nếu API trả về thành công
+          setTatic(response.data);
         },
       }
     );
@@ -190,42 +207,45 @@ export default function Home() {
     ],
   };
 
-  const columnChartOption = {
-    title: {
-      text: t("MalOps by Mitre Tactic"),
-      left: "center",
-      textStyle: {
-        paddingTop: "40px",
-        color: "rgba(0, 0, 0, 0.88)",
-        fontWeight: "600",
-        fontSize: "16px",
-        fontFamily: "Segoe UI",
+  const columnChartOption = useMemo(() => {
+    const xLabels = tatic.map((item: any) => item.tactic || "Unknown");
+    const yValues = tatic.map((item: any) => item.count);
+
+    return {
+      title: {
+        text: t("MalOps by Mitre Tactic"),
+        left: "center",
+        textStyle: {
+          paddingTop: "40px",
+          color: "rgba(0, 0, 0, 0.88)",
+          fontWeight: "600",
+          fontSize: "16px",
+          fontFamily: "Segoe UI",
+        },
       },
-    },
-    tooltip: {
-      trigger: "axis",
-    },
-    xAxis: {
-      type: "category",
-      data: [
-        "Execution",
-        "Persistence",
-        "Defense Evasion",
-        "Discovery",
-        "Lateral Movement",
+      tooltip: {
+        trigger: "axis",
+      },
+      xAxis: {
+        type: "category",
+        data: xLabels,
+        axisLabel: { interval: 0, rotate: 30 },
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          data: yValues,
+          type: "bar",
+          itemStyle: {
+            color: "#1890ff",
+          },
+        },
       ],
-      axisLabel: { interval: 0, rotate: 30 },
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        data: [120, 200, 150, 80, 70],
-        type: "bar",
-      },
-    ],
-  };
+    };
+  }, [tatic, t]);
+
   const machineStatusPieOption = useMemo(() => {
     return {
       title: {

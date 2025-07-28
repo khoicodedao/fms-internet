@@ -1,5 +1,8 @@
 const API_URL = {
-  HOME_PAGE: { DEFAULT: "/api/be/dashboard/statis" },
+  HOME_PAGE: {
+    DEFAULT: "/api/be/dashboard/statis",
+    TATIC: "/api/be/dashboard/getTacticCounts",
+  },
   LOGIN_PAGE: { DEFAULT: "/api/be/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/be/events/paginate" },
   ALERT_PAGE: {
