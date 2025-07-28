@@ -1,6 +1,5 @@
 /* eslint-disable */
 "use client";
-import { Divider } from "antd";
 import { useEffect, useState } from "react";
 import ObjectDetailHeader from "./header";
 import getFileIcon from "../../object-type/object-type";
@@ -19,7 +18,8 @@ export default function MalOpsManagementDetail() {
   const searchParams = useSearchParams();
   const root_process = searchParams.get("root_process");
   const time_stamp = searchParams.get("time_stamp");
-  const summary = searchParams.get("summary ");
+  const summary = searchParams.get("summary");
+  const uid = searchParams.get("uid");
   const [activeSection, setActiveSection] = useState("diagram");
   const [dataProcessTree, setDataProcessTree] = useState([]);
   const [targetProcess, setTargetProcess] = useState({});
@@ -126,7 +126,7 @@ export default function MalOpsManagementDetail() {
         <Communication alert_id={id} />
       </section>
       <section className="pb-8" id="machine-profile">
-        <MachineProfilePage />
+        <MachineProfilePage uid={uid || ""} />
       </section>
       <section className="pb-8" id="process-profile">
         {/* @ts-ignore */}

@@ -54,7 +54,7 @@ function Description({ tatics, techniques, targetProcess, events }: Props) {
       return (
         <Tooltip key={trimmedItem} title={description}>
           <a href={url} target="_blank" rel="noopener noreferrer">
-            <Tag color="blue">{trimmedItem}</Tag>
+            <Tag color={isTactic ? "gold" : "blue"}>{trimmedItem}</Tag>
           </a>
         </Tooltip>
       );

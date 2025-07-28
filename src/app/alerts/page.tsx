@@ -13,6 +13,7 @@ import ReactJson from "react-json-view";
 export default function Alerts() {
   const { t } = useTranslation();
   interface RowData {
+    uid: string;
     id: string;
     root_process: string;
     host: string;
@@ -32,7 +33,7 @@ export default function Alerts() {
       // @ts-ignore
       cellRenderer: (params) => (
         <Link
-          href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}`}
+          href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}&uid=${params.data.uid}`}
         >
           {params.value}
         </Link>
