@@ -44,14 +44,24 @@ function buildProcessTree(processList: Process[]) {
   const pathMap: Record<string, any> = {};
 
   processList.forEach((proc) => {
-    // ✅ Kiểm tra path tồn tại và có ít nhất một dấu "/"
-    if (!proc.xxhash_path || !proc.xxhash_path.toString().includes("/")) {
-      return proc.xxhash_path.toString(); // bỏ qua nếu không hợp lệ
+    const rawPath = proc.xxhash_path?.toString() || "";
+
+    // Nếu path không có "/" hoặc "\", vẫn tạo node đơn lẻ
+    if (!rawPath.includes("/") && !rawPath.includes("\\")) {
+      const key = rawPath || proc.process_name;
+      if (!pathMap[key]) {
+        pathMap[key] = {
+          title: proc.process_name,
+          key: key,
+          children: [],
+        };
+      }
+      return;
     }
 
-    const segments = proc.xxhash_path.split("/");
+    // Nếu có path nhiều cấp
+    const segments = rawPath.split(/[\\/]/); // Hỗ trợ cả "/" và "\"
     let currentPath = "";
-    let currentNode = null;
 
     segments.forEach((segment, index) => {
       currentPath = index === 0 ? segment : `${currentPath}/${segment}`;
@@ -69,17 +79,41 @@ function buildProcessTree(processList: Process[]) {
 
         if (index > 0) {
           const parentPath = segments.slice(0, index).join("/");
-          pathMap[parentPath].children.push(newNode);
+          if (pathMap[parentPath]) {
+            pathMap[parentPath].children.push(newNode);
+          }
         }
       }
     });
   });
 
+  // Lấy các node gốc (không có "/")
   const roots = Object.values(pathMap).filter(
     (node: any) => !node.key.includes("/")
   );
   return roots;
 }
+const deepFlattenAllObjects = (obj: any): Record<string, any> => {
+  const result: Record<string, any> = {};
+
+  const recurse = (curr: any, parentKey = "") => {
+    for (const [key, value] of Object.entries(curr || {})) {
+      const fullKey = parentKey ? `${parentKey}_${key}` : key;
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        recurse(value, fullKey); // đệ quy lồng sâu hơn
+      } else {
+        result[fullKey] = value;
+      }
+    }
+  };
+
+  recurse(obj);
+  return result;
+};
 
 export default function ProcessViewer({
   processListProcess,
@@ -269,14 +303,79 @@ export default function ProcessViewer({
                       dataSource={dataEvents[tab.key as keyof EventItem]}
                       columns={[
                         {
-                          title: "Name",
-                          dataIndex: "name",
-                          key: "name",
-                        },
-                        {
                           title: "Log Time",
                           dataIndex: "log_time",
                           key: "log_time",
+                          width: "10%",
+                        },
+                        {
+                          title: "Data",
+                          key: "data",
+                          render: (record) => {
+                            const data = record.data || {};
+
+                            const renderFieldsObject = (
+                              fieldsObj: Record<string, any>
+                            ) => {
+                              return (
+                                <span style={{ whiteSpace: "pre-wrap" }}>
+                                  {"{"}
+                                  {Object.entries(fieldsObj).map(
+                                    ([k, v], idx, arr) => (
+                                      <span key={k}>
+                                        <span
+                                          style={{
+                                            color: "#f90",
+                                            fontWeight: "bold",
+                                          }}
+                                        >
+                                          "{k}"
+                                        </span>
+                                        :{" "}
+                                        <span style={{ color: "#aaa" }}>
+                                          {typeof v === "string"
+                                            ? `"${v}"`
+                                            : JSON.stringify(v)}
+                                        </span>
+                                        {idx < arr.length - 1 ? ", " : ""}
+                                      </span>
+                                    )
+                                  )}
+                                  {"}"}
+                                </span>
+                              );
+                            };
+
+                            return (
+                              <div
+                                style={{
+                                  fontFamily: "monospace",
+                                  whiteSpace: "pre-wrap",
+                                }}
+                              >
+                                {Object.entries(data).map(([key, value]) => (
+                                  <span key={key}>
+                                    <span
+                                      style={{
+                                        fontWeight: "bold",
+                                        color: "#1677ff",
+                                      }}
+                                    >
+                                      {key}
+                                    </span>
+                                    =
+                                    {key === "fields" &&
+                                    typeof value === "object" &&
+                                    value !== null ? (
+                                      renderFieldsObject(value)
+                                    ) : (
+                                      <span> {String(value)} </span>
+                                    )}{" "}
+                                  </span>
+                                ))}
+                              </div>
+                            );
+                          },
                         },
                       ]}
                       expandable={{
@@ -288,6 +387,7 @@ export default function ProcessViewer({
                               style={{
                                 width: "100%",
                                 borderCollapse: "collapse",
+                                fontFamily: "monospace",
                               }}
                             >
                               <tbody>
