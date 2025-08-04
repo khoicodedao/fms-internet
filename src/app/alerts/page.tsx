@@ -23,6 +23,7 @@ export default function Alerts() {
     summary: string;
     techniques: string;
     tatics: string;
+    process_root: Object;
   }
 
   const columns: ColDef<RowData>[] = [
@@ -43,8 +44,19 @@ export default function Alerts() {
       headerName: t("mac"),
       field: "mac",
     },
-    { headerName: t("Root Process"), field: "root_process" },
-    { headerName: t("host"), field: "host" },
+    {
+      headerName: t("Root Process"),
+      field: "process_root.file_info.file_path",
+      width: 300,
+    },
+    {
+      headerName: t("Score tatic"),
+      field: "process_root.file_info.score_tatic",
+    },
+    {
+      headerName: t("Score level"),
+      field: "process_root.file_info.score_level",
+    },
     { headerName: t("Computer name"), field: "computer_name" },
     { headerName: t("Time stamp"), field: "timestamp", width: 250 },
     { headerName: t("Summary"), field: "summary", width: 450 },
