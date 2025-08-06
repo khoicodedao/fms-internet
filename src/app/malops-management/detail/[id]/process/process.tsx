@@ -44,11 +44,23 @@ function buildProcessTree(processList: Process[]) {
   const pathMap: Record<string, any> = {};
 
   processList.forEach((proc) => {
-    if (!proc.xxhash_path || !proc.xxhash_path.toString().includes("/")) {
-      return proc.xxhash_path.toString();
+    const rawPath = proc.xxhash_path?.toString() || "";
+
+    // Nếu path không có "/" hoặc "\", vẫn tạo node đơn lẻ
+    if (!rawPath.includes("/") && !rawPath.includes("\\")) {
+      const key = rawPath || proc.process_name;
+      if (!pathMap[key]) {
+        pathMap[key] = {
+          title: proc.process_name,
+          key: key,
+          children: [],
+        };
+      }
+      return;
     }
 
-    const segments = proc.xxhash_path.split("/");
+    // Nếu có path nhiều cấp
+    const segments = rawPath.split(/[\\/]/); // Hỗ trợ cả "/" và "\"
     let currentPath = "";
 
     segments.forEach((segment, index) => {
@@ -67,12 +79,15 @@ function buildProcessTree(processList: Process[]) {
 
         if (index > 0) {
           const parentPath = segments.slice(0, index).join("/");
-          pathMap[parentPath].children.push(newNode);
+          if (pathMap[parentPath]) {
+            pathMap[parentPath].children.push(newNode);
+          }
         }
       }
     });
   });
 
+  // Lấy các node gốc (không có "/")
   const roots = Object.values(pathMap).filter(
     (node: any) => !node.key.includes("/")
   );
