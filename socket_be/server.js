@@ -120,8 +120,8 @@ function broadcastToFrontendClients(data) {
   });
 }
 
-wssServer.listen(3001, () => {
-  console.log("Secure WebSocket (wss) server running on port 3001");
+wssServer.listen(3003, () => {
+  console.log("Secure WebSocket (wss) server running on port 3003");
 });
 
 // ✅ API routes
