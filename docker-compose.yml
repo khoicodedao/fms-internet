@@ -15,8 +15,8 @@ services:
       context: ./socket_be
       dockerfile: Dockerfile
     ports:
-      - "3001:3001"
       - "3002:3002"
+      - "3003:3003"
     environment:
       - EXTERNAL_SERVER_URL=wss://10.32.116.222:444
       - SOCKET_SERVER_URL=https://10.32.116.222:8443

@@ -77,7 +77,7 @@ const CLIPage = () => {
 
   const connectToWebSocket = () => {
     //IP của server web không phải server ngoài, connect tới socket server của web
-    const ws = new WebSocket("wss://10.10.60.56:3003?token=" + token);
+    const ws = new WebSocket("wss://10.32.116.195:3003?token=" + token);
     setSocket(ws);
 
     ws.onopen = () => {
@@ -236,7 +236,7 @@ const CLIPage = () => {
             <Tooltip title=" Click here to Check server status">
               <Button
                 type="link"
-                href="https://10.32.116.195:444"
+                href="https://localhost:444"
                 target="_blank"
                 icon={
                   <DisconnectOutlined
