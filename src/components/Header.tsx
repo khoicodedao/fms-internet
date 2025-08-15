@@ -18,6 +18,7 @@ import {
   DeploymentUnitOutlined,
   GlobalOutlined,
   FileExclamationOutlined,
+  SecurityScanOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -253,6 +254,21 @@ export default function Header() {
             },
             {
               key: "8",
+              label: t("MITRE events"),
+              icon: (
+                <SecurityScanOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/mittre-events");
+                setDrawerOpen(false);
+              },
+            },
+
+            {
+              key: "9",
               label: t("Logs"),
               icon: (
                 <FileExclamationOutlined

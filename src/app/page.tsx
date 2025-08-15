@@ -1,12 +1,10 @@
 /* eslint-disable  */
 "use client";
-import { Button, Card, Row, Col, Typography, Progress, Statistic } from "antd";
+import { Button, Card, Row, Col, Typography, Statistic } from "antd";
 import ReactECharts from "echarts-for-react";
 import {
   ExportOutlined,
   SyncOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   ClusterOutlined,
   DatabaseOutlined,
   DeploymentUnitOutlined,
@@ -23,6 +21,7 @@ import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 import CountUp from "react-countup";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 type DashboardData = {
   countEdrTotal: number;
   countNdrTotal: number;
@@ -206,6 +205,15 @@ export default function Home() {
       },
     ],
   };
+  const router = useRouter();
+
+  const onBarClick = (params: any) => {
+    if (params?.componentType !== "series") return;
+    const label = String(params.name ?? "");
+    router.push(`/mittre-events?tatic=${encodeURIComponent(label)}`);
+    // Nếu muốn thay lịch sử:
+    // router.replace(`/mittre-events?tatic=${encodeURIComponent(label)}`);
+  };
 
   const columnChartOption = useMemo(() => {
     const xLabels = tatic.map((item: any) => item.tactic || "Unknown");
@@ -223,24 +231,18 @@ export default function Home() {
           fontFamily: "Segoe UI",
         },
       },
-      tooltip: {
-        trigger: "axis",
-      },
+      tooltip: { trigger: "axis" },
       xAxis: {
         type: "category",
         data: xLabels,
         axisLabel: { interval: 0, rotate: 30 },
       },
-      yAxis: {
-        type: "value",
-      },
+      yAxis: { type: "value" },
       series: [
         {
           data: yValues,
           type: "bar",
-          itemStyle: {
-            color: "#1890ff",
-          },
+          itemStyle: { color: "#1890ff" },
         },
       ],
     };
@@ -463,7 +465,8 @@ export default function Home() {
             <div>
               <ReactECharts
                 option={columnChartOption}
-                style={{ height: "300px", fontFamily: "inherit" }}
+                onEvents={{ click: onBarClick }}
+                style={{ height: 300 }}
               />
             </div>
           </Col>

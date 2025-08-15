@@ -31,5 +31,8 @@ const API_URL = {
   MALOPS_PAGE: {
     DEFAULT: "/api/be/alerts/paginate",
   },
+  EVENTS_MITTRE_PAGE: {
+    DEFAULT: "/api/be/events/getEventMitre",
+  },
 };
 export default API_URL;

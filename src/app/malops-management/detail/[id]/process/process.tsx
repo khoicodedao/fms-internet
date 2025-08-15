@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Tree, Card, Tabs, Table, Typography } from "antd";
 import {
@@ -196,41 +197,66 @@ export default function ProcessViewer({
     {
       key: "Process",
       label: (
-        <>
-          <AppstoreOutlined /> Process
-        </>
+        <div className="flex items-center justify-center">
+          <AppstoreOutlined
+            style={{ color: "#1890ff", fontSize: 20 }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />{" "}
+          Process
+        </div>
       ),
     },
     {
       key: "Registry",
       label: (
-        <>
-          <DatabaseOutlined /> Registry
-        </>
+        <div className="flex items-center justify-center">
+          <DatabaseOutlined
+            style={{ color: "#52c41a", fontSize: 20 }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />{" "}
+          Registry
+        </div>
       ),
     },
     {
       key: "File",
       label: (
-        <>
-          <FileOutlined /> File
-        </>
+        <div className="flex items-center justify-center">
+          <FileOutlined
+            style={{ color: "#fa8c16", fontSize: 20 }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />{" "}
+          File
+        </div>
       ),
     },
     {
       key: "Socket",
       label: (
-        <>
-          <ClusterOutlined /> Socket
-        </>
+        <div className="flex items-center justify-center">
+          <ClusterOutlined
+            style={{ color: "#13c2c2", fontSize: 20 }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />{" "}
+          Socket
+        </div>
       ),
     },
     {
       key: "Other",
       label: (
-        <>
-          <ThunderboltOutlined /> Other
-        </>
+        <div className="flex items-center justify-center">
+          <ThunderboltOutlined
+            style={{ color: "#eb2f96", fontSize: 20 }}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          />{" "}
+          Other
+        </div>
       ),
     },
   ];
@@ -241,7 +267,11 @@ export default function ProcessViewer({
         <Card
           title={
             <div className="flex items-center space-x-2 ">
-              <SettingOutlined style={{ fontSize: "24px", color: "Yellow" }} />
+              <SettingOutlined
+                style={{ fontSize: "24px", color: "Yellow" }}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              />
               <Typography.Title level={5} style={{ margin: 0 }}>
                 Process
               </Typography.Title>
@@ -263,7 +293,7 @@ export default function ProcessViewer({
 
       <div style={{ flex: 1, overflow: "auto" }}>
         <Card
-          title={`Events for ${selectedPath || "..."}`}
+          // title={`Events for ${selectedPath || "..."}`}
           style={{ height: "100%" }}
         >
           {selectedPath ? (
@@ -315,6 +345,7 @@ export default function ProcessViewer({
                               title: "Alert time",
                               dataIndex: "log_time",
                               key: "log_time",
+                              width: 300,
                             },
                             {
                               title: "Action",

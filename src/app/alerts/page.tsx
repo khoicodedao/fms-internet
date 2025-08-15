@@ -51,11 +51,13 @@ export default function Alerts() {
     },
     {
       headerName: t("Score tatic"),
+      width: 100,
       field: "process_root.file_info.score_tatic",
     },
     {
       headerName: t("Score level"),
       field: "process_root.file_info.score_level",
+      width: 100,
     },
     { headerName: t("Computer name"), field: "computer_name" },
     { headerName: t("Time stamp"), field: "timestamp", width: 250 },

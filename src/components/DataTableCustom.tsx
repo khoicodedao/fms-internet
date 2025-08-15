@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { ExportOutlined } from "@ant-design/icons";
 // @ts-ignore
 import { unparse } from "papaparse";
+import { useSearchParams } from "next/navigation";
 
 interface DataTableProps {
   title?: string;
@@ -26,6 +27,7 @@ interface DataTableProps {
   showDatepicker?: boolean; // Add showDatepicker prop
   HeaderDrawer?: React.ReactNode; //show component here
   tableHeight?: string;
+  customObject?: Object;
 }
 
 export default function DataTable({
@@ -34,6 +36,7 @@ export default function DataTable({
   columns,
   dataFieldName,
   body,
+  customObject,
   reload,
   showFilter = true,
   showDatepicker = true,
@@ -82,6 +85,7 @@ export default function DataTable({
         skip: (pagination.current - 1) * pagination.pageSize,
         limit: pagination.pageSize,
         // ...bodyData,
+        ...customObject,
       },
       {
         onSuccess: (response: any) => {

@@ -140,7 +140,7 @@ const CLIPage = () => {
       cmd_type: cmdType,
       from_user: "server",
       to_user: selectedMac || "",
-      data: { message: "Get directory", dir: dir, type: "request" },
+      data: { message: "Get directory", dir: dir, type: cmdType },
     };
     if (wss) {
       wss.send(JSON.stringify(payload));
@@ -158,7 +158,7 @@ const CLIPage = () => {
       cmd_type: cmdType,
       from_user: "server",
       to_user: selectedMac || "",
-      data: { type: "request" },
+      data: { type: cmdType },
     };
 
     if (cmdType === "cmd") {
@@ -211,7 +211,7 @@ const CLIPage = () => {
         cmd_type: cmdType,
         from_user: "server",
         to_user: selectedMac || "",
-        data: { message: terminalInput, dir: dir, type: "request" },
+        data: { message: terminalInput, dir: dir, type: cmdType },
       };
       socket.send(JSON.stringify(payload));
     } else {
