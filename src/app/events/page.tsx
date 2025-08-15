@@ -40,6 +40,25 @@ export default function Events() {
   const columns: ColDef<RowData>[] = [
     { headerName: t("mac"), field: "mac", width: 170 },
     { headerName: t("ip"), field: "ip", width: 150 },
+
+    { headerName: t("computerName"), field: "computer_name" },
+    { headerName: t("alertSource"), field: "alert_source", width: 120 },
+    {
+      headerName: t("alertLevelId"),
+      field: "alert_level_id",
+      width: 120,
+      cellRenderer: (params: any) => <AlertLevel level={params.value} />,
+    },
+    { headerName: t("mitreTatic"), field: "mitre_tatic", width: 120 },
+    { headerName: t("mitreTechnique"), field: "mitre_technique", width: 120 },
+
+    { headerName: t("eventTime"), field: "event_time" },
+    {
+      headerName: t("action"),
+      width: 320,
+      field: "action",
+      cellRenderer: (params: any) => <SocketStatus status={params.value} />,
+    },
     {
       headerName: t("Description"),
       field: "computer_name",
@@ -71,25 +90,6 @@ export default function Events() {
 
         return params.value ?? ""; // fallback
       },
-    },
-
-    { headerName: t("computerName"), field: "computer_name" },
-    { headerName: t("alertSource"), field: "alert_source", width: 120 },
-    {
-      headerName: t("alertLevelId"),
-      field: "alert_level_id",
-      width: 120,
-      cellRenderer: (params: any) => <AlertLevel level={params.value} />,
-    },
-    { headerName: t("mitreTatic"), field: "mitre_tatic", width: 120 },
-    { headerName: t("mitreTechnique"), field: "mitre_technique", width: 120 },
-
-    { headerName: t("eventTime"), field: "event_time" },
-    {
-      headerName: t("action"),
-      width: 320,
-      field: "action",
-      cellRenderer: (params: any) => <SocketStatus status={params.value} />,
     },
   ];
   const columnFlow = [

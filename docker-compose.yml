@@ -20,7 +20,7 @@ services:
     environment:
       - EXTERNAL_SERVER_URL=wss://10.32.116.195:444
       - SOCKET_SERVER_URL=https://10.32.116.195:8443
-      - CERTIFICATE_URL= https://10.32.116.195:9443
+      - CERTIFICATE_URL=https://10.32.116.195:9443
     volumes:
       - ./socket_be/certs:/app/certs
 
