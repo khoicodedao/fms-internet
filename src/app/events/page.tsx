@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { ColDef } from "ag-grid-community";
-// import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
 import { Tabs } from "antd";
 import dynamic from "next/dynamic";
@@ -22,8 +21,56 @@ import {
   WifiOutlined,
   UsbOutlined,
 } from "@ant-design/icons";
+
+// App Router hooks
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 export default function Events() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // map tên tab <-> key
+  const TAB_KEY_BY_PARAM: Record<string, string> = {
+    socket: "1",
+    registry: "2",
+    file: "3",
+    process: "4",
+    flow: "5",
+    http: "6",
+    fileusb: "7",
+  };
+  const TAB_PARAM_BY_KEY: Record<string, string> = Object.fromEntries(
+    Object.entries(TAB_KEY_BY_PARAM).map(([k, v]) => [v, k])
+  );
+
+  // Lấy key từ URL (?tab=socket | registry | 1 | 2 ...)
+  const initialActiveKey = useMemo(() => {
+    const tabParam = (searchParams.get("tab") || "").toLowerCase();
+    if (!tabParam) return "1";
+    // hỗ trợ cả tên (socket) lẫn số ("1")
+    return (
+      TAB_KEY_BY_PARAM[tabParam] ??
+      (Object.values(TAB_KEY_BY_PARAM).includes(tabParam) ? tabParam : "1")
+    );
+  }, [searchParams]);
+
+  const [activeKey, setActiveKey] = useState<string>(initialActiveKey);
+
+  // Đồng bộ khi URL thay đổi (VD: user đổi query bằng tay)
+  useEffect(() => {
+    setActiveKey(initialActiveKey);
+  }, [initialActiveKey]);
+
+  // Khi đổi tab -> cập nhật URL (giữ các query khác)
+  const onTabChange = (key: string) => {
+    setActiveKey(key);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", TAB_PARAM_BY_KEY[key] ?? key);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
   type RowData = {
     mac: string;
     ip: string;
@@ -40,7 +87,6 @@ export default function Events() {
   const columns: ColDef<RowData>[] = [
     { headerName: t("mac"), field: "mac", width: 170 },
     { headerName: t("ip"), field: "ip", width: 150 },
-
     { headerName: t("computerName"), field: "computer_name" },
     { headerName: t("alertSource"), field: "alert_source", width: 120 },
     {
@@ -51,7 +97,6 @@ export default function Events() {
     },
     { headerName: t("mitreTatic"), field: "mitre_tatic", width: 120 },
     { headerName: t("mitreTechnique"), field: "mitre_technique", width: 120 },
-
     { headerName: t("eventTime"), field: "event_time" },
     {
       headerName: t("action"),
@@ -87,11 +132,11 @@ export default function Events() {
           const imagePathCreated = fields.image_path_created || "";
           return `${filePath} - ${action} - ${imagePathCreated}`;
         }
-
-        return params.value ?? ""; // fallback
+        return params.value ?? "";
       },
     },
   ];
+
   const columnFlow = [
     { headerName: t("mac"), field: "mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
@@ -104,17 +149,19 @@ export default function Events() {
     },
     { headerName: t("action"), field: "action" },
   ];
+
   return (
-    <Tabs id="event-page" tabPosition="left" type="card" defaultActiveKey="1">
+    <Tabs
+      id="event-page"
+      tabPosition="left"
+      type="card"
+      activeKey={activeKey} // dùng activeKey thay vì defaultActiveKey
+      onChange={onTabChange}
+    >
       <TabPane
         tab={
           <span>
-            <WifiOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-              color="red"
-            />{" "}
-            Socket
+            <WifiOutlined /> Socket
           </span>
         }
         key="1"
@@ -125,21 +172,14 @@ export default function Events() {
           dataFieldName="events"
           tableHeight="calc(-282px + 100vh)"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          // columns={columns}
-          columns={columns.map((col) => ({
-            ...col,
-            tableTitle: "socket", // Thêm tableTitle vào từng cột
-          }))}
+          columns={columns.map((col) => ({ ...col, tableTitle: "socket" }))}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <ProfileOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />
-            Registry
+            <ProfileOutlined /> Registry
           </span>
         }
         key="2"
@@ -150,20 +190,14 @@ export default function Events() {
           body="object = 'registry'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns.map((col) => ({
-            ...col,
-            tableTitle: "registry", // Thêm tableTitle vào từng cột
-          }))}
+          columns={columns.map((col) => ({ ...col, tableTitle: "registry" }))}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <FileOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />{" "}
-            File
+            <FileOutlined /> File
           </span>
         }
         key="3"
@@ -174,20 +208,14 @@ export default function Events() {
           body="object = 'file'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns.map((col) => ({
-            ...col,
-            tableTitle: "file", // Thêm tableTitle vào từng cột
-          }))}
+          columns={columns.map((col) => ({ ...col, tableTitle: "file" }))}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <PartitionOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />{" "}
-            Process
+            <PartitionOutlined /> Process
           </span>
         }
         key="4"
@@ -198,20 +226,14 @@ export default function Events() {
           body="object = 'process'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns.map((col) => ({
-            ...col,
-            tableTitle: "process", // Thêm tableTitle vào từng cột
-          }))}
+          columns={columns.map((col) => ({ ...col, tableTitle: "process" }))}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <BranchesOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />{" "}
-            Flow
+            <BranchesOutlined /> Flow
           </span>
         }
         key="5"
@@ -225,14 +247,11 @@ export default function Events() {
           columns={columnFlow}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <ApiOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />{" "}
-            Http
+            <ApiOutlined /> Http
           </span>
         }
         key="6"
@@ -246,14 +265,11 @@ export default function Events() {
           columns={columnFlow}
         />
       </TabPane>
+
       <TabPane
         tab={
           <span>
-            <UsbOutlined
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />{" "}
-            File Usb
+            <UsbOutlined /> File Usb
           </span>
         }
         key="7"
@@ -264,10 +280,7 @@ export default function Events() {
           body="object = 'FileUSB'"
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns.map((col) => ({
-            ...col,
-            tableTitle: "file", // Thêm tableTitle vào từng cột
-          }))}
+          columns={columns.map((col) => ({ ...col, tableTitle: "file" }))}
         />
       </TabPane>
     </Tabs>

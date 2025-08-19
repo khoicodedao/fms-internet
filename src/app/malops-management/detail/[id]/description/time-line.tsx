@@ -86,10 +86,7 @@ export default function TimelineComponent({ events }: { events: any }) {
   const [selected, setSelected] = useState<any | null>(null);
   console.log(events);
   return (
-    <div
-      className="overflow-y-scroll scrollbar-none p-4"
-      style={{ maxHeight: "600px" }}
-    >
+    <div className="scrollbar-none p-4" style={{ maxHeight: "600px" }}>
       <Timeline
         mode="alternate"
         items={events

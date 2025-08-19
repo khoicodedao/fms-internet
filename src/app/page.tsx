@@ -107,7 +107,7 @@ export default function Home() {
         radius: ["40%", "70%"],
         label: {
           show: true,
-          formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+          formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
         },
         data: [
           { value: data.countSocket, name: "Socket" },
@@ -157,7 +157,7 @@ export default function Home() {
         ],
         label: {
           show: true,
-          formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+          formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
         },
         emphasis: {
           itemStyle: {
@@ -274,7 +274,7 @@ export default function Home() {
           radius: ["40%", "70%"],
           label: {
             show: true,
-            formatter: "{b}: {d}%", // Hiển thị tên và tỷ lệ phần trăm
+            formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
           },
           data: [
             { value: data.countEdrOnline || 0, name: "Online" },
@@ -338,6 +338,7 @@ export default function Home() {
           {[
             {
               title: "Socket Event",
+              tab: "socket",
               value: data?.countSocket || 0,
               icon: (
                 <ClusterOutlined
@@ -349,6 +350,7 @@ export default function Home() {
             },
             {
               title: "Registry Event",
+              tab: "registry",
               value: data.countRegistry || 0,
               icon: (
                 <DatabaseOutlined
@@ -360,6 +362,7 @@ export default function Home() {
             },
             {
               title: "File Event",
+              tab: "file",
               value: data.countFile || 0,
               icon: (
                 <FileOutlined
@@ -371,6 +374,7 @@ export default function Home() {
             },
             {
               title: "Flow Event",
+              tab: "flow",
               value: data.countFlow || 0,
               icon: (
                 <DeploymentUnitOutlined
@@ -382,6 +386,7 @@ export default function Home() {
             },
             {
               title: "Process Event",
+              tab: "process",
               value: data.countProcess || 0,
               icon: (
                 <SettingOutlined
@@ -393,6 +398,7 @@ export default function Home() {
             },
             {
               title: "Http Event",
+              tab: "http",
               value: data.countHttp || 0,
               icon: (
                 <CloudOutlined
@@ -415,7 +421,10 @@ export default function Home() {
                   }}
                 >
                   {item.icon}
-                  <Link style={{ color: "var(--textDark)" }} href={"/events"}>
+                  <Link
+                    style={{ color: "var(--textDark)" }}
+                    href={`/events?tab=${item.tab}`}
+                  >
                     {item.title}
                   </Link>
                 </Title>

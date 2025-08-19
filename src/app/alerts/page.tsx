@@ -10,6 +10,7 @@ import API_URL from "@/common/api-url";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import ReactJson from "react-json-view";
+import { EyeOutlined } from "@ant-design/icons";
 export default function Alerts() {
   const { t } = useTranslation();
   interface RowData {
@@ -28,21 +29,26 @@ export default function Alerts() {
 
   const columns: ColDef<RowData>[] = [
     {
-      headerName: t("_id"),
+      headerName: "",
       field: "id",
-      width: 150,
+      width: 80,
+
       // @ts-ignore
       cellRenderer: (params) => (
-        <Link
-          href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}&uid=${params.data.uid}`}
-        >
-          {params.value}
-        </Link>
+        <div className="flex justify-center items-center">
+          <Link
+            target="_blank"
+            href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}&uid=${params.data.uid}`}
+          >
+            <EyeOutlined style={{ fontSize: "18px", color: "#f6bd03" }} />
+          </Link>
+        </div>
       ),
     },
     {
       headerName: t("mac"),
       field: "mac",
+      width: 200,
     },
     {
       headerName: t("Root Process"),

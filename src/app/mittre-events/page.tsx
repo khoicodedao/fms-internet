@@ -34,17 +34,19 @@ export default function Alerts() {
     {
       headerName: t("mac"),
       field: "mac",
+      width: 180,
     },
     {
       headerName: t("ip"),
       field: "ip",
+      width: 150,
     },
     { headerName: t("Computer name"), field: "computer_name" },
-    { headerName: t("object"), field: "object" },
-    { headerName: t("action"), field: "action" },
-    { headerName: t("alert_type"), field: "alert_type" },
-    { headerName: t("mitre_tatic"), field: "mitre_tatic" },
-    { headerName: t("mitre_technique"), field: "mitre_technique" },
+    { headerName: t("object"), field: "object", width: 100 },
+    { headerName: t("action"), field: "action", width: 100 },
+    { headerName: t("alert_type"), field: "alert_type", width: 100 },
+    { headerName: t("mitre_tatic"), field: "mitre_tatic", width: 300 },
+    { headerName: t("mitre_technique"), field: "mitre_technique", width: 500 },
   ];
   return (
     <DataTable

@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Tree, Card, Tabs, Table, Typography } from "antd";
+import { Tree, Card, Tabs, Table, Typography, Badge, Input } from "antd";
 import {
   FileOutlined,
   DatabaseOutlined,
@@ -8,6 +8,7 @@ import {
   ThunderboltOutlined,
   AppstoreOutlined,
   SettingOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import ReactJson from "react-json-view";
 import { usePostApi } from "@/common/usePostApi";
@@ -39,7 +40,29 @@ interface ProcessViewerProps {
 type Process = {
   process_name: string;
   xxhash_path: string;
+  score_level: number;
 };
+// màu gợi ý theo mức độ (bạn chỉnh lại theo thang điểm của bạn)
+const getScoreColor = (score?: number) => {
+  if (score == null) return "#d9d9d9";
+  if (score >= 80) return "#ff4d4f"; // cao
+  if (score >= 60) return "#faad14"; // trung bình
+  if (score >= 30) return "#52c41a"; // thấp
+  return "#d9d9d9";
+};
+
+const makeTitle = (text: string, score?: number, showBadge = false) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+    {showBadge && (
+      <Badge
+        count={score}
+        showZero
+        color={getScoreColor(typeof score === "number" ? score : undefined)}
+      />
+    )}
+    <span>{text}</span>
+  </div>
+);
 
 function buildProcessTree(processList: Process[]) {
   const pathMap: Record<string, any> = {};
@@ -47,32 +70,32 @@ function buildProcessTree(processList: Process[]) {
   processList.forEach((proc) => {
     const rawPath = proc.xxhash_path?.toString() || "";
 
-    // Nếu path không có "/" hoặc "\", vẫn tạo node đơn lẻ
+    // Không có "/" hoặc "\" → tạo node đơn
     if (!rawPath.includes("/") && !rawPath.includes("\\")) {
       const key = rawPath || proc.process_name;
       if (!pathMap[key]) {
         pathMap[key] = {
-          title: proc.process_name,
-          key: key,
+          title: makeTitle(proc.process_name, proc.score_level, true), // ✅ badge ở leaf
+          key,
           children: [],
         };
       }
       return;
     }
 
-    // Nếu có path nhiều cấp
-    const segments = rawPath.split(/[\\/]/); // Hỗ trợ cả "/" và "\"
+    // Có path nhiều cấp
+    const segments = rawPath.split(/[\\/]/); // hỗ trợ "/" và "\"
     let currentPath = "";
 
     segments.forEach((segment, index) => {
       currentPath = index === 0 ? segment : `${currentPath}/${segment}`;
+      const isLeaf = index === segments.length - 1;
+      const processInfo = isLeaf ? proc.process_name : segment;
 
       if (!pathMap[currentPath]) {
-        const isLeaf = index === segments.length - 1;
-        const processInfo = isLeaf ? proc.process_name : segment;
-
         const newNode = {
-          title: processInfo,
+          // ✅ chỉ hiện badge ở leaf (node cuối)
+          title: makeTitle(processInfo, proc.score_level, isLeaf),
           key: currentPath,
           children: [],
         };
@@ -122,7 +145,6 @@ export default function ProcessViewer({
   useEffect(() => {
     const builtTree = buildProcessTree(processListProcess);
     setTreeData(builtTree);
-
     const firstParentKey = builtTree.find((node) => node.children?.length)?.key;
     if (firstParentKey) {
       setExpandedKeys([firstParentKey]);
@@ -283,7 +305,7 @@ export default function ProcessViewer({
             treeData={treeData}
             expandedKeys={expandedKeys}
             onExpand={(keys) => setExpandedKeys(keys as string[])}
-            height={450}
+            // height={450}
             showLine
             blockNode
             onSelect={handleSelect}
@@ -291,7 +313,7 @@ export default function ProcessViewer({
         </Card>
       </div>
 
-      <div style={{ flex: 1, overflow: "auto" }}>
+      <div style={{ flex: 1, overflow: "hidden", maxWidth: "100%" }}>
         <Card
           // title={`Events for ${selectedPath || "..."}`}
           style={{ height: "100%" }}
@@ -318,22 +340,21 @@ export default function ProcessViewer({
                     tab.key === "Socket" ? (
                       <SocketGraph events={dataEvents["Socket"]} />
                     ) : (
-                      <>
+                      <div className="max-w-full overflow-x-scroll">
                         <div style={{ marginBottom: 12 }}>
-                          <input
-                            type="text"
-                            placeholder="Search in table..."
-                            value={searchText}
-                            onChange={(e) =>
-                              handleSearch(e.target.value, tabKey)
-                            }
-                            style={{
-                              padding: 8,
-                              width: 300,
-                              border: "1px solid #ccc",
-                              borderRadius: 4,
-                            }}
-                          />
+                          <div style={{ marginBottom: 12 }}>
+                            <Input
+                              placeholder="Search in table..."
+                              value={searchText}
+                              onChange={(e) =>
+                                handleSearch(e.target.value, tabKey)
+                              }
+                              prefix={
+                                <SearchOutlined style={{ color: "#999" }} />
+                              }
+                              style={{ width: 300 }}
+                            />
+                          </div>
                         </div>
                         <Table
                           rowKey={(record, index) =>
@@ -345,20 +366,25 @@ export default function ProcessViewer({
                               title: "Alert time",
                               dataIndex: "log_time",
                               key: "log_time",
-                              width: 300,
+                              width: 150,
                             },
                             {
                               title: "Action",
                               key: "action",
                               dataIndex: "action",
+                              width: 150,
                               render: (_, record) =>
                                 record?.data?.action || "-",
                             },
                             {
                               title: "Image path",
                               key: "image_path",
-                              render: (_, record) =>
-                                record?.data?.fields?.image_path || "-",
+                              width: 300,
+                              render: (_, record) => (
+                                <div className="w-80">
+                                  {record?.data?.fields?.image_path || "-"}
+                                </div>
+                              ),
                             },
                             {
                               title: "Pid",
@@ -383,7 +409,7 @@ export default function ProcessViewer({
                             expandedRowRender: (record) => (
                               <div
                                 style={{
-                                  background: "#fafafa",
+                                  background: "white",
                                   padding: "12px",
                                 }}
                               >
@@ -399,7 +425,7 @@ export default function ProcessViewer({
                           }}
                           pagination={false}
                         />
-                      </>
+                      </div>
                     ),
                 };
               })}
