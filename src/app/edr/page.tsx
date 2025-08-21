@@ -26,10 +26,11 @@ export default function Edr() {
       field: "mac_address",
       sortable: true, // Enable sorting for this column
       sort: "asc",
+      width: 170,
     },
-    { headerName: t("internalIp"), field: "internal_ip" },
+    { headerName: t("internalIp"), field: "internal_ip", width: 150 },
     { headerName: t("machineName"), field: "machine_name" },
-    { headerName: t("version"), field: "version" },
+    { headerName: t("version"), field: "version", width: 100 },
     {
       headerName: t("memoryUse"),
       width: 160,
@@ -89,6 +90,7 @@ export default function Edr() {
       headerName: t("lastSeen"),
       field: "last_seen",
       valueFormatter: formatDateTime,
+      width: 180,
     },
     { headerName: t("os"), field: "os", width: 400 },
   ];

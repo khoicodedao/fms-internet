@@ -98,8 +98,9 @@ export default function Home() {
       formatter: "{b}: {c} ({d}%)",
     },
     legend: {
-      bottom: "5%",
-      left: "center",
+      orient: "vertical", // sửa chính tả: horizontal | vertical
+      right: 0,
+      top: "middle",
     },
     series: [
       {
@@ -107,7 +108,7 @@ export default function Home() {
         radius: ["40%", "70%"],
         label: {
           show: true,
-          formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
+          formatter: "{b}: {c}",
         },
         data: [
           { value: data.countSocket, name: "Socket" },
@@ -126,6 +127,51 @@ export default function Home() {
         },
       },
     ],
+    graphic: [
+      {
+        type: "group",
+        left: "center",
+        top: "middle",
+        children: [
+          {
+            type: "text",
+            style: {
+              text: `${
+                (data.countSocket || 0) +
+                (data.countRegistry || 0) +
+                (data.countFile || 0) +
+                (data.countFlow || 0) +
+                (data.countProcess || 0) +
+                (data.countHttp || 0)
+              }`,
+              fill: "#000",
+              fontSize: 20,
+              fontWeight: "bold",
+              fontFamily: "Segoe UI",
+              textAlign: "center",
+            },
+          },
+          {
+            type: "text",
+            top: 25,
+            style: {
+              text: "Total",
+              fill: "rgba(0,0,0,0.6)",
+              fontSize: 14,
+              fontFamily: "Segoe UI",
+              textAlign: "center",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const onChartNDRClick = (params: any) => {
+    router.push("/ndr");
+  };
+  const onChartEDRClick = (params: any) => {
+    router.push("/edr");
   };
 
   const ndrPieOption = {
@@ -145,7 +191,7 @@ export default function Home() {
     },
     legend: {
       bottom: "5%",
-      left: "center",
+      left: "center", // nếu muốn căn giữa
     },
     series: [
       {
@@ -157,7 +203,7 @@ export default function Home() {
         ],
         label: {
           show: true,
-          formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
+          formatter: "{b}: {c}",
         },
         emphasis: {
           itemStyle: {
@@ -168,8 +214,32 @@ export default function Home() {
         },
       },
     ],
+    graphic: [
+      {
+        type: "text",
+        left: "center",
+        top: "middle",
+        style: {
+          text: `${data.countNdrTotal}`, // số tổng hiển thị
+          fill: "#000",
+          fontSize: 18,
+          fontWeight: "bold",
+          fontFamily: "Segoe UI",
+        },
+      },
+      {
+        type: "text",
+        top: 25,
+        style: {
+          text: "Total",
+          fill: "rgba(0,0,0,0.6)",
+          fontSize: 14,
+          fontFamily: "Segoe UI",
+          textAlign: "center",
+        },
+      },
+    ],
   };
-
   const lineChartOption = {
     title: {
       text: "MalOps by Unit",
@@ -242,13 +312,15 @@ export default function Home() {
         {
           data: yValues,
           type: "bar",
-          itemStyle: { color: "#1890ff" },
+          itemStyle: { color: "#5C7BD9" },
         },
       ],
     };
   }, [tatic, t]);
 
   const machineStatusPieOption = useMemo(() => {
+    const total = (data.countEdrTotal || 0) ?? 0;
+
     return {
       title: {
         text: "EDR Status",
@@ -274,19 +346,51 @@ export default function Home() {
           radius: ["40%", "70%"],
           label: {
             show: true,
-            formatter: "{b}: {c}", // Hiển thị tên và tỷ lệ phần trăm
+            formatter: "{b}: {c}", // Hiển thị tên và giá trị
           },
           data: [
             { value: data.countEdrOnline || 0, name: "Online" },
             {
-              value: data.countEdrTotal - data.countEdrOnline || 0,
+              value: (data.countEdrTotal || 0) - (data.countEdrOnline || 0),
               name: "Offline",
             },
           ],
         },
       ],
+      graphic: [
+        {
+          type: "group",
+          left: "center",
+          top: "middle",
+          children: [
+            {
+              type: "text",
+              style: {
+                text: `${total}`,
+                fill: "#000",
+                fontSize: 20,
+                fontWeight: "bold",
+                fontFamily: "Segoe UI",
+                textAlign: "center",
+              },
+            },
+            {
+              type: "text",
+              top: 25,
+              style: {
+                text: "Total",
+                fill: "rgba(0,0,0,0.6)",
+                fontSize: 14,
+                fontFamily: "Segoe UI",
+                textAlign: "center",
+              },
+            },
+          ],
+        },
+      ],
     };
-  }, [data]); //
+  }, [data]);
+
   return (
     <div className="home-page grid p-2 gap-1 font-[family-name:var(--font-geist-sans)]">
       <div className="w-full flex justify-end items-center  rounded-lg">
@@ -481,7 +585,11 @@ export default function Home() {
           </Col>
           <Col span={6}>
             <div className="h-full">
-              <ReactECharts option={ndrPieOption} style={{ height: "300px" }} />
+              <ReactECharts
+                onEvents={{ click: onChartNDRClick }}
+                option={ndrPieOption}
+                style={{ height: "300px" }}
+              />
             </div>
           </Col>
           <Col span={6}>
@@ -490,6 +598,7 @@ export default function Home() {
               data.countEdrOnline !== undefined ? (
                 <ReactECharts
                   option={machineStatusPieOption}
+                  onEvents={{ click: onChartEDRClick }}
                   style={{ height: "300px" }}
                 />
               ) : (
