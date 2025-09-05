@@ -43,6 +43,8 @@ export default function DataTable({
   HeaderDrawer,
   tableHeight = "calc(100vh - 220px)",
 }: DataTableProps) {
+  const searchParams = useSearchParams();
+  const unitCode = searchParams.get("unitCode");
   const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
   const handleSearch = (query: string) => {
     setPagination({ ...pagination, current: 1 }); // Reset trang về 1 khi tìm kiếm
@@ -59,7 +61,7 @@ export default function DataTable({
   const [pagination, setPagination] = useState({ current: 1, pageSize: 50 });
   const [rowTotal, setRowTotal] = useState(0); // Tổng số row từ API
   const { mutation, contextHolder } = usePostApi(apiUrl, false);
-  const bodyData = body || "";
+  let bodyData = body || "";
   const idColumn: ColDef = {
     headerName: "#",
     field: "autoId",
@@ -74,6 +76,9 @@ export default function DataTable({
       return null;
     },
   };
+  if (unitCode) {
+    bodyData = `${bodyData} and unit_code = '${unitCode}' `;
+  }
   const columnDefs = [idColumn, ...columns];
   // Fetch data từ API
   const fetchData = () => {
@@ -113,6 +118,7 @@ export default function DataTable({
     pagination.current,
     pagination.pageSize,
     searchQuery,
+    unitCode,
   ]);
   useEffect(() => {
     setTimeout(() => {

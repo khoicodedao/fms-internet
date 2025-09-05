@@ -108,7 +108,9 @@ export default function Home() {
         radius: ["40%", "70%"],
         label: {
           show: true,
-          formatter: "{b}: {c}",
+          formatter: (params: any) => {
+            return `${params.value.toLocaleString("vi-VN")}`;
+          },
         },
         data: [
           { value: data.countSocket, name: "Socket" },
@@ -136,14 +138,14 @@ export default function Home() {
           {
             type: "text",
             style: {
-              text: `${
+              text: `${(
                 (data.countSocket || 0) +
                 (data.countRegistry || 0) +
                 (data.countFile || 0) +
                 (data.countFlow || 0) +
                 (data.countProcess || 0) +
                 (data.countHttp || 0)
-              }`,
+              ).toLocaleString("vi-VN")}`,
               fill: "#000",
               fontSize: 20,
               fontWeight: "bold",
@@ -203,7 +205,9 @@ export default function Home() {
         ],
         label: {
           show: true,
-          formatter: "{b}: {c}",
+          formatter: (params: any) => {
+            return `${params.value.toLocaleString("vi-VN")}`;
+          },
         },
         emphasis: {
           itemStyle: {
@@ -346,7 +350,9 @@ export default function Home() {
           radius: ["40%", "70%"],
           label: {
             show: true,
-            formatter: "{b}: {c}", // Hiển thị tên và giá trị
+            formatter: (params: any) => {
+              return ` ${params.value.toLocaleString("vi-VN")}`;
+            },
           },
           data: [
             { value: data.countEdrOnline || 0, name: "Online" },
@@ -366,7 +372,7 @@ export default function Home() {
             {
               type: "text",
               style: {
-                text: `${total}`,
+                text: `${total.toLocaleString("vi-VN")}`,
                 fill: "#000",
                 fontSize: 20,
                 fontWeight: "bold",
@@ -537,7 +543,7 @@ export default function Home() {
                     value={item.value}
                     formatter={(value) => (
                       //@ts-ignore
-                      <CountUp end={value} duration={1} separator="," />
+                      <CountUp end={value} duration={1} separator="." />
                     )}
                     className="text-2xl font-bold mb-2"
                   />

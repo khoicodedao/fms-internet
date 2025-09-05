@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link"; // Import Link from Next.js
 import { Divider } from "antd";
+import UnitTree from "./UnitTree";
 import {
   MenuOutlined,
   UserOutlined,
@@ -115,6 +116,7 @@ export default function Header() {
           />
         </Link>
       </div>
+      <UnitTree></UnitTree>
       <div>
         <button
           className={selectedLanguage === "vi" ? "font-bold" : "opacity-50"}

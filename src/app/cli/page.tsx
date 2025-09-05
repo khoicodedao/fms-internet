@@ -222,9 +222,7 @@ const CLIPage = () => {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       {contextHolder}
-      <div
-        style={{ width: "20%", padding: "10px", borderRight: "1px solid #ccc" }}
-      >
+      <div style={{ width: "20%", padding: "10px" }}>
         <div
           style={{
             display: "flex",
@@ -304,7 +302,7 @@ const CLIPage = () => {
           form={form}
           onFinish={handleSubmit}
           layout="vertical"
-          style={{ marginBottom: "5px" }}
+          style={{ marginBottom: "5px", marginTop: "5px" }}
         >
           <Form.Item label="Command Type">
             <Radio.Group
@@ -386,7 +384,7 @@ const CLIPage = () => {
 
         <Terminal
           name="Terminal"
-          colorMode={ColorMode.Light}
+          colorMode={ColorMode.Dark}
           prompt={`${dir}>`}
           onInput={handleCommandInput}
           startingInputValue=""

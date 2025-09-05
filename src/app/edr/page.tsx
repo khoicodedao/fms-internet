@@ -36,11 +36,10 @@ export default function Edr() {
       width: 160,
       field: "memory_use",
       cellRenderer: (params: any) => {
-        const match = params.value.match(/Total:\s*([\d.]+Gb)/);
+        const match = params.value?.match(/Total:\s*([\d.]+Gb)/);
         const total = match ? match[1] : "Unknown"; // Extract total or fallback to "Unknown"
         const usageMatch = params.value.match(/(\d+)%/);
         const usage = usageMatch ? parseInt(usageMatch[1], 10) : 0; // Extract usage percentage
-
         return (
           <div
             style={{
@@ -68,7 +67,6 @@ export default function Edr() {
       cellRenderer: (params: any) => {
         const match = params.value.match(/([\d.]+)%\s*\((.+)\)/);
         const usage = match ? parseFloat(match[1]) : 0; // Extract CPU usage percentage
-
         return (
           <div style={{ display: "flex", alignItems: "center" }}>
             <Progress
