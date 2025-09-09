@@ -6,6 +6,7 @@ const API_URL = {
   LOGIN_PAGE: { DEFAULT: "/api/be/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/be/events/paginate" },
   ALERT_PAGE: {
+    NDR: "/api/be/alerts/paginateAlertNDR",
     DEFAULT: "/api/be/alerts/paginate",
     PROCESS_TREE: "/api/be/alerts/getProcessTree",
     EVENTS: "/api/be/alerts/getEventAlert",

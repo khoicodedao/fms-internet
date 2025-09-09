@@ -158,6 +158,34 @@ export default function Header() {
           items={[
             {
               key: "1",
+              label: t("alerts"),
+              icon: (
+                <AlertOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/alerts");
+                setDrawerOpen(false);
+              },
+            },
+            {
+              key: "2",
+              label: t("events"),
+              icon: (
+                <ClockCircleOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/events");
+                setDrawerOpen(false);
+              },
+            },
+            {
+              key: "3",
               label: t("malops_management"),
               icon: (
                 <BarChartOutlined
@@ -167,34 +195,6 @@ export default function Header() {
               ),
               onClick: () => {
                 router.push("/malops-management");
-                setDrawerOpen(false);
-              },
-            },
-            {
-              key: "2",
-              label: t("investigation"),
-              icon: (
-                <SearchOutlined
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                />
-              ),
-              onClick: () => {
-                router.push("/investigation");
-                setDrawerOpen(false);
-              },
-            },
-            {
-              key: "3",
-              label: "NDR",
-              icon: (
-                <GlobalOutlined
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                />
-              ),
-              onClick: () => {
-                router.push("/ndr");
                 setDrawerOpen(false);
               },
             },
@@ -212,8 +212,24 @@ export default function Header() {
                 setDrawerOpen(false);
               },
             },
+
             {
               key: "5",
+              label: "NDR",
+              icon: (
+                <GlobalOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/ndr");
+                setDrawerOpen(false);
+              },
+            },
+
+            {
+              key: "6",
               label: t("cli"),
               icon: (
                 <CodeOutlined
@@ -227,33 +243,20 @@ export default function Header() {
               },
             },
             {
-              key: "6",
-              label: t("events"),
+              key: "8",
+              label: t("Rules"),
               icon: (
-                <ClockCircleOutlined
+                <SearchOutlined
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
               ),
               onClick: () => {
-                router.push("/events");
+                router.push("/investigation");
                 setDrawerOpen(false);
               },
             },
-            {
-              key: "7",
-              label: t("alerts"),
-              icon: (
-                <AlertOutlined
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                />
-              ),
-              onClick: () => {
-                router.push("/alerts");
-                setDrawerOpen(false);
-              },
-            },
+
             {
               key: "8",
               label: t("MITRE events"),

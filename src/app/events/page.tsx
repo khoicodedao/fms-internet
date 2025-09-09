@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import type { ColDef } from "ag-grid-community";
 import API_URL from "@/common/api-url";
-import { Tabs } from "antd";
+import { Card, Tabs } from "antd";
 import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
@@ -44,6 +44,37 @@ export default function Events() {
   const TAB_PARAM_BY_KEY: Record<string, string> = Object.fromEntries(
     Object.entries(TAB_KEY_BY_PARAM).map(([k, v]) => [v, k])
   );
+
+  function flattenObject(obj: any, parentKey = "", res: any = {}) {
+    for (let key in obj) {
+      const propName = parentKey ? `${parentKey}.${key}` : key;
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        flattenObject(obj[key], propName, res);
+      } else {
+        res[propName] = obj[key];
+      }
+    }
+    return res;
+  }
+  function buildColumns(data: any[]) {
+    if (!data.length) return [];
+    const sample = flattenObject(data[0]);
+    const fields = Object.keys(sample);
+
+    // Ưu tiên Time ở đầu
+    const orderedFields = ["event_time", "@timestamp"]
+      .filter((f) => fields.includes(f))
+      .concat(fields.filter((f) => f !== "event_time" && f !== "@timestamp"));
+
+    return orderedFields.map((field) => ({
+      headerName: field,
+      field,
+      resizable: true,
+      sortable: true,
+      filter: true,
+      flex: 1,
+    }));
+  }
 
   // Lấy key từ URL (?tab=socket | registry | 1 | 2 ...)
   const initialActiveKey = useMemo(() => {
@@ -161,7 +192,33 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <WifiOutlined /> Socket
+            <ProfileOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            All
+          </span>
+        }
+        key="0"
+      >
+        <DataTable
+          tableHeight="calc(-282px + 100vh)"
+          title=""
+          body="" // không filter -> lấy tất cả events
+          dataFieldName="events"
+          apiUrl={API_URL.EVENT_PAGE.DEFAULT}
+          columns={columns.map((col) => ({ ...col, tableTitle: "all" }))}
+        />
+      </TabPane>
+
+      <TabPane
+        tab={
+          <span>
+            <WifiOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Socket
           </span>
         }
         key="1"
@@ -179,7 +236,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <ProfileOutlined /> Registry
+            <ProfileOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Registry
           </span>
         }
         key="2"
@@ -197,7 +258,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <FileOutlined /> File
+            <FileOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            File
           </span>
         }
         key="3"
@@ -215,7 +280,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <PartitionOutlined /> Process
+            <PartitionOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Process
           </span>
         }
         key="4"
@@ -233,7 +302,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <BranchesOutlined /> Flow
+            <BranchesOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Flow
           </span>
         }
         key="5"
@@ -251,7 +324,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <ApiOutlined /> Http
+            <ApiOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Http
           </span>
         }
         key="6"
@@ -269,7 +346,11 @@ export default function Events() {
       <TabPane
         tab={
           <span>
-            <UsbOutlined /> File Usb
+            <UsbOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            File Usb
           </span>
         }
         key="7"

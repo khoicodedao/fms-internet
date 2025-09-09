@@ -11,6 +11,8 @@ import {
   FileOutlined,
   SettingOutlined,
   CloudOutlined,
+  AlertOutlined,
+  DesktopOutlined,
 } from "@ant-design/icons";
 import DatetimePicker from "@/components/DatetimePicker";
 import { useDateContext } from "@/common/date-context";
@@ -34,6 +36,7 @@ type DashboardData = {
   countFlow: number;
   countProcess: number;
   countHttp: number;
+  countalertDeviceTotal: number;
 };
 //@ts-ignore
 import { saveAs } from "file-saver";
@@ -95,7 +98,7 @@ export default function Home() {
     },
     tooltip: {
       trigger: "item",
-      formatter: "{b}: {c} ({d}%)",
+      formatter: "{b}: {d}%",
     },
     legend: {
       orient: "vertical", // sửa chính tả: horizontal | vertical
@@ -190,6 +193,7 @@ export default function Home() {
     },
     tooltip: {
       trigger: "item",
+      formatter: "{b}: {d}%",
     },
     legend: {
       bottom: "5%",
@@ -339,6 +343,7 @@ export default function Home() {
       },
       tooltip: {
         trigger: "item",
+        formatter: "{b}: {d}%",
       },
       legend: {
         bottom: "5%",
@@ -447,24 +452,37 @@ export default function Home() {
         <Row gutter={[16, 16]}>
           {[
             {
-              title: "Socket Event",
-              tab: "socket",
-              value: data?.countSocket || 0,
+              title: "Alert",
+              tab: "",
+              value: data.countAlert || 0,
               icon: (
-                <ClusterOutlined
-                  style={{ color: "#1890ff", marginRight: "8px" }}
+                <AlertOutlined
+                  style={{ color: "#faad14", marginRight: "8px" }}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
               ),
             },
             {
-              title: "Registry Event",
-              tab: "registry",
-              value: data.countRegistry || 0,
+              title: "Device",
+              tab: "",
+              value: data.countalertDeviceTotal || 0,
               icon: (
-                <DatabaseOutlined
-                  style={{ color: "#52c41a", marginRight: "8px" }}
+                <DesktopOutlined
+                  style={{ color: "#eb2f96", marginRight: "8px" }}
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+            },
+
+            {
+              title: "Process Event",
+              tab: "process",
+              value: data.countProcess || 0,
+              icon: (
+                <SettingOutlined
+                  style={{ color: "#ff4d4f", marginRight: "8px" }}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
@@ -483,36 +501,24 @@ export default function Home() {
               ),
             },
             {
-              title: "Flow Event",
-              tab: "flow",
-              value: data.countFlow || 0,
+              title: "Socket Event",
+              tab: "socket",
+              value: data?.countSocket || 0,
               icon: (
-                <DeploymentUnitOutlined
-                  style={{ color: "#eb2f96", marginRight: "8px" }}
+                <ClusterOutlined
+                  style={{ color: "#1890ff", marginRight: "8px" }}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
               ),
             },
             {
-              title: "Process Event",
-              tab: "process",
-              value: data.countProcess || 0,
+              title: "Registry Event",
+              tab: "registry",
+              value: data.countRegistry || 0,
               icon: (
-                <SettingOutlined
-                  style={{ color: "#ff4d4f", marginRight: "8px" }}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                />
-              ),
-            },
-            {
-              title: "Http Event",
-              tab: "http",
-              value: data.countHttp || 0,
-              icon: (
-                <CloudOutlined
-                  style={{ color: "#40a9ff", marginRight: "8px" }}
+                <DatabaseOutlined
+                  style={{ color: "#52c41a", marginRight: "8px" }}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />

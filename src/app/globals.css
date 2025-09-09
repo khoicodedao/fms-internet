@@ -629,3 +629,7 @@ section::-webkit-scrollbar {
 .ant-table-cell {
   background: white !important;
 }
+
+.ant-tabs-tab-active {
+  background-color: rgb(246, 189, 3) !important;
+}
