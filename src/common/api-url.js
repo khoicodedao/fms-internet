@@ -2,6 +2,7 @@ const API_URL = {
   HOME_PAGE: {
     DEFAULT: "/api/be/dashboard/statis",
     TATIC: "/api/be/dashboard/getTacticCounts",
+    UNIT_CHART: "/api/be/dashboard/getUnitNameCounts",
   },
   LOGIN_PAGE: { DEFAULT: "/api/be/auth/login" },
   EVENT_PAGE: { DEFAULT: "/api/be/events/paginate" },
@@ -34,6 +35,12 @@ const API_URL = {
   },
   EVENTS_MITTRE_PAGE: {
     DEFAULT: "/api/be/events/getEventMitre",
+  },
+  UNIT_LIST: {
+    DEFAULT: "/api/be/dashboard/getUnitNameCounts",
+  },
+  FLIE: {
+    DEFAULT: "/api/be/files/paginate",
   },
 };
 export default API_URL;

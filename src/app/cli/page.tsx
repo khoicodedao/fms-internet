@@ -2,7 +2,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Terminal, { ColorMode, TerminalOutput } from "react-terminal-ui";
-import { Input, List, Avatar, Badge, Button, message, Tooltip } from "antd";
+import {
+  Input,
+  List,
+  Avatar,
+  Badge,
+  Button,
+  message,
+  Tooltip,
+  Tabs,
+  Col,
+  Row,
+} from "antd";
+import API_URL from "@/common/api-url";
+const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
+  ssr: false,
+});
 import { Radio, Form } from "antd";
 import {
   ApiOutlined,
@@ -10,6 +25,7 @@ import {
   DisconnectOutlined,
 } from "@ant-design/icons";
 import Cookies from "js-cookie";
+import dynamic from "next/dynamic";
 type SOCKET_DATA = {
   type: "request" | "response";
   cmd_type: "cmd" | "upload" | "donwload" | "excute";
@@ -24,6 +40,7 @@ type SOCKET_DATA = {
 const token = Cookies.get("auth_token");
 // const  = process.env.SOCKET_SERVER_URL;
 const CLIPage = () => {
+  const { TabPane } = Tabs;
   const [cmdType, setCmdType] = useState<
     "cmd" | "upload" | "donwload" | "excute"
   >("cmd");
@@ -175,16 +192,19 @@ const CLIPage = () => {
       payload.data = {
         file_path: values.file_path,
         upload_url: values.upload_url,
+        type: cmdType,
       };
     } else if (cmdType === "donwload") {
       payload.data = {
         file_path: values.file_path,
         download_url: values.download_url,
+        type: cmdType,
       };
     } else if (cmdType === "excute") {
       payload.data = {
         message: values.message,
         script_path: values.script_path,
+        type: cmdType,
       };
     }
 
@@ -220,7 +240,7 @@ const CLIPage = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
+    <div id="cli-page" style={{ display: "flex", flexDirection: "row" }}>
       {contextHolder}
       <div style={{ width: "20%", padding: "10px" }}>
         <div
@@ -329,20 +349,76 @@ const CLIPage = () => {
             )}
           {cmdType === "upload" && (
             <>
-              <Form.Item
-                label="File Path"
-                name="file_path"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="/path/to/file" />
-              </Form.Item>
-              <Form.Item
-                label="Upload URL"
-                name="upload_url"
-                rules={[{ required: true }]}
-              >
-                <Input placeholder="https://upload.target" />
-              </Form.Item>
+              <Row gutter={24}>
+                {/* Cột Form */}
+                <Col span={8}>
+                  <Form layout="vertical">
+                    <Form.Item
+                      label="File Path"
+                      name="file_path"
+                      rules={[
+                        { required: true, message: "Please input file path" },
+                      ]}
+                    >
+                      <Input placeholder="/path/to/file" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Upload URL"
+                      name="upload_url"
+                      rules={[
+                        { required: true, message: "Please input upload url" },
+                      ]}
+                    >
+                      <Input placeholder="https://upload.target" />
+                    </Form.Item>
+                  </Form>
+                </Col>
+
+                {/* Cột Table */}
+                <Col span={16}>
+                  <DataTable
+                    title="Files"
+                    showFilter={false}
+                    showDatepicker={false}
+                    tableHeight="400px"
+                    dataFieldName="files"
+                    apiUrl={API_URL.FLIE.DEFAULT}
+                    columns={[
+                      {
+                        headerName: "Client",
+                        field: "edr_id",
+                        width: 150,
+                      },
+                      {
+                        headerName: "File name",
+                        field: "filename",
+                        width: 250,
+                        cellRenderer: (params: any) => {
+                          const fileName = params.value;
+                          const edrId = params.data?.edr_id;
+                          const downloadUrl = `http://10.32.116.217:5000/api/files/download/${edrId}/${encodeURIComponent(
+                            fileName
+                          )}`;
+                          return (
+                            <a
+                              href={downloadUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {fileName}
+                            </a>
+                          );
+                        },
+                      },
+                      {
+                        headerName: "Time",
+                        field: "created_at",
+                        width: 300,
+                      },
+                    ]}
+                  />
+                </Col>
+              </Row>
             </>
           )}
           {cmdType === "donwload" && (
@@ -382,15 +458,17 @@ const CLIPage = () => {
           )}
         </Form>
 
-        <Terminal
-          name="Terminal"
-          colorMode={ColorMode.Dark}
-          prompt={`${dir}>`}
-          onInput={handleCommandInput}
-          startingInputValue=""
-        >
-          {terminalLineData}
-        </Terminal>
+        {cmdType == "cmd" && (
+          <Terminal
+            name="Terminal"
+            colorMode={ColorMode.Dark}
+            prompt={`${dir}>`}
+            onInput={handleCommandInput}
+            startingInputValue=""
+          >
+            {terminalLineData}
+          </Terminal>
+        )}
       </div>
     </div>
   );

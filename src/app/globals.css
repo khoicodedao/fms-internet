@@ -633,3 +633,7 @@ section::-webkit-scrollbar {
 .ant-tabs-tab-active {
   background-color: rgb(246, 189, 3) !important;
 }
+
+#cli-page .ant-tabs-tab-active {
+  background-color: white !important;
+}
