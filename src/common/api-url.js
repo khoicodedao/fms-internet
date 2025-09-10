@@ -36,8 +36,9 @@ const API_URL = {
   EVENTS_MITTRE_PAGE: {
     DEFAULT: "/api/be/events/getEventMitre",
   },
-  UNIT_LIST: {
-    DEFAULT: "/api/be/dashboard/getUnitNameCounts",
+  UNIT: {
+    LIST_EVENT: "/api/be/dashboard/getUnitNameCounts",
+    LIST: "/api/be/units/paginate",
   },
   FLIE: {
     DEFAULT: "/api/be/files/paginate",

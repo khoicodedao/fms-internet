@@ -1,16 +1,18 @@
 "use client";
 import React from "react";
 import type { ColDef } from "ag-grid-community";
-// import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
+import { Tabs } from "antd";
+import { useTranslation } from "next-i18next";
+
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
-import { useTranslation } from "next-i18next";
 
 export default function ErrorLogs() {
   const { t } = useTranslation();
+
   type RowData = {
     mac: string;
     error_message: string;
@@ -30,11 +32,24 @@ export default function ErrorLogs() {
   ];
 
   return (
-    <DataTable
-      title={"Error Logs"}
-      dataFieldName="errors"
-      apiUrl={API_URL.LOGS_PAGE.DEFAULT}
-      columns={columns}
-    />
+    <Tabs tabPosition="left" style={{ height: "100%" }}>
+      <Tabs.TabPane tab="Event" key="1">
+        <DataTable
+          title={"Event Logs"}
+          dataFieldName="events"
+          apiUrl={API_URL.LOGS_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </Tabs.TabPane>
+
+      <Tabs.TabPane tab="Alert" key="2">
+        <DataTable
+          title={"Alert Logs"}
+          dataFieldName="alerts"
+          apiUrl={API_URL.LOGS_PAGE.DEFAULT}
+          columns={columns}
+        />
+      </Tabs.TabPane>
+    </Tabs>
   );
 }

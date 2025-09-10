@@ -43,12 +43,12 @@ function RootLayout({ children }: { children: ReactNode }) {
       >
         <TerminalContextProvider>
           <ConfigProvider>
-            {!isLoginPage && <Header />}
-            <DateProvider>
-              <QueryClientProvider client={queryClient}>
+            <QueryClientProvider client={queryClient}>
+              {!isLoginPage && <Header />}
+              <DateProvider>
                 <main className="mt-24">{children}</main>
-              </QueryClientProvider>
-            </DateProvider>
+              </DateProvider>
+            </QueryClientProvider>
           </ConfigProvider>
         </TerminalContextProvider>
       </body>

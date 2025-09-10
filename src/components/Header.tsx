@@ -20,6 +20,8 @@ import {
   GlobalOutlined,
   FileExclamationOutlined,
   SecurityScanOutlined,
+  AreaChartOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -283,6 +285,21 @@ export default function Header() {
               ),
               onClick: () => {
                 router.push("/error-logs");
+                setDrawerOpen(false);
+              },
+            },
+
+            {
+              key: "10",
+              label: t("Statistic"),
+              icon: (
+                <LineChartOutlined
+                  onPointerEnterCapture={undefined}
+                  onPointerLeaveCapture={undefined}
+                />
+              ),
+              onClick: () => {
+                router.push("/statistic");
                 setDrawerOpen(false);
               },
             },

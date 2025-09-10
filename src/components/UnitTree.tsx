@@ -5,49 +5,47 @@ import { useEffect, useState } from "react";
 import { Card, Tree, Dropdown, Button } from "antd";
 import { DownOutlined, ClusterOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
+import API_URL from "@/common/api-url";
+import { usePostApi } from "@/common/usePostApi";
 
-type UnitNode = {
-  unitName: string;
-  unitCode: string;
-  children?: UnitNode[];
+type ApiUnit = {
+  unit_id: string;
+  unit_name: string;
+  full_name: string;
+  parent_unit_id: string | null;
+  location: string;
 };
 
-const mockData: UnitNode[] = [
-  {
-    unitName: "ALL",
-    unitCode: "",
-    children: [
-      {
-        unitName: "Bộ tư lệnh 86",
-        unitCode: "Z8M1K4T9QP2J",
-        children: [
-          { unitName: "Trung tâm 586", unitCode: "A001-HN-KD" },
-          { unitName: "Trung tâm 186", unitCode: "A001-HN-KT" },
-        ],
-      },
-      {
-        unitName: "Binh chủng pháo binh",
-        unitCode: "A001-HCM",
-        children: [
-          { unitName: "Phòng Tham mưu", unitCode: "A001-HCM-NS" },
-          { unitName: "Phòng Tài chính", unitCode: "A001-HCM-TC" },
-        ],
-      },
-    ],
-  },
-];
+function buildTree(units: ApiUnit[]): any[] {
+  const map: Record<string, any> = {};
+  const roots: any[] = [];
 
-function transformData(data: UnitNode[]): any[] {
-  return data.map((item) => ({
-    title: item.unitName,
-    key: item.unitCode,
-    unitName: item.unitName, // giữ lại unitName để lookup
-    children: item.children ? transformData(item.children) : [],
-  }));
+  // Tạo map id -> node
+  units.forEach((u) => {
+    map[u.unit_id] = {
+      title: u.unit_name,
+      key: u.unit_id,
+      unitName: u.unit_name,
+      children: [],
+    };
+  });
+
+  // Gắn con vào cha hoặc root
+  units.forEach((u) => {
+    if (u.parent_unit_id && map[u.parent_unit_id]) {
+      map[u.parent_unit_id].children.push(map[u.unit_id]);
+    } else {
+      roots.push(map[u.unit_id]);
+    }
+  });
+
+  return roots; // Không bọc thêm "ALL"
 }
 
 export default function UnitTreeDropdown() {
   const [treeData, setTreeData] = useState<any[]>([]);
+  const { mutation } = usePostApi(API_URL.UNIT.LIST, false);
+
   const [selectedUnit, setSelectedUnit] = useState<{
     code: string;
     name: string;
@@ -57,28 +55,38 @@ export default function UnitTreeDropdown() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const transformed = transformData(mockData);
-    setTreeData(transformed);
+    mutation.mutate(
+      {},
+      {
+        onSuccess: (res) => {
+          const units: ApiUnit[] = res.data.units || [];
+          const tree = buildTree(units);
+          setTreeData(tree);
 
-    // Khi load lại trang, đọc unitCode từ URL để hiển thị label
-    const currentUnit = searchParams.get("unitCode");
-    if (currentUnit) {
-      // Tìm unitName theo unitCode
-      const findUnit = (nodes: any[]): any | null => {
-        for (const n of nodes) {
-          if (n.key === currentUnit) return n;
-          if (n.children) {
-            const f = findUnit(n.children);
-            if (f) return f;
+          // Khi load lại trang, nếu có unitCode trên URL thì set selected
+          const currentUnit = searchParams.get("unitCode");
+          if (currentUnit) {
+            const findUnit = (nodes: any[]): any | null => {
+              for (const n of nodes) {
+                if (n.key === currentUnit) return n;
+                if (n.children) {
+                  const f = findUnit(n.children);
+                  if (f) return f;
+                }
+              }
+              return null;
+            };
+            const found = findUnit(tree);
+            if (found) {
+              setSelectedUnit({ code: found.key, name: found.unitName });
+            }
           }
-        }
-        return null;
-      };
-      const found = findUnit(transformed);
-      if (found) {
-        setSelectedUnit({ code: found.key, name: found.unitName });
+        },
+        onError: (error) => {
+          console.error("Lỗi khi gọi API:", error);
+        },
       }
-    }
+    );
   }, []);
 
   const handleSelect = (selectedKeys: React.Key[], info: any) => {
@@ -115,7 +123,7 @@ export default function UnitTreeDropdown() {
     >
       <Button
         className="flex justify-stretch items-center"
-        style={{ width: 220 }} // cố định width
+        style={{ width: 220 }}
         icon={
           <ClusterOutlined
             onPointerEnterCapture={undefined}

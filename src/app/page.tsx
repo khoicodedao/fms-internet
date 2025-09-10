@@ -7,10 +7,8 @@ import {
   SyncOutlined,
   ClusterOutlined,
   DatabaseOutlined,
-  DeploymentUnitOutlined,
   FileOutlined,
   SettingOutlined,
-  CloudOutlined,
   AlertOutlined,
   DesktopOutlined,
 } from "@ant-design/icons";
@@ -44,6 +42,8 @@ export default function Home() {
   const { startDate, endDate } = useDateContext(); // Reducer sử dụng để set giá  trị cho startDate và endDate toàn bộ project
   const [data, setData] = useState<DashboardData>({} as DashboardData);
   const [tatic, setTatic] = useState([]);
+  const [unitAlert, setUnitAlert] = useState([]);
+
   const exportToJson = () => {
     const jsonData = JSON.stringify(data, null, 2); // Chuyển đổi dữ liệu thành JSON
     const blob = new Blob([jsonData], { type: "application/json" });
@@ -53,8 +53,9 @@ export default function Home() {
     API_URL.HOME_PAGE.TATIC,
     false
   );
-  const { mutation, contextHolder } = usePostApi(
-    API_URL.HOME_PAGE.DEFAULT,
+  const { mutation } = usePostApi(API_URL.HOME_PAGE.DEFAULT, false);
+  const { mutation: mutationUntiChart } = usePostApi(
+    API_URL.UNIT.LIST_EVENT,
     false
   );
   useEffect(() => {
@@ -79,6 +80,18 @@ export default function Home() {
         onSuccess: (response: any) => {
           // Kiểm tra nếu API trả về thành công
           setTatic(response.data);
+        },
+      }
+    );
+    mutationUntiChart.mutate(
+      {
+        start_date: startDate,
+        end_date: endDate,
+      },
+      {
+        onSuccess: (response: any) => {
+          // Kiểm tra nếu API trả về thành công
+          setUnitAlert(response.data);
         },
       }
     );
@@ -248,6 +261,7 @@ export default function Home() {
       },
     ],
   };
+
   const lineChartOption = {
     title: {
       text: "MalOps by Unit",
@@ -269,8 +283,18 @@ export default function Home() {
     },
     xAxis: {
       type: "category",
-      data: ["TT586", "TT186", "TT286", "TT386", "TT486"],
-      axisLabel: { interval: 0, rotate: 30 },
+      data: unitAlert.map((item) =>
+        // @ts-ignore
+        item.unit_name === "UNKNOWN" ? "Khác" : item.unit_name
+      ), // <-- sử dụng dữ liệu map
+      axisLabel: {
+        interval: 0,
+        rotate: 30,
+        fontFamily: "Segoe UI, Arial, Tahoma, sans-serif", // font hỗ trợ Unicode
+        fontSize: 12,
+        color: "#333",
+        fontWeight: "500",
+      },
     },
     yAxis: {
       type: "value",
@@ -279,7 +303,8 @@ export default function Home() {
       {
         name: "Total MalOps",
         type: "bar",
-        data: [120, 132, 101, 134, 90],
+        // @ts-ignore
+        data: unitAlert.map((item) => item?.count), // <-- sử dụng dữ liệu map
       },
     ],
   };
