@@ -15,71 +15,19 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 export default function Statistic() {
   const { t } = useTranslation();
 
-  interface RowData {
-    uid: string;
-    id: string;
-    root_process: string;
-    host: string;
-    mac: string;
-    computer_name: string;
-    timestamp: string;
-    summary: string;
-    techniques: string;
-    tatics: string;
-    process_root: Object;
-  }
-
-  const columns: ColDef<RowData>[] = [
-    {
-      headerName: "",
-      field: "id",
-      width: 80,
-      // @ts-ignore
-      cellRenderer: (params) => (
-        <div className="flex justify-center items-center">
-          <Link
-            target="_blank"
-            href={`/malops-management/detail/${params.data.id}?root_process=${params.data.root_process}&file_name=${params.data.file_name}&tatics=${params.data.tatics}&techniques=${params.data.techniques}&summary=${params.data.summary}&time_stamp=${params.data.timestamp}&uid=${params.data.uid}`}
-          >
-            <EyeOutlined
-              style={{ fontSize: "18px", color: "#f6bd03" }}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
-            />
-          </Link>
-        </div>
-      ),
-    },
-    { headerName: t("mac"), field: "mac", width: 200 },
-    {
-      headerName: t("Root Process"),
-      // @ts-ignore
-      field: "process_root.file_info.file_path",
-      width: 300,
-    },
-    {
-      headerName: t("Score tatic"),
-      width: 100,
-      // @ts-ignore
-      field: "process_root.file_info.score_tatic",
-    },
-    {
-      headerName: t("Score level"),
-      // @ts-ignore
-      field: "process_root.file_info.score_level",
-      width: 100,
-    },
-    { headerName: t("Computer name"), field: "computer_name" },
-    { headerName: t("Time stamp"), field: "timestamp", width: 250 },
-    { headerName: t("Summary"), field: "summary", width: 450 },
+  const columns: ColDef<any>[] = [
+    { headerName: t("Unit name"), field: "unit_name", width: 200 },
+    { headerName: t("Event"), field: "events_total", width: 200 },
+    { headerName: t("Alert"), field: "alerts_total", width: 200 },
+    { headerName: t("Edr"), field: "edr_total", width: 200 },
   ];
 
   return (
     <DataTable
       tableHeight="calc(-270px + 100vh)"
       title={""}
-      dataFieldName="alerts"
-      apiUrl={`${API_URL.ALERT_PAGE.DEFAULT}`}
+      dataFieldName="rows"
+      apiUrl={`${API_URL.STATISTIC_PAGE.DEFAULT}`}
       columns={columns}
     />
   );

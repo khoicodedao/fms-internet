@@ -43,5 +43,8 @@ const API_URL = {
   FLIE: {
     DEFAULT: "/api/be/files/paginate",
   },
+  STATISTIC_PAGE: {
+    DEFAULT: "/api/be/statistics/summary",
+  },
 };
 export default API_URL;
