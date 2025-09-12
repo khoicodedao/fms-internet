@@ -5,30 +5,28 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import {
   DesktopOutlined,
-  UserOutlined,
   AppstoreOutlined,
   FileOutlined,
   LinkOutlined,
   GlobalOutlined,
-  BugOutlined,
   DeleteOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
 import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
 import formatDateTime from "@/common/formatDate";
+import { usePostApi } from "@/common/usePostApi";
+import QueryFlowBuilder from "./query-builder/query-flow-builder";
+import Link from "next/link";
+import { Card, Modal, Form, Input, Button, Switch } from "antd";
 
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
-import { usePostApi } from "@/common/usePostApi";
 
-import QueryFlowBuilder from "./query-builder/query-flow-builder";
-import Link from "next/link";
-import { Card } from "antd";
-// import { Collapse } from "antd";
 export default function Investigation() {
-  const { t } = useTranslation(); //multi-language support
+  const { t } = useTranslation();
   const items = [
     {
       icon: DesktopOutlined,
@@ -47,7 +45,6 @@ export default function Investigation() {
         { name: "memory_use", label: "memory_use" },
       ],
     },
-    // { icon: UserOutlined, label: t("user") },
     {
       icon: AppstoreOutlined,
       label: t("process"),
@@ -123,93 +120,140 @@ export default function Investigation() {
       ],
     },
     { icon: LinkOutlined, label: t("connection") },
-    // { icon: GlobalOutlined, label: t("domain_name") },
-    // { icon: BugOutlined, label: t("malop_process") },
+    { icon: GlobalOutlined, label: t("Registry") },
   ];
-  const [reload, setReload] = React.useState(false);
+
+  const [reload, setReload] = useState(false);
   const [fields, setFields] = useState<any[]>(items[0].fields || []);
   const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
     usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
+
+  const { mutation: mutationEdit, contextHolder: contextHolderEdit } =
+    usePostApi(API_URL.INVESTIGATION_PAGE.EDIT, true);
+
   const onDelete = (id: string) => {
-    mutationDelete.mutate(
-      {
-        id: id,
-      },
-      {
-        onSuccess: (response: any) => {
-          setReload(!reload);
-        },
-      }
-    );
+    mutationDelete.mutate({ id }, { onSuccess: () => setReload(!reload) });
+  };
+
+  // Modal Edit
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<any>(null);
+  const [form] = Form.useForm();
+
+  const onEdit = (record: any) => {
+    setEditingRecord(record);
+    form.setFieldsValue({
+      name: record.name,
+      description: record.description,
+      query_str: record.query_str,
+      tag: record.tag,
+      time_window: record.time_window,
+      enable: record.enable,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    form.validateFields().then((values) => {
+      mutationEdit.mutate(
+        { id: editingRecord.id, ...values },
+        {
+          onSuccess: () => {
+            setReload(!reload);
+            setIsModalOpen(false);
+          },
+        }
+      );
+    });
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const columns = [
     {
       headerName: t("Function"),
-      width: 100,
+      width: 120,
       field: "id",
       cellRenderer: (params: any) => {
         return (
-          //@ts-ignore
-          <DeleteOutlined
-            style={{ color: "red", cursor: "pointer" }}
-            onClick={() => onDelete(params.data.id)}
-          />
+          <div>
+            <EditOutlined
+              className="mr-9"
+              style={{ color: "blue", cursor: "pointer" }}
+              onClick={() => onEdit(params.data)}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+            <DeleteOutlined
+              style={{ color: "red", cursor: "pointer" }}
+              onClick={() => onDelete({ ...params.data, enable: false })}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+          </div>
         );
       },
     },
-
     {
       headerName: "Description",
       field: "description",
       width: 200,
-      cellRenderer: (params: any) => {
-        return (
-          <Link href={`/malops-management/detail/${params.data.id}`}>
-            {params.value}
-          </Link>
-        );
-      },
+      cellRenderer: (params: any) => (
+        <Link href={`/malops-management/detail/${params.data.id}`}>
+          {params.value}
+        </Link>
+      ),
     },
-
-    { headerName: "Filter", field: "filter", width: 500 },
+    { headerName: "Query", field: "query_str", width: 600 },
+    { headerName: "Tag", field: "tag", width: 300 },
+    {
+      headerName: "Enable",
+      field: "enable",
+      width: 100,
+      cellRenderer: (params: any) =>
+        params.value ? (
+          <span style={{ color: "green", fontWeight: "bold" }}>✔ ON</span>
+        ) : (
+          <span style={{ color: "red", fontWeight: "bold" }}>✘ OFF</span>
+        ),
+    },
     {
       headerName: "Created at",
       field: "created_at",
       valueFormatter: formatDateTime,
     },
   ];
+
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   return (
     <div className="grid gap-3 font-[family-name:var(--font-geist-sans)]">
       {contextHolderDelete}
+      {contextHolderEdit}
       <Card className="p-2">
-        {" "}
-        <div className="grid  gap-3  font-[family-name:var(--font-geist-sans)]">
-          {" "}
-          <h2 className="text-2xl ml-4  font-bold text-gray-800">
-            {t("build_query")}
-          </h2>
-          <section className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {items.map((item, index) => (
-              <div key={index} className="flex flex-col items-center gap-2">
-                <div
-                  className={`w-12 h-12 rounded-full  ${
-                    activeIndex == index ? "bg-[#F6BD03]" : "bg-[#F2F2F2]"
-                  }  flex items-center justify-center`}
-                  onClick={() => {
-                    setFields(item.fields || []);
-                    setActiveIndex(index);
-                  }}
-                >
-                  {React.createElement(item.icon)}
-                </div>
-                <span className="text-sm text-center">{item.label}</span>
+        <h2 className="text-2xl ml-4 font-bold text-gray-800">
+          {t("build_query")}
+        </h2>
+        <section className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {items.map((item, index) => (
+            <div key={index} className="flex flex-col items-center gap-2">
+              <div
+                className={`w-12 h-12 rounded-full ${
+                  activeIndex == index ? "bg-[#F6BD03]" : "bg-[#F2F2F2]"
+                } flex items-center justify-center`}
+                onClick={() => {
+                  setFields(item.fields || []);
+                  setActiveIndex(index);
+                }}
+              >
+                {React.createElement(item.icon)}
               </div>
-            ))}
-          </section>
-        </div>
+              <span className="text-sm text-center">{item.label}</span>
+            </div>
+          ))}
+        </section>
       </Card>
 
       <div className="flex w-full justify-stretch">
@@ -220,25 +264,68 @@ export default function Investigation() {
             setReload={setReload}
           />
         </div>
-        <div className="flex-1 gap-3 font-[family-name:var(--font-geist-sans)]">
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[300px]">
-              <section>
-                <DataTable
-                  tableHeight="calc(100vh - 416px)"
-                  showDatepicker={false}
-                  showFilter={false}
-                  title="Query Flow"
-                  dataFieldName="filters"
-                  apiUrl={API_URL.INVESTIGATION_PAGE.DEFAULT}
-                  columns={columns}
-                  reload={reload}
-                />
-              </section>
-            </div>
-          </div>
+        <div className="flex-1 gap-3">
+          <DataTable
+            tableHeight="calc(100vh - 416px)"
+            showDatepicker={false}
+            showFilter={false}
+            title="Query Flow"
+            dataFieldName="filters"
+            apiUrl={API_URL.INVESTIGATION_PAGE.DEFAULT}
+            columns={columns}
+            reload={reload}
+          />
         </div>
       </div>
+
+      {/* Modal Edit */}
+      {/* Modal Edit */}
+      <Modal
+        title="Edit Query Flow"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Save"
+        cancelText="Cancel"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input name!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={[{ required: true, message: "Please input description!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Query String"
+            name="query_str"
+            rules={[{ required: true, message: "Please input query string!" }]}
+          >
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item
+            label="Time Window"
+            name="time_window"
+            rules={[{ required: true, message: "Please input time window!" }]}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item label="Tag" name="tag">
+            <Input placeholder="windows, demo" />
+          </Form.Item>
+
+          <Form.Item label="Enable" name="enable" valuePropName="checked">
+            <Switch checkedChildren="ON" unCheckedChildren="OFF" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

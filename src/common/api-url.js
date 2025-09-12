@@ -27,11 +27,12 @@ const API_URL = {
   LOGS_PAGE: { DEFAULT: "/api/be/error-logs/paginate" },
   INVESTIGATION_PAGE: {
     DEFAULT: "/api/be/filter/paginate",
-    DELETE: "/api/be/filter/delete",
+    DELETE: "/api/be/filter/add",
     ADD: "/api/be/filter/add",
+    EDIT: "/api/be/filter/add",
   },
   MALOPS_PAGE: {
-    DEFAULT: "/api/be/alerts/paginate",
+    DEFAULT: "/api/be/filter/paginate",
   },
   EVENTS_MITTRE_PAGE: {
     DEFAULT: "/api/be/events/getEventMitre",

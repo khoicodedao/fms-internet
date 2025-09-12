@@ -18,6 +18,7 @@ export default function QueryBuilderForm({
   fields: propsFields,
 }: QueryBuilderFormProps) {
   const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
   const { mutation, contextHolder } = usePostApi(
     API_URL.INVESTIGATION_PAGE.ADD,
     true
@@ -39,8 +40,9 @@ export default function QueryBuilderForm({
     const conditions = flattenQueryToSQL(query);
     mutation.mutate(
       {
-        filter: conditions,
+        query_str: conditions,
         ...(description && { description }),
+        ...(name && { name }),
       },
       {
         onSuccess: () => {
@@ -64,7 +66,15 @@ export default function QueryBuilderForm({
   return (
     <Card className="p-4" style={{ minHeight: "calc(100vh - 300px)" }}>
       {contextHolder}
-
+      Name:
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Enter name"
+        className="border px-2 py-1 rounded w-full mb-2"
+      />
+      Description:
       <input
         type="text"
         value={description}
@@ -72,7 +82,6 @@ export default function QueryBuilderForm({
         placeholder="Enter description (optional)"
         className="border px-2 py-1 rounded w-full mb-2"
       />
-
       <QueryBuilderAntD className="p-1">
         <QueryBuilder
           // Buộc re-render khi fields thay đổi
