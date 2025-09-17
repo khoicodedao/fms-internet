@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable*/
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { ColDef } from "ag-grid-community";

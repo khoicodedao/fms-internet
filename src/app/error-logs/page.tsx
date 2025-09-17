@@ -9,6 +9,7 @@ import { useTranslation } from "next-i18next";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
 
 export default function ErrorLogs() {
   const { t } = useTranslation();

@@ -9,6 +9,8 @@ import HeaderDrawer from "./HeaderDrawer";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
+
 import { usePostApi } from "@/common/usePostApi";
 import formatDateTime from "@/common/formatDate";
 import { message, Progress, Switch } from "antd";

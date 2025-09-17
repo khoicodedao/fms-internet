@@ -1,7 +1,5 @@
 /* eslint-disable */
 "use client";
-/* eslint-disable */
-"use client";
 import React, { useState } from "react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -23,6 +21,8 @@ import formatDateTime from "@/common/formatDate";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
+
 import { usePostApi } from "@/common/usePostApi";
 import Link from "next/link";
 

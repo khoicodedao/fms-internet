@@ -1,3 +1,4 @@
+"user client";
 import React, { useState, useEffect } from "react";
 import { message, Progress, Switch } from "antd";
 import { usePostApi } from "@/common/usePostApi";

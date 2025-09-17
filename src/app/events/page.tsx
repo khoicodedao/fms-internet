@@ -7,6 +7,8 @@ import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
+
 const { TabPane } = Tabs;
 import { useTranslation } from "next-i18next";
 import AlertLevel from "@/common/alertLevel";

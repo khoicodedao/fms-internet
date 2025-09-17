@@ -24,6 +24,7 @@ import { Card, Modal, Form, Input, Button, Switch } from "antd";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
 
 export default function Investigation() {
   const { t } = useTranslation();

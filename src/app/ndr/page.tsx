@@ -10,6 +10,7 @@ import HeaderDrawer from "./HeaderDrawer";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+
 import formatDateTime from "@/common/formatDate";
 import Status from "@/common/status";
 import { Switch } from "antd";

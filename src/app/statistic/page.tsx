@@ -7,7 +7,7 @@ import API_URL from "@/common/api-url";
 import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { EyeOutlined } from "@ant-design/icons";
-
+// import DataTable from "@/components/DataTableCustom";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });

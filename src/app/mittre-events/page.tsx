@@ -6,6 +6,8 @@ import dynamic from "next/dynamic";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
+
 import API_URL from "@/common/api-url";
 import { useTranslation } from "next-i18next";
 import { useSearchParams } from "next/navigation";

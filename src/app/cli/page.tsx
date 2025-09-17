@@ -18,6 +18,8 @@ import API_URL from "@/common/api-url";
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
+// import DataTable from "@/components/DataTableCustom";
+
 import { Radio, Form } from "antd";
 import {
   ApiOutlined,
@@ -170,6 +172,7 @@ const CLIPage = () => {
     ]);
   };
   const handleSubmit = (values: any) => {
+    console.log(values);
     const payload: SOCKET_DATA = {
       type: "request",
       cmd_type: cmdType,
@@ -209,6 +212,7 @@ const CLIPage = () => {
     }
 
     if (socket) {
+      console.log(payload);
       socket.send(JSON.stringify(payload));
       success("Command sent.");
     } else {
@@ -349,76 +353,62 @@ const CLIPage = () => {
             )}
           {cmdType === "upload" && (
             <>
-              <Row gutter={24}>
-                {/* Cột Form */}
-                <Col span={8}>
-                  <Form layout="vertical">
-                    <Form.Item
-                      label="File Path"
-                      name="file_path"
-                      rules={[
-                        { required: true, message: "Please input file path" },
-                      ]}
-                    >
-                      <Input placeholder="/path/to/file" />
-                    </Form.Item>
-                    <Form.Item
-                      label="Upload URL"
-                      name="upload_url"
-                      rules={[
-                        { required: true, message: "Please input upload url" },
-                      ]}
-                    >
-                      <Input placeholder="https://upload.target" />
-                    </Form.Item>
-                  </Form>
-                </Col>
+              <Form.Item
+                label="File Path"
+                name="file_path"
+                rules={[{ required: true, message: "Please input file path" }]}
+              >
+                <Input placeholder="/path/to/file" />
+              </Form.Item>
+              <Form.Item
+                label="Upload URL"
+                name="upload_url"
+                rules={[{ required: true, message: "Please input upload url" }]}
+              >
+                <Input placeholder="https://upload.target" />
+              </Form.Item>
 
-                {/* Cột Table */}
-                <Col span={16}>
-                  <DataTable
-                    title="Files"
-                    showFilter={false}
-                    showDatepicker={false}
-                    tableHeight="400px"
-                    dataFieldName="files"
-                    apiUrl={API_URL.FLIE.DEFAULT}
-                    columns={[
-                      {
-                        headerName: "Client",
-                        field: "edr_id",
-                        width: 150,
-                      },
-                      {
-                        headerName: "File name",
-                        field: "filename",
-                        width: 250,
-                        cellRenderer: (params: any) => {
-                          const fileName = params.value;
-                          const edrId = params.data?.edr_id;
-                          const downloadUrl = `http://10.32.116.217:5000/api/files/download/${edrId}/${encodeURIComponent(
-                            fileName
-                          )}`;
-                          return (
-                            <a
-                              href={downloadUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              {fileName}
-                            </a>
-                          );
-                        },
-                      },
-                      {
-                        headerName: "Time",
-                        field: "created_at",
-                        width: 300,
-                      },
-                    ]}
-                  />
-                </Col>
-              </Row>
+              <DataTable
+                title="Files"
+                showFilter={false}
+                showDatepicker={false}
+                tableHeight="400px"
+                dataFieldName="files"
+                apiUrl={API_URL.FLIE.DEFAULT}
+                columns={[
+                  {
+                    headerName: "Client",
+                    field: "edr_id",
+                    width: 150,
+                  },
+                  {
+                    headerName: "File name",
+                    field: "filename",
+                    width: 250,
+                    cellRenderer: (params: any) => {
+                      const fileName = params.value;
+                      const edrId = params.data?.edr_id;
+                      const downloadUrl = `http://10.32.116.217:5000/api/files/download/${edrId}/${encodeURIComponent(
+                        fileName
+                      )}`;
+                      return (
+                        <a
+                          href={downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {fileName}
+                        </a>
+                      );
+                    },
+                  },
+                  {
+                    headerName: "Time",
+                    field: "created_at",
+                    width: 300,
+                  },
+                ]}
+              />
             </>
           )}
           {cmdType === "donwload" && (
