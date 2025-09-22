@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  socket_be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: socket_be
+    ports:
+      - "3002:3002"
+      - "3003:3003"
+    env_file:
+      - .env
+    volumes:
+      - ./certs:/app/certs
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    external: true

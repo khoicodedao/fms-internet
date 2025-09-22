@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+```markdown
+# 🚀 Quản lý dự án Next.js + Socket_BE + Nginx bằng Docker Compose
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Dự án này gồm 3 service tách riêng, mỗi service có `docker-compose.yml` riêng:
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+/projects
+├── nextjs/
+│ └── docker-compose.nextjs.yml
+├── socket_be/
+│ └── docker-compose.socket_be.yml
+├── nginx/
+│ └── docker-compose.nginx.yml
+├── manage.sh # Script quản lý cho Linux/macOS
+└── manage.bat # Script quản lý cho Windows CMD
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+````
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🐧 Cách chạy trên Linux / Ubuntu / macOS
 
-To learn more about Next.js, take a look at the following resources:
+### 1. Cấp quyền thực thi script
+```bash
+chmod +x manage.sh
+````
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Các lệnh sử dụng
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+./manage.sh up       # Chạy tất cả service
+./manage.sh down     # Dừng tất cả service
+./manage.sh restart  # Restart toàn bộ
+./manage.sh logs     # Xem log của nginx
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🪟 Cách chạy trên Windows (CMD)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 1. Mở Command Prompt hoặc PowerShell
+
+Chạy trong thư mục `/projects`.
+
+### 2. Các lệnh sử dụng
+
+```bat
+manage.bat up       :: Chạy tất cả service
+manage.bat down     :: Dừng tất cả service
+manage.bat restart  :: Restart toàn bộ
+manage.bat logs     :: Xem log của nginx
+```
+
+---
+
+## 🌐 Network dùng chung
+
+Các service đều join vào `appnet`. Nếu chưa tồn tại, script sẽ tự tạo:
+
+```bash
+docker network create appnet
+```
+
+---
+
+## 🔑 SSL Certificates
+
+- Chứng chỉ SSL nằm trong `nginx/certs/`
+- File config `nginx.conf` đã được mount sẵn:
+
+  - `ssl_certificate     /etc/nginx/certs/client.crt`
+  - `ssl_certificate_key /etc/nginx/certs/client.key`
+
+---
+
+## 📜 Ghi chú
+
+- `nextjs` chạy tại `http://nextjs:3000` trong network docker.
+- `socket_be` chạy tại `http://socket_be:3002` (hoặc `3003`).
+- `nginx` expose ra ngoài `80` và `443`.
+- Khi truy cập từ trình duyệt: **[https://localhost/](https://localhost/)** sẽ tới Next.js.
+
+---
+
+```
+
+```
