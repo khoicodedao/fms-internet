@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs
+    expose:
+      - "3000"
+    env_file:
+      - .env
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    external: true
