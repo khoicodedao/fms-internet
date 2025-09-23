@@ -1,0 +1,41 @@
+# ===== Node.js common =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# ===== Next.js build =====
+nextjs/.next/
+nextjs/out/
+
+# ===== Backend build =====
+socket_be/dist/
+socket_be/build/
+
+# ===== Logs =====
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# ===== Certificates & secrets =====
+**/certs/
+*.crt
+*.key
+*.pem
+
+# ===== Env files =====
+.env
+.env.local
+.env.*.local
+
+# ===== Coverage / test =====
+coverage/
+*.lcov
+
+# ===== Misc =====
+.DS_Store
+Thumbs.db
