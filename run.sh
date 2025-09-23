@@ -1,9 +1,9 @@
 #!/bin/bash
 # Script quản lý toàn bộ service bằng docker compose (cú pháp mới)
 
-NEXTJS_COMPOSE="nextjs/docker-compose.nextjs.yml"
-SOCKET_COMPOSE="socket_be/docker-compose.socket_be.yml"
-NGINX_COMPOSE="nginx/docker-compose.nginx.yml"
+NEXTJS_COMPOSE="nextjs/docker-compose.yml"
+SOCKET_COMPOSE="socket_be/docker-compose.yml"
+NGINX_COMPOSE="nginx/docker-compose.yml"
 NETWORK_NAME="appnet"
 CMD=$1   # up | down | restart | logs
 
