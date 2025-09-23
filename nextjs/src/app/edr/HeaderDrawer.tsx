@@ -1,6 +1,6 @@
-"user client";
+"use client";
 import React, { useState, useEffect } from "react";
-import { message, Progress, Switch } from "antd";
+import { message, Progress, Switch, Button } from "antd";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 import { useTranslation } from "react-i18next";
@@ -40,6 +40,31 @@ const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!selectedRow?.mac_address) return;
+    try {
+      const query = new URLSearchParams({
+        mac_address: selectedRow.mac_address,
+      }).toString();
+
+      const response = await fetch(`/api/delete_edrs?${query}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        message.success("EDR deleted successfully");
+      } else {
+        message.error("Failed to delete EDR");
+      }
+    } catch (error) {
+      console.error("Error deleting device:", error);
+      message.error("Error deleting device");
+    }
+  };
+
   useEffect(() => {
     fetchDeviceData();
   }, [selectedRow?.mac_address]);
@@ -47,8 +72,11 @@ const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
   if (loading) return null;
 
   return (
-    <div className="flex justify-between">
-      <div className="flex gap-2">
+    <div>
+      <div
+        className="flex gap-2"
+        style={{ justifyContent: "space-between", alignItems: "center" }}
+      >
         <Switch
           checked={isRemote}
           checkedChildren={t("Remote")}
@@ -68,6 +96,13 @@ const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
             );
           }}
         />
+        <Button
+          danger
+          onClick={handleDelete}
+          style={{ color: "white", background: "#ff4d4f" }}
+        >
+          {t("Delete")}
+        </Button>
       </div>
       {contextHolder}
     </div>
