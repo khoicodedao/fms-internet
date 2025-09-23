@@ -21,8 +21,9 @@ app.use(express.json());
 
 let externalSocket = null;
 let reconnectTimeout = null;
+let messageQueue = []; // hàng đợi message từ FE
 
-// Agent dùng client cert
+// Agent dùng client cert cho axios
 const httpsAgent = new https.Agent({
   cert,
   key,
@@ -30,19 +31,31 @@ const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-// 🔌 Kết nối tới WebSocket ngoài
+// ====== External WebSocket ======
+function flushQueue() {
+  while (
+    messageQueue.length > 0 &&
+    externalSocket &&
+    externalSocket.readyState === WebSocket.OPEN
+  ) {
+    externalSocket.send(messageQueue.shift());
+  }
+}
+
 function connectExternalSocket() {
   externalSocket = new WebSocket(externalServerUrl, {
     cert,
     key,
+    ca,
     rejectUnauthorized: false,
   });
 
   externalSocket.on("open", () => {
-    console.log("Connected to external websocket server");
+    console.log("✅ Connected to external websocket server");
     externalSocket.send(
       JSON.stringify({ type: "new_user", nickname: "backend" })
     );
+    flushQueue();
   });
 
   externalSocket.on("message", (data) => {
@@ -52,12 +65,12 @@ function connectExternalSocket() {
   });
 
   externalSocket.on("close", () => {
-    console.log("External websocket disconnected");
+    console.log("⚠️ External websocket disconnected");
     reconnectTimeout = setTimeout(connectExternalSocket, 3000);
   });
 
   externalSocket.on("error", (err) => {
-    console.error("External websocket error:", err);
+    console.error("❌ External websocket error:", err.message);
     if (externalSocket.readyState !== WebSocket.OPEN && !reconnectTimeout) {
       reconnectTimeout = setTimeout(connectExternalSocket, 3000);
     }
@@ -66,13 +79,13 @@ function connectExternalSocket() {
 
 connectExternalSocket();
 
-// 📦 HTTPS server cho API (port 3002)
+// ====== HTTPS API server (3002) ======
 const apiServer = https.createServer({ key, cert }, app);
 apiServer.listen(3002, () => {
   console.log("HTTPS API server running on port 3002");
 });
 
-// 🛰️ WSS WebSocket server cho frontend (port 3001)
+// ====== WSS server cho frontend (3003) ======
 const wssServer = https.createServer({ key, cert });
 const wss = new WebSocket.Server({ server: wssServer });
 
@@ -80,24 +93,25 @@ let frontendClients = [];
 
 wss.on("connection", (ws, req) => {
   console.log("Frontend client connected");
-  const parsedUrl = url.parse(req.url, true); // parse query string
+  const parsedUrl = url.parse(req.url, true);
   const token = parsedUrl.query.token;
 
-  // Nếu không có token thì từ chối kết nối
   if (!token) {
     ws.send(JSON.stringify({ type: "error", message: "Unauthorized" }));
     return ws.close();
   }
+
   frontendClients.push(ws);
 
   ws.on("message", (message) => {
     console.log("Received from FE:", message.toString());
     if (!externalSocket || externalSocket.readyState !== WebSocket.OPEN) {
-      console.log("External socket not connected, reconnecting...");
-      connectExternalSocket();
+      console.log("External socket not connected → queueing message");
+      messageQueue.push(message);
+      if (!reconnectTimeout) connectExternalSocket();
       ws.send(
         JSON.stringify({
-          type: "error",
+          type: "info",
           message: "Đang kết nối lại tới server ngoài...",
         })
       );
@@ -124,31 +138,27 @@ wssServer.listen(3003, () => {
   console.log("Secure WebSocket (wss) server running on port 3003");
 });
 
-// ✅ API routes
+// ====== API routes ======
 app.post("/api/edrs", async (req, res) => {
   try {
     const macAddress = req.body?.mac_address;
-    console.log("macAddress", macAddress);
     if (!macAddress) {
       return res.status(400).json({ error: "Missing mac_address" });
     }
 
-    // Lấy certificate từ server
     const certResponse = await axios.post(
       `${certServerUrl}/get-certificate`,
       { common_name: macAddress },
-      { httpsAgent } // agent có client cert để truy cập server
+      { httpsAgent }
     );
-    console.log("certResponse", certResponse.data);
     const { certificate, private_key } = certResponse.data;
 
-    // Thêm vào body trước khi gửi
     const bodyWithCert = {
       ...req.body,
       crt: certificate,
       key: private_key,
     };
-    console.log("bodyWithCert", bodyWithCert);
+
     const response = await axios.post(
       `${socketServerUrl}/api/edrs`,
       bodyWithCert,
@@ -193,12 +203,10 @@ app.post("/api/edrs/get", async (req, res) => {
 app.post("/api/ndrs", async (req, res) => {
   try {
     const macAddress = req.body?.mac_address;
-    const columns = req.body;
     if (!macAddress) {
       return res.status(400).json({ error: "Missing mac_address or columns" });
     }
 
-    // Lấy certificate từ server
     const certResponse = await axios.post(
       `${certServerUrl}/get-certificate`,
       { common_name: macAddress },
@@ -207,10 +215,11 @@ app.post("/api/ndrs", async (req, res) => {
 
     const { certificate, private_key } = certResponse.data;
     const bodyWithCert = {
-      ...columns,
+      ...req.body,
       crt: certificate,
       key: private_key,
     };
+
     const response = await axios.post(
       `${socketServerUrl}/api/ndrs`,
       bodyWithCert,
@@ -228,7 +237,6 @@ app.post("/api/ndrs", async (req, res) => {
 });
 
 app.post("/api/ndrs/get", async (req, res) => {
-  console.log("req.body", req.body);
   try {
     const response = await axios.post(
       `${socketServerUrl}/api/ndrs/get`,

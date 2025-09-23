@@ -95,8 +95,11 @@ const CLIPage = () => {
   }, []);
 
   const connectToWebSocket = () => {
-    //IP của server web không phải server ngoài, connect tới socket server của web
-    const ws = new WebSocket("wss://10.32.116.195:3003?token=" + token);
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = window.location.hostname; // ví dụ: myapp.local hoặc example.com
+    const wsUrl = `${protocol}//${host}:3003?token=${token}`;
+
+    const ws = new WebSocket(wsUrl);
     setSocket(ws);
 
     ws.onopen = () => {
