@@ -35,6 +35,7 @@ export default function Events() {
 
   // map tên tab <-> key
   const TAB_KEY_BY_PARAM: Record<string, string> = {
+    all: "0",
     socket: "1",
     registry: "2",
     file: "3",
@@ -81,7 +82,7 @@ export default function Events() {
   // Lấy key từ URL (?tab=socket | registry | 1 | 2 ...)
   const initialActiveKey = useMemo(() => {
     const tabParam = (searchParams.get("tab") || "").toLowerCase();
-    if (!tabParam) return "1";
+    if (!tabParam) return "0";
     // hỗ trợ cả tên (socket) lẫn số ("1")
     return (
       TAB_KEY_BY_PARAM[tabParam] ??
