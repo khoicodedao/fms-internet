@@ -55,7 +55,7 @@ export default function Alerts() {
   return (
     <DataTable
       tableHeight=" calc(-273px + 100vh)"
-      title={t("alertManagement")}
+      // title={t("alertManagement")}
       dataFieldName="events"
       apiUrl={`${API_URL.EVENTS_MITTRE_PAGE.DEFAULT}`}
       columns={columns}

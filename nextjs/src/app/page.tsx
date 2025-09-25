@@ -313,7 +313,7 @@ export default function Home() {
   const onBarClick = (params: any) => {
     if (params?.componentType !== "series") return;
     const label = String(params.name ?? "");
-    router.push(`/mittre-events?tatic=${encodeURIComponent(label)}`);
+    router.push(`/events?tatic=${encodeURIComponent(label)}&tab=mittre`);
     // Nếu muốn thay lịch sử:
     // router.replace(`/mittre-events?tatic=${encodeURIComponent(label)}`);
   };

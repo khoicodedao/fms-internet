@@ -8,7 +8,7 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
 // import DataTable from "@/components/DataTableCustom";
-
+import MittreEvent from "@/app/mittre-events/page";
 const { TabPane } = Tabs;
 import { useTranslation } from "next-i18next";
 import AlertLevel from "@/common/alertLevel";
@@ -22,6 +22,7 @@ import {
   ProfileOutlined,
   WifiOutlined,
   UsbOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 // App Router hooks
@@ -43,6 +44,7 @@ export default function Events() {
     flow: "5",
     http: "6",
     fileusb: "7",
+    mittre: "8",
   };
   const TAB_PARAM_BY_KEY: Record<string, string> = Object.fromEntries(
     Object.entries(TAB_KEY_BY_PARAM).map(([k, v]) => [v, k])
@@ -366,6 +368,20 @@ export default function Events() {
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
           columns={columns.map((col) => ({ ...col, tableTitle: "file" }))}
         />
+      </TabPane>
+      <TabPane
+        tab={
+          <span>
+            <SettingOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />{" "}
+            Mittre
+          </span>
+        }
+        key="8"
+      >
+        <MittreEvent />
       </TabPane>
     </Tabs>
   );

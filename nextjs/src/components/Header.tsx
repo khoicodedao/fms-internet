@@ -245,7 +245,7 @@ export default function Header() {
               },
             },
             {
-              key: "8",
+              key: "7",
               label: t("Rules"),
               icon: (
                 <SearchOutlined
@@ -261,19 +261,18 @@ export default function Header() {
 
             {
               key: "8",
-              label: t("MITRE events"),
+              label: t("Statistic"),
               icon: (
-                <SecurityScanOutlined
+                <LineChartOutlined
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
                 />
               ),
               onClick: () => {
-                router.push("/mittre-events");
+                router.push("/statistic");
                 setDrawerOpen(false);
               },
             },
-
             {
               key: "9",
               label: t("Logs"),
@@ -285,21 +284,6 @@ export default function Header() {
               ),
               onClick: () => {
                 router.push("/error-logs");
-                setDrawerOpen(false);
-              },
-            },
-
-            {
-              key: "10",
-              label: t("Statistic"),
-              icon: (
-                <LineChartOutlined
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                />
-              ),
-              onClick: () => {
-                router.push("/statistic");
                 setDrawerOpen(false);
               },
             },
