@@ -27,9 +27,9 @@ const API_URL = {
   LOGS_PAGE: { DEFAULT: "/api/be/error-logs/paginate" },
   INVESTIGATION_PAGE: {
     DEFAULT: "/api/be/filter/paginate",
-    DELETE: "/api/be/filter/add",
+    DELETE: "/api/be/filter/delete",
     ADD: "/api/be/filter/add",
-    EDIT: "/api/be/filter/add",
+    EDIT: "/api/be/filter/edit",
   },
   MALOPS_PAGE: {
     DEFAULT: "/api/be/filter/paginate",
