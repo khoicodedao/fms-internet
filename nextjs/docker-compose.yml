@@ -5,11 +5,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ENV_FILE: ${ENV_FILE} # tham số build, truyền từ .env ngoài
     container_name: nextjs
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     env_file:
-      - .env
+      - ${ENV_FILE} # load file env vào container
     networks:
       - appnet
 

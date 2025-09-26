@@ -5,12 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        ENV_FILE: ${ENV_FILE:-.env.test} # default là .env.test nếu không truyền
     container_name: socket_be
     ports:
       - "3002:3002"
       - "3003:3003"
     env_file:
-      - .env
+      - ${ENV_FILE} # load file env vào container
     volumes:
       - ./certs:/app/certs
     networks:
