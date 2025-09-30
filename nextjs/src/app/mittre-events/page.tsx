@@ -46,9 +46,9 @@ export default function Alerts() {
     },
     { headerName: t("Computer name"), field: "computer_name" },
     { headerName: t("object"), field: "object", width: 100 },
-    { headerName: t("action"), field: "action", width: 100 },
+    { headerName: t("action"), field: "action", width: 200 },
     { headerName: t("Alert level"), field: "alert_level_id", width: 100 },
-    { headerName: t("alert_type"), field: "alert_type", width: 100 },
+    { headerName: t("alert_type"), field: "alert_type", width: 200 },
     { headerName: t("mitre_tatic"), field: "mitre_tatic", width: 300 },
     { headerName: t("mitre_technique"), field: "mitre_technique", width: 500 },
   ];

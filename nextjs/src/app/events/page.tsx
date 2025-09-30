@@ -121,7 +121,7 @@ export default function Events() {
   };
 
   const columns: ColDef<RowData>[] = [
-    { headerName: t("mac"), field: "mac", width: 170 },
+    { headerName: t("mac"), field: "mac", width: 200 },
     { headerName: t("ip"), field: "ip", width: 150 },
     { headerName: t("computerName"), field: "computer_name" },
     { headerName: t("alertSource"), field: "alert_source", width: 120 },

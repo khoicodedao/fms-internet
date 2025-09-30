@@ -79,12 +79,13 @@ export default function Alerts() {
   // columns cho bảng thứ 2 (ví dụ demo)
   const columns2: ColDef<any>[] = [
     { headerName: t("mac"), field: "mac", width: 200 },
+    { headerName: t("ip"), field: "fields.src_ip", width: 200 },
+
     { headerName: "Action", field: "action", width: 200 },
     { headerName: "Signature", field: "fields.signature", width: 400 },
     { headerName: t("Created At"), field: "created_at", width: 250 },
     { headerName: t("Severity"), field: "severity", width: 250 },
   ];
-
   return (
     <Tabs defaultActiveKey="1" type="card" tabPosition="left">
       <TabPane tab={t("EDR")} key="1">

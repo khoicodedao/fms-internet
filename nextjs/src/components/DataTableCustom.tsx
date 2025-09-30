@@ -126,7 +126,11 @@ export default function DataTable({
       fetchData();
     }, 1000);
   }, [reload]);
-
+  useEffect(() => {
+    if (gridRef.current?.api) {
+      gridRef.current.api.sizeColumnsToFit();
+    }
+  }, [data]);
   // Sự kiện khi đổi trang
   const onPaginationChange = (page: number, pageSize: number) => {
     setPagination({ current: page, pageSize });
