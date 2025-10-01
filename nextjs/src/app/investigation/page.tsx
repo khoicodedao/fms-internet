@@ -11,6 +11,7 @@ import {
   GlobalOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "next-i18next";
 import API_URL from "@/common/api-url";
@@ -19,12 +20,11 @@ import formatDateTime from "@/common/formatDate";
 import { usePostApi } from "@/common/usePostApi";
 import QueryFlowBuilder from "./query-builder/query-flow-builder";
 import Link from "next/link";
-import { Card, Modal, Form, Input, Button, Switch } from "antd";
+import { Card, Modal, Form, Input, Button, Switch, Table } from "antd";
 
 const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
   ssr: false,
 });
-// import DataTable from "@/components/DataTableCustom";
 
 export default function Investigation() {
   const { t } = useTranslation();
@@ -125,15 +125,68 @@ export default function Investigation() {
   ];
 
   const [reload, setReload] = useState(false);
+  const [isViewModal, setIsViewModal] = useState(false);
+  const [viewData, setViewData] = useState<any>(null);
   const [fields, setFields] = useState<any[]>(items[0].fields || []);
   const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
     usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
 
   const { mutation: mutationEdit, contextHolder: contextHolderEdit } =
     usePostApi(API_URL.INVESTIGATION_PAGE.EDIT, true);
+  const { mutation: mutationView } = usePostApi(
+    API_URL.INVESTIGATION_PAGE.PREVIEW,
+    false
+  );
 
   const onDelete = (id: string) => {
     mutationDelete.mutate({ id }, { onSuccess: () => setReload(!reload) });
+  };
+
+  const onView = async (query: string) => {
+    try {
+      mutationView.mutate(
+        { filter: query },
+        {
+          onSuccess: (response: any) => {
+            if (response?.data) {
+              setViewData(response.data); // Gán dữ liệu trả về vào state
+              console.log(response.data);
+              setIsViewModal(true); // Mở modal
+            }
+          },
+          onError: (error: any) => {
+            console.error("API call failed:", error);
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  // Hàm để render sự kiện theo từng nhóm MAC address
+  const renderEvents = (events: any[]) => {
+    const columns = [
+      {
+        title: "Computer Name",
+        dataIndex: "computer_name",
+        key: "computer_name",
+      },
+      { title: "Alert Time", dataIndex: "alert_time", key: "alert_time" },
+      { title: "IP", dataIndex: "ip", key: "ip" },
+      { title: "Action", dataIndex: "action", key: "action" },
+      { title: "Event Time", dataIndex: "event_time", key: "event_time" },
+      { title: "Object", dataIndex: "object", key: "object" },
+    ];
+
+    return (
+      <Table
+        columns={columns}
+        dataSource={events}
+        pagination={false}
+        rowKey={(record) => record.event_time} // Tạo key duy nhất cho mỗi dòng
+      />
+    );
   };
 
   // Modal Edit
@@ -175,11 +228,18 @@ export default function Investigation() {
   const columns = [
     {
       headerName: t("Function"),
-      width: 120,
+      width: 240,
       field: "id",
       cellRenderer: (params: any) => {
         return (
           <div>
+            <EyeOutlined
+              className="mr-9"
+              style={{ color: "green", cursor: "pointer" }} // Màu xanh cho Eye icon
+              onClick={() => onView(params.data.query_str)} // onView thay thế cho hành động xem
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
             <EditOutlined
               className="mr-9"
               style={{ color: "blue", cursor: "pointer" }}
@@ -280,7 +340,6 @@ export default function Investigation() {
       </div>
 
       {/* Modal Edit */}
-      {/* Modal Edit */}
       <Modal
         title="Edit Query Flow"
         open={isModalOpen}
@@ -326,6 +385,42 @@ export default function Investigation() {
             <Switch checkedChildren="ON" unCheckedChildren="OFF" />
           </Form.Item>
         </Form>
+      </Modal>
+      {/* Modal view */}
+      <Modal
+        width={900}
+        title="View Details"
+        visible={isViewModal}
+        onCancel={() => setIsViewModal(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsViewModal(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {/* Check if viewData is available */}
+        {viewData ? (
+          <div>
+            {/* Iterate over each MAC address and its events */}
+            {viewData.macs.map((mac: any, index: number) => (
+              <div key={index}>
+                <p>
+                  <strong>MAC Address:</strong> {mac.mac_address}
+                </p>
+                <p>
+                  <strong>Total Events in Range:</strong>{" "}
+                  {mac.total_events_in_range}
+                </p>
+                {/* Render events for each MAC address */}
+                <h3>Events:</h3>
+                {renderEvents(mac.events)}{" "}
+                {/* Render sự kiện của mỗi MAC address */}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>Loading...</p>
+        )}
       </Modal>
     </div>
   );

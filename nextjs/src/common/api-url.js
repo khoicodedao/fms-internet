@@ -30,6 +30,7 @@ const API_URL = {
     DELETE: "/api/be/filter/delete",
     ADD: "/api/be/filter/add",
     EDIT: "/api/be/filter/edit",
+    PREVIEW: "/api/be/filter/testFilter",
   },
   MALOPS_PAGE: {
     DEFAULT: "/api/be/filter/paginate",
