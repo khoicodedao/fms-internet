@@ -42,6 +42,9 @@ type SOCKET_DATA = {
 const token = Cookies.get("auth_token");
 // const  = process.env.SOCKET_SERVER_URL;
 const CLIPage = () => {
+  // Lấy từ env (client-side phải prefix NEXT_PUBLIC_)
+  const DEFAULT_UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+
   const { TabPane } = Tabs;
   const [cmdType, setCmdType] = useState<
     "cmd" | "upload" | "donwload" | "excute"
@@ -98,6 +101,7 @@ const CLIPage = () => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.hostname; // ví dụ: myapp.local hoặc example.com
     const wsUrl = `${protocol}//${host}:3003?token=${token}`;
+    // URL upload dùng mặc định; có thể override bằng biến môi trường
 
     const ws = new WebSocket(wsUrl);
     setSocket(ws);
@@ -224,26 +228,65 @@ const CLIPage = () => {
   };
 
   const handleCommandInput = (terminalInput: string) => {
-    setCurrentInput(terminalInput);
-    setTerminalLineData([
-      ...terminalLineData,
+    const raw = terminalInput.trim();
+    if (!raw) return;
+
+    setCurrentInput(raw);
+    setTerminalLineData((prev) => [
+      ...prev,
       <TerminalOutput
-        key={terminalInput}
-      >{`${dir}${terminalInput}`}</TerminalOutput>,
+        key={`cmd-${Date.now()}`}
+      >{`${dir}${raw}`}</TerminalOutput>,
     ]);
 
-    if (socket) {
+    if (!socket) {
+      error("WebSocket is not open");
+      return;
+    }
+    if (!selectedMac) {
+      error("Chưa chọn máy đích ở danh sách bên trái.");
+      return;
+    }
+
+    // --- LỆNH UPLOAD TRONG CMD ---
+    // Cú pháp: upload <đường_dẫn_tệp>
+    const uploadMatch = raw.match(/^upload\s+(.+)$/i);
+    if (uploadMatch) {
+      const filePath = uploadMatch[1].trim();
+      if (!filePath) {
+        error("Vui lòng nhập đường dẫn tệp sau lệnh upload.");
+        return;
+      }
+
       const payload: SOCKET_DATA = {
         type: "request",
-        cmd_type: cmdType,
+        cmd_type: "upload",
         from_user: "server",
         to_user: selectedMac || "",
-        data: { message: terminalInput, dir: dir, type: cmdType },
+        data: {
+          file_path: filePath,
+          upload_url: DEFAULT_UPLOAD_URL,
+          type: "upload",
+        },
       };
+
       socket.send(JSON.stringify(payload));
-    } else {
-      error("WebSocket is not open");
+      messageApi.open({
+        type: "info",
+        content: `Đang upload: ${filePath} → ${DEFAULT_UPLOAD_URL}`,
+      });
+      return;
     }
+
+    // --- CÁC LỆNH CMD THƯỜNG ---
+    const payload: SOCKET_DATA = {
+      type: "request",
+      cmd_type: "cmd",
+      from_user: "server",
+      to_user: selectedMac || "",
+      data: { message: raw, dir: dir, type: "cmd" },
+    };
+    socket.send(JSON.stringify(payload));
   };
 
   return (
@@ -337,7 +380,7 @@ const CLIPage = () => {
               value={cmdType}
             >
               <Radio value="cmd">CMD</Radio>
-              <Radio value="upload">Upload</Radio>
+              {/* <Radio value="upload">Upload</Radio> */}
               <Radio value="donwload">Download</Radio>
               {/* <Radio value="excute">Execute</Radio> */}
             </Radio.Group>
