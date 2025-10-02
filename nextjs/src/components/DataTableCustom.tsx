@@ -225,7 +225,15 @@ export default function DataTable({
             >
               {t("export_csv")}
             </Button>
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar
+              // suggestions={[
+              //   "log.level: error",
+              //   "@timestamp >= now-1h",
+              //   'service.name: "checkout"',
+              //   'message: "timeout" OR message: "failed"',
+              // ]}
+              onSearch={handleSearch}
+            />
           </div>
         )}
 
