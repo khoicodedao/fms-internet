@@ -339,7 +339,7 @@ const CLIPage = () => {
               <Radio value="cmd">CMD</Radio>
               <Radio value="upload">Upload</Radio>
               <Radio value="donwload">Download</Radio>
-              <Radio value="excute">Execute</Radio>
+              {/* <Radio value="excute">Execute</Radio> */}
             </Radio.Group>
           </Form.Item>
 
