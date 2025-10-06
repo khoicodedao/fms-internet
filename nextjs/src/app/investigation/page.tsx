@@ -130,14 +130,12 @@ export default function Investigation() {
   const [fields, setFields] = useState<any[]>(items[0].fields || []);
   const { mutation: mutationDelete, contextHolder: contextHolderDelete } =
     usePostApi(API_URL.INVESTIGATION_PAGE.DELETE, true);
-
   const { mutation: mutationEdit, contextHolder: contextHolderEdit } =
     usePostApi(API_URL.INVESTIGATION_PAGE.EDIT, true);
   const { mutation: mutationView } = usePostApi(
     API_URL.INVESTIGATION_PAGE.PREVIEW,
     false
   );
-
   const onDelete = (id: string) => {
     mutationDelete.mutate({ id }, { onSuccess: () => setReload(!reload) });
   };
@@ -262,7 +260,7 @@ export default function Investigation() {
       field: "description",
       width: 200,
       cellRenderer: (params: any) => (
-        <Link href={`/malops-management/detail/${params.data.id}`}>
+        <Link href={`/investigation/${params.data.filter_id}`}>
           {params.value}
         </Link>
       ),

@@ -31,6 +31,7 @@ const API_URL = {
     ADD: "/api/be/filter/add",
     EDIT: "/api/be/filter/edit",
     PREVIEW: "/api/be/filter/testFilter",
+    EVENTS: "/api/be/filter/getEventFilter",
   },
   MALOPS_PAGE: {
     DEFAULT: "/api/be/filter/paginate",
