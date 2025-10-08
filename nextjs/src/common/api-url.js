@@ -49,5 +49,10 @@ const API_URL = {
   STATISTIC_PAGE: {
     DEFAULT: "/api/be/statistics/summary",
   },
+  USER_PAGE: {
+    DEFAULT: "/api/be/users/paginate",
+    ADD: "/api/be/users/add",
+    DELETE: "/api/be/users/delete",
+  },
 };
 export default API_URL;
