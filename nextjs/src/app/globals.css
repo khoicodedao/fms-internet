@@ -637,3 +637,13 @@ section::-webkit-scrollbar {
 #cli-page .ant-tabs-tab-active {
   background-color: white !important;
 }
+
+#process-profile .ant-tabs-tab-active {
+  background-color: unset !important;
+}
+
+#machine-profile .ant-col {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
