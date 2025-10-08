@@ -141,7 +141,7 @@ export default function UsersManagement() {
       ),
     },
     {
-      headerName: "Or",
+      headerName: "Units",
       field: "organizations",
       flex: 1.3,
       cellRenderer: (params: any) => {

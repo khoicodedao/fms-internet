@@ -22,6 +22,7 @@ import {
   SecurityScanOutlined,
   AreaChartOutlined,
   LineChartOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
@@ -66,6 +67,17 @@ export default function Header() {
         {
           key: "1",
           icon: (
+            <UsergroupAddOutlined
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
+          ),
+          label: "Manage Users",
+          onClick: () => router.push("/users"),
+        },
+        {
+          key: "2",
+          icon: (
             <KeyOutlined
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
@@ -77,7 +89,7 @@ export default function Header() {
           },
         },
         {
-          key: "2",
+          key: "3",
           icon: (
             <LogoutOutlined
               onPointerEnterCapture={undefined}
