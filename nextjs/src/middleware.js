@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-
+import { jwtDecode } from "jwt-decode";
 export async function middleware(request) {
   const url = request.nextUrl.clone();
-  const authToken = request.cookies.get("auth_token")?.value;
+  const authToken = request.cookies.get("auth_token")?.value || "";
 
   // ✅ Cho phép Next xử lý các route nội bộ hoặc API proxy tới backend
   if (
@@ -23,7 +23,14 @@ export async function middleware(request) {
   if (!authToken) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-
+  if (url.pathname === "/users" && authToken) {
+    const payload = jwtDecode(authToken);
+    const role = payload?.role;
+    console.log(role);
+    if (role == "user") {
+      return NextResponse.redirect(new URL("/not-found", request.url));
+    }
+  }
   return NextResponse.next();
 }
 

@@ -1,6 +1,6 @@
 /*eslint-disable*/
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 // import DataTable from "@/components/DataTableCustom";
 import API_URL from "@/common/api-url";
 import dynamic from "next/dynamic";
@@ -13,7 +13,7 @@ const DataTable = dynamic(() => import("@/components/DataTableCustom"), {
 
 import { usePostApi } from "@/common/usePostApi";
 import formatDateTime from "@/common/formatDate";
-import { message, Progress, Switch } from "antd";
+import { Progress } from "antd";
 export default function Edr() {
   const { mutation, contextHolder } = usePostApi(
     API_URL.EDR_PAGE.SOCKET_EDR,

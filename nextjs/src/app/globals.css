@@ -647,3 +647,6 @@ section::-webkit-scrollbar {
   justify-content: center !important;
   align-items: center !important;
 }
+.hidden {
+  display: none !important;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable */
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import type { ColDef } from "ag-grid-community";
 import { useTranslation } from "react-i18next";
@@ -32,11 +32,19 @@ import Status from "@/common/status";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 
+type ApiUnit = {
+  unit_id: string;
+  unit_name: string;
+  full_name: string;
+  parent_unit_id: string | null;
+  location: string;
+};
+
 type UserRow = {
   _id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "USER";
+  role: "admin" | "user" | "superAdmin";
   organizations: string[];
   status: "ACTIVE" | "INACTIVE";
   last_login: string; // ISO string
@@ -46,20 +54,44 @@ type UserRow = {
 export default function UsersManagement() {
   const { t } = useTranslation();
 
-  // Nếu sau này muốn bấm toggle gọi API thật:
+  // === API hooks ===
+  const { mutation: mutationUnit } = usePostApi(API_URL.UNIT.LIST, false);
   const { mutation, contextHolder } = usePostApi(
     "/api/users/toggle-active",
     false
   );
+  // NEW: mutation tạo user
+  const { mutation: mutationCreateUser } = usePostApi(
+    "/api/be/users/add",
+    false
+  );
+
+  const [units, setUnits] = useState<ApiUnit[]>([] as ApiUnit[]);
+
+  useEffect(() => {
+    mutationUnit.mutate(
+      {},
+      {
+        onSuccess: (res) => {
+          const unitsRes: ApiUnit[] = res.data?.units || [];
+          setUnits(unitsRes);
+        },
+        onError: (error) => {
+          console.error("Lỗi khi gọi API:", error);
+        },
+      }
+    );
+  }, []);
 
   // =====================
   // State & Form
   // =====================
-
   const [viewing, setViewing] = React.useState<UserRow | null>(null);
   const [editing, setEditing] = React.useState<UserRow | null>(null);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const [form] = Form.useForm<UserRow>();
+  const [form] = Form.useForm<
+    UserRow & { user_name: string; password: string }
+  >();
 
   const openCreate = () => {
     form.resetFields();
@@ -68,9 +100,11 @@ export default function UsersManagement() {
 
   const openEdit = (record: UserRow) => {
     setEditing(record);
+    // map status switch & role giữ nguyên UI (ALLCAPS)
     form.setFieldsValue({
       ...record,
-    });
+      // organizations giữ nguyên dạng string[]
+    } as any);
   };
 
   const handleDelete = (id: string) => {
@@ -79,7 +113,6 @@ export default function UsersManagement() {
 
   const handleToggleActive = (row: UserRow, checked: boolean) => {
     const newStatus: UserRow["status"] = checked ? "ACTIVE" : "INACTIVE";
-
     // Demo gọi mutation giả
     mutation.mutate({ userId: row._id, active: checked });
   };
@@ -90,18 +123,52 @@ export default function UsersManagement() {
   const onSubmit = async () => {
     try {
       const values = await form.validateFields();
+
       if (editing) {
+        // TODO: gọi API cập nhật nếu cần
         setEditing(null);
         message.success("Cập nhật người dùng thành công");
-      } else {
-        // Create
-
-        setIsCreateOpen(false);
-        message.success("Tạo người dùng thành công");
+        form.resetFields();
+        return;
       }
+
+      // Create user
+      // Map fields theo body yêu cầu:
+      // - role gửi lowercase user|admin|super_admin
+      // - unit_code gửi CHUỖI dạng mảng: "['A','B']"
+      const roleLower =
+        (values.role || "user").toString().toLowerCase() === "superAdmin"
+          ? "superAdmin"
+          : (values.role || "user").toString().toLowerCase();
+
+      const unitArray: string[] = (values.organizations ||
+        []) as unknown as string[];
+      // tạo chuỗi dạng "['A','B']"
+      const unitCodeString = `[${unitArray.map((c) => `'${c}'`).join(",")}]`;
+
+      const payload = {
+        user_name: (values as any).user_name, // lấy từ form tạo user
+        role: roleLower,
+        password: (values as any).password,
+        unit_code: unitCodeString,
+      };
+
+      await new Promise<void>((resolve, reject) => {
+        mutationCreateUser.mutate(payload as any, {
+          onSuccess: () => resolve(),
+          onError: (e: any) => reject(e),
+        });
+      });
+
+      message.success("Tạo người dùng thành công");
+      setIsCreateOpen(false);
       form.resetFields();
-    } catch {
-      // validate fail - do nothing
+    } catch (err: any) {
+      if (err?.errorFields) {
+        // validate fail
+        return;
+      }
+      message.error(err?.message || "Tạo người dùng thất bại");
     }
   };
 
@@ -126,12 +193,12 @@ export default function UsersManagement() {
       headerName: "Role",
       field: "role",
       sortable: true,
-      width: 120,
+      width: 150,
       valueGetter: (p) => p.data?.role,
       cellRenderer: (params: any) => (
         <span
           className={
-            params.value === "ADMIN"
+            params.value === "ADMIN" || params.value === "SUPER_ADMIN"
               ? "text-red-600 font-medium"
               : "text-slate-700"
           }
@@ -233,9 +300,16 @@ export default function UsersManagement() {
     },
   ];
 
+  // Options đơn vị từ API: dùng unit_id làm value (khớp unit_code mẫu); hiển thị tên + mã
+  const unitOptions = units.map((u) => ({
+    label: `${u.unit_name} (${u.unit_id})`,
+    value: u.unit_id,
+  }));
+
   return (
     <div className="flex flex-col gap-2">
       {contextHolder}
+
       {/* Header */}
       <div className="flex items-center justify-between mt-4">
         <Button
@@ -267,9 +341,7 @@ export default function UsersManagement() {
             <div>
               <b>Họ tên:</b> {viewing.name}
             </div>
-            <div>
-              <b>Email:</b> {viewing.email}
-            </div>
+
             <div>
               <b>Vai trò:</b> {viewing.role}
             </div>
@@ -277,18 +349,12 @@ export default function UsersManagement() {
               <b>Đơn vị:</b> {viewing.organizations.join(", ")}
             </div>
             <div>
-              <b>Trạng thái:</b> {viewing.status}
-            </div>
-            <div>
-              <b>Lần đăng nhập gần nhất:</b>{" "}
-              {formatDateTime({ value: viewing.last_login })}
-            </div>
-            <div>
               <b>Ngày tạo:</b> {formatDateTime({ value: viewing.created_at })}
             </div>
           </Space>
         )}
       </Modal>
+
       <DataTable
         tableHeight="calc(-330px + 100vh)"
         title={t("Users")}
@@ -297,6 +363,7 @@ export default function UsersManagement() {
         columns={columns}
         showDatepicker={false}
       />
+
       {/* Create / Edit Modal (dùng chung) */}
       <Modal
         open={isCreateOpen || !!editing}
@@ -313,11 +380,34 @@ export default function UsersManagement() {
           layout="vertical"
           form={form}
           initialValues={{
-            role: "USER",
+            role: "user",
             organizations: [],
             status: "ACTIVE",
           }}
         >
+          {/* Chỉ hiển thị các field bắt buộc của API khi tạo mới */}
+          {!editing && (
+            <>
+              <Form.Item
+                label="User name"
+                name="user_name"
+                rules={[{ required: true, message: "Vui lòng nhập user name" }]}
+              >
+                <Input placeholder="VD: va1" />
+              </Form.Item>
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Vui lòng nhập mật khẩu" },
+                  { min: 8, message: "Mật khẩu tối thiểu 8 ký tự" },
+                ]}
+              >
+                <Input.Password placeholder="VD: Abc@1234567" />
+              </Form.Item>
+            </>
+          )}
+
           <Form.Item
             label="Họ tên"
             name="name"
@@ -326,7 +416,7 @@ export default function UsersManagement() {
             <Input placeholder="VD: Nguyễn Văn A" />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             label="Email"
             name="email"
             rules={[
@@ -335,34 +425,25 @@ export default function UsersManagement() {
             ]}
           >
             <Input placeholder="VD: a.nguyen@example.com" />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item label="Vai trò" name="role" rules={[{ required: true }]}>
             <Select
               options={[
-                { label: "ADMIN", value: "ADMIN" },
-                { label: "USER", value: "USER" },
+                { label: "admin", value: "admin" },
+                { label: "user", value: "user" },
+                { label: "superAdmin", value: "superAdmin" }, // NEW
               ]}
             />
           </Form.Item>
 
+          {/* Đơn vị: lấy danh sách từ units, multiple */}
           <Form.Item label="Đơn vị" name="organizations">
             <Select
-              mode="tags"
-              tokenSeparators={[","]}
-              placeholder="Nhập tên đơn vị và Enter (đa lựa chọn)"
-            />
-          </Form.Item>
-
-          <Form.Item label="Trạng thái" name="status" valuePropName="checked">
-            {/* Map checked ↔ ACTIVE */}
-            <AntSwitch
-              checkedChildren="ACTIVE"
-              unCheckedChildren="INACTIVE"
-              onChange={(checked) =>
-                form.setFieldsValue({ status: checked ? "ACTIVE" : "INACTIVE" })
-              }
-              checked={form.getFieldValue("status") !== "INACTIVE"}
+              mode="multiple"
+              allowClear
+              options={unitOptions}
+              placeholder="Chọn đơn vị (đa lựa chọn)"
             />
           </Form.Item>
         </Form>

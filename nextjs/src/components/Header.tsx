@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link"; // Import Link from Next.js
-import { Divider } from "antd";
+import { Divider, message } from "antd";
 import UnitTree from "./UnitTree";
 import {
   MenuOutlined,
@@ -27,9 +27,11 @@ import {
 import { Layout, Drawer, Button, Dropdown, Menu, Breadcrumb } from "antd";
 import logo from "@/assets/images/logo.png";
 import { useTranslation } from "react-i18next";
+import { readRoleFromCookieNonSecure } from "@/common/client-role";
 const { Header: AntHeader } = Layout;
 
 export default function Header() {
+  const role = readRoleFromCookieNonSecure();
   const { t, i18n } = useTranslation(); // multi-language support
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
   const handleLanguageChange = (language: string) => {
@@ -50,7 +52,15 @@ export default function Header() {
       })) || []),
     ];
   };
-
+  const handleLogout = async () => {
+    try {
+      document.cookie = "auth_token=; Max-Age=0; path=/; SameSite=Lax";
+      message.success("Đã đăng xuất");
+      router.replace("/login"); // về trang login
+    } catch {
+      message.error("Đăng xuất thất bại");
+    }
+  };
   // Custom breadcrumb item renderer to use Next.js Link
   const itemRender = (route: any, params: any, routes: any[]) => {
     const last = routes.indexOf(route) === routes.length - 1;
@@ -65,6 +75,7 @@ export default function Header() {
     <Menu
       items={[
         {
+          className: role == "user" ? "hidden" : "",
           key: "1",
           icon: (
             <UsergroupAddOutlined
@@ -97,9 +108,7 @@ export default function Header() {
             />
           ),
           label: t("logout"),
-          onClick: () => {
-            /* handle logout */
-          },
+          onClick: handleLogout,
         },
       ]}
     />

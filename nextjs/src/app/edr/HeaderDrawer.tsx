@@ -4,6 +4,7 @@ import { message, Progress, Switch, Button } from "antd";
 import { usePostApi } from "@/common/usePostApi";
 import API_URL from "@/common/api-url";
 import { useTranslation } from "react-i18next";
+import { readRoleFromCookieNonSecure } from "@/common/client-role";
 
 const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
     API_URL.EDR_PAGE.SOCKET_EDR,
     false
   );
+  const role = readRoleFromCookieNonSecure();
 
   const fetchDeviceData = async () => {
     if (!selectedRow?.mac_address) return;
@@ -97,6 +99,7 @@ const HeaderDrawer = ({ selectedRow }: { selectedRow: any }) => {
           }}
         />
         <Button
+          className={role == "user" ? "hidden" : ""}
           danger
           onClick={handleDelete}
           style={{ color: "white", background: "#ff4d4f" }}
