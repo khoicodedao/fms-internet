@@ -487,6 +487,7 @@ export default function Home() {
                   onPointerLeaveCapture={undefined}
                 />
               ),
+              url: "/alerts",
             },
             {
               title: "Device",
@@ -499,6 +500,7 @@ export default function Home() {
                   onPointerLeaveCapture={undefined}
                 />
               ),
+              url: "/edr",
             },
 
             {
@@ -564,7 +566,7 @@ export default function Home() {
                   {item.icon}
                   <Link
                     style={{ color: "var(--textDark)" }}
-                    href={`/events?tab=${item.tab}`}
+                    href={item?.url ? item.url : `/events?tab=${item.tab}`}
                   >
                     {item.title}
                   </Link>

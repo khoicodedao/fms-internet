@@ -252,6 +252,7 @@ export default function Header() {
             },
 
             {
+              className: role == "user" ? "hidden" : "",
               key: "6",
               label: t("cli"),
               icon: (
@@ -266,6 +267,7 @@ export default function Header() {
               },
             },
             {
+              className: role == "user" ? "hidden" : "",
               key: "7",
               label: t("Rules"),
               icon: (
