@@ -173,6 +173,32 @@ export default function Events() {
     },
   ];
 
+  const columnsAll: ColDef<any>[] = [
+    { headerName: t("mac"), field: "mac", width: 200 },
+    { headerName: t("ip"), field: "ip", width: 150 },
+    { headerName: t("computerName"), field: "computer_name" },
+    { headerName: t("alertSource"), field: "alert_source", width: 120 },
+    {
+      headerName: t("Severity"),
+      field: "alert_level_id",
+      width: 120,
+      cellRenderer: (params: any) => <AlertLevel level={params.value} />,
+    },
+    { headerName: t("mitreTactic"), field: "mitre_tactic", width: 300 },
+    { headerName: t("mitreTechnique"), field: "mitre_technique", width: 300 },
+    { headerName: t("eventTime"), field: "event_time" },
+    {
+      headerName: t("action"),
+      width: 120,
+      field: "action",
+      cellRenderer: (params: any) => <SocketStatus status={params.value} />,
+    },
+    {
+      headerName: t("object"),
+      field: "object",
+      width: 120,
+    },
+  ];
   const columnFlow = [
     { headerName: t("mac"), field: "mac" },
     { headerName: t("Dest mac"), field: "fields.dest_mac" },
@@ -212,7 +238,7 @@ export default function Events() {
           body="" // không filter -> lấy tất cả events
           dataFieldName="events"
           apiUrl={API_URL.EVENT_PAGE.DEFAULT}
-          columns={columns.map((col) => ({ ...col, tableTitle: "all" }))}
+          columns={columnsAll.map((col) => ({ ...col, tableTitle: "all" }))}
         />
       </TabPane>
 

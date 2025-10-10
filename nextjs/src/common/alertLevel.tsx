@@ -17,7 +17,7 @@ const alertLevelConfig: Record<
 };
 
 const AlertLevel: React.FC<AlertLevelProps> = ({ level }) => {
-  const config = alertLevelConfig[level] || { label: "Unknown", color: "gray" };
+  const config = alertLevelConfig[level] || { label: "Info", color: "gray" };
 
   return <Tag color={config.color}>{config.label}</Tag>;
 };
