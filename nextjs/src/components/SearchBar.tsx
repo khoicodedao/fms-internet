@@ -16,21 +16,13 @@ interface KQLSearchBoxProps {
 }
 
 const DEFAULT_SUGGESTIONS: string[] = [
-  "response.status_code: 200",
-  "response.status_code: 404",
-  'url.path: "/api/*"',
-  "method: GET",
-  'kubernetes.pod.name: "auth-*"',
-  'host.name: "prod-*"',
-  'message: "timeout" OR message: "failed"',
-  "@timestamp >= now-15m",
-  "@timestamp >= now-24h and @timestamp < now",
-  "bytes > 1048576",
-  'geo.country_name: "Vietnam"',
-  "log.level: error",
-  "log.level: warn",
-  'user.name: "admin"',
-  'agent.type: "filebeat"',
+  'any like :"   "',
+  "and",
+  "or",
+  'mac="  "',
+  'ip="   "',
+  "field.",
+  'object="  "',
 ];
 
 const MAX_ITEMS = 8;
