@@ -100,7 +100,9 @@ const CLIPage = () => {
   const connectToWebSocket = () => {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.hostname; // ví dụ: myapp.local hoặc example.com
-    const wsUrl = `${protocol}//${host}:3003?token=${token}`;
+    // const wsUrl = `${protocol}//${host}:3003?token=${token}`;
+    const wsUrl = `wss://localhost:3003?token=${token}`;
+
     // URL upload dùng mặc định; có thể override bằng biến môi trường
 
     const ws = new WebSocket(wsUrl);

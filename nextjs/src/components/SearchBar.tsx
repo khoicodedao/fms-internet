@@ -14,16 +14,127 @@ interface KQLSearchBoxProps {
   /** Tự động gọi onSearch sau khi chọn gợi ý */
   autoSearchOnSelect?: boolean;
 }
-
-const DEFAULT_SUGGESTIONS: string[] = [
+const NORMAL_SUGGESTIONS: string[] = [
   'any like :"   "',
   "and",
   "or",
-  'mac="  "',
-  'ip="   "',
   "field.",
   'object="  "',
+  'ip="   "',
+  'mac="  "',
+
+  // ==== ID / SUMMARY / UID / HOST ====
+  'id="  "',
+  'summary like :"  "',
+  'uid="  "',
+  'host="  "',
+
+  // ==== THỜI GIAN ====
+  'timestamp="  "',
+  'timestamp>="YYYY-MM-DD HH:mm:ss"',
+  'timestamp<="YYYY-MM-DD HH:mm:ss"',
+  'created_at between "YYYY-MM-DDTHH:mm:ssZ" and "YYYY-MM-DDTHH:mm:ssZ"',
+  'updated_at>="YYYY-MM-DDTHH:mm:ssZ"',
+
+  // ==== MÁY / TÊN MÁY ====
+  'computer_name="  "',
+  'fqdn="  "',
+  'hostname="  "',
+
+  // ==== ROOT PROCESS / HASH KHÓA ====
+  'root_process="  "',
+  'xxHash_path="  "',
+  'xxHash="  "',
+
+  // ==== NGƯỜI DÙNG / NHÓM ====
+  'owner="  "',
+  'group="  "',
+  "uid=  ",
+
+  // ==== ĐƯỜNG DẪN FILE / MIME / MODE / IL ====
+  'file_path like :"  "',
+  'file_path="  "',
+  'mime_type="  "',
+  'mode="  "',
+  'integrity_level="  "',
+
+  // ==== HASH / CHỮ KÝ ====
+  'md5_hash="  "',
+  'sha1_hash="  "',
+  "signature_valid=(true|false)",
+  'signer="  "',
+  'company="  "',
+
+  // ==== KỸ THUẬT / CHIẾN THUẬT (MITRE) ====
+  'techniques contains "  "',
+  'tactics contains "  "',
+  'techniques like :"  "',
+  'tactics like :"  "',
+
+  // ==== SCORE ====
+  "score_level>=  ",
+  "score_tactic=  ",
+
+  // ==== THỜI ĐIỂM TẠO/SỬA FILE ====
+  'file_created_at>="YYYY-MM-DD HH:mm:ss"',
+  'file_modified_at>="YYYY-MM-DD HH:mm:ss"',
+
+  // ==== TỔ HỢP NHANH (mẫu) ====
+  'computer_name="  " and mac="  "',
+  'root_process="  " and file_path like :"  "',
+  'owner="  " and signer="  "',
+  'md5_hash="  " or sha1_hash="  "',
+  'techniques contains "  " and tactics contains "  "',
+  'signature_valid=(true|false) and company="  "',
 ];
+// Bổ sung dạng nested cho process_root & file_info
+const NESTED_SUGGESTIONS: string[] = [
+  // ==== process_root ====
+  'process_root.parent="  "',
+  'process_root.xxHash_path="  "',
+  "process_root.level=  ",
+
+  // ==== process_root.file_info.* ====
+  'process_root.file_info.owner="  "',
+  'process_root.file_info.group="  "',
+  "process_root.file_info.uid=  ",
+  'process_root.file_info.fqdn="  "',
+  'process_root.file_info.hostname="  "',
+
+  'process_root.file_info.file_path="  "',
+  'process_root.file_info.file_path like :"  "',
+  'process_root.file_info.mime_type="  "',
+  'process_root.file_info.mode="  "',
+  'process_root.file_info.integrity_level="  "',
+
+  'process_root.file_info.md5_hash="  "',
+  'process_root.file_info.sha1_hash="  "',
+  'process_root.file_info.xxHash="  "',
+
+  'process_root.file_info.company="  "',
+  'process_root.file_info.signer="  "',
+  "process_root.file_info.signature_valid=(true|false)",
+
+  'process_root.file_info.created_at>="YYYY-MM-DD HH:mm:ss"',
+  'process_root.file_info.modified_at>="YYYY-MM-DD HH:mm:ss"',
+
+  'process_root.file_info.techniques contains "  "',
+  'process_root.file_info.tactics contains "  "',
+  'process_root.file_info.techniques like :"  "',
+  'process_root.file_info.tactics like :"  "',
+
+  "process_root.file_info.score_level>=  ",
+  "process_root.file_info.score_tactic=  ",
+
+  // ==== tổ hợp nhanh (mẫu) ====
+  'process_root.file_info.owner="  " and process_root.file_info.signer="  "',
+  'process_root.file_info.file_path like :"  " and process_root.xxHash_path="  "',
+  'process_root.file_info.md5_hash="  " or process_root.file_info.sha1_hash="  "',
+  'process_root.file_info.signature_valid=(true|false) and process_root.file_info.company="  "',
+];
+
+// Hợp nhất vào mảng hiện có
+const DEFAULT_SUGGESTIONS = [...NORMAL_SUGGESTIONS, ...NESTED_SUGGESTIONS];
 
 const MAX_ITEMS = 8;
 const LOGICAL_TOKENS = new Set(["and", "or"]);
